@@ -1,0 +1,146 @@
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 210 45% 98%;
+    --foreground: 217 46% 12%;
+    --card: 0 0% 100%;
+    --card-foreground: 217 46% 12%;
+    --primary: 205 90% 46%;
+    --primary-foreground: 210 40% 99%;
+    --secondary: 193 80% 94%;
+    --secondary-foreground: 215 35% 20%;
+    --muted: 210 40% 95%;
+    --muted-foreground: 215 16% 42%;
+    --accent: 45 100% 92%;
+    --accent-foreground: 30 70% 24%;
+    --border: 214 32% 88%;
+    --input: 214 32% 88%;
+    --ring: 205 90% 46%;
+    --radius: 0.85rem;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: "Manrope", sans-serif;
+    background-image:
+      radial-gradient(circle at 10% -10%, rgba(14, 165, 233, 0.25), transparent 35%),
+      radial-gradient(circle at 90% -10%, rgba(34, 211, 238, 0.22), transparent 30%),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(247, 250, 252, 0.98));
+    min-height: 100vh;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: "Space Grotesk", sans-serif;
+  }
+}
+
+@layer components {
+  .container-shell {
+    @apply mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8;
+  }
+
+  .docs-container-shell {
+    @apply mx-auto w-full max-w-[96rem] px-4 sm:px-6 lg:px-8 xl:px-10;
+  }
+
+  .markdown {
+    @apply prose prose-sm prose-slate max-w-none break-words prose-headings:font-semibold prose-headings:text-foreground prose-headings:scroll-mt-24 prose-p:text-muted-foreground prose-p:leading-relaxed prose-strong:text-foreground prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-img:rounded-xl prose-img:border prose-img:border-border/70 prose-ul:my-3 prose-ol:my-3 prose-li:my-1 prose-li:text-muted-foreground prose-blockquote:border-l-primary/30 prose-blockquote:text-foreground/80 prose-hr:border-border/80 prose-pre:rounded-xl prose-pre:border prose-pre:border-slate-800 prose-pre:bg-slate-950 prose-pre:text-slate-100 prose-th:text-foreground prose-td:align-top sm:prose-base;
+  }
+
+  .markdown :not(pre) > code {
+    @apply rounded-md border border-slate-200 bg-slate-100 px-1.5 py-0.5 font-medium text-slate-900;
+  }
+
+  .markdown pre {
+    @apply overflow-x-auto;
+  }
+
+  .markdown img,
+  .markdown svg,
+  .markdown video,
+  .markdown iframe {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .markdown .table-wrapper {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  .markdown table {
+    width: auto;
+    border-collapse: separate;
+    border-spacing: 0;
+    border: 1px solid hsl(var(--border));
+    border-radius: 0.9rem;
+    background: rgba(255, 255, 255, 0.82);
+  }
+
+  .markdown > :where(p, ul, ol, blockquote, h2, h3, h4, hr) {
+    max-width: 78ch;
+  }
+
+  .markdown > :where(h2, h3, h4) {
+    text-wrap: balance;
+  }
+
+  .markdown a {
+    word-break: break-word;
+  }
+
+  .markdown ul,
+  .markdown ol {
+    padding-left: 1.1rem;
+  }
+
+  .markdown li > p {
+    margin: 0;
+  }
+
+  .markdown pre {
+    padding: 1rem;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  }
+
+  .markdown th,
+  .markdown td {
+    padding: 0.8rem 1rem;
+    border-bottom: 1px solid hsl(var(--border));
+    text-align: left;
+  }
+
+  .markdown thead th {
+    background: rgba(242, 248, 252, 0.92);
+  }
+
+  .markdown tbody tr:nth-child(even) {
+    background: rgba(247, 250, 252, 0.82);
+  }
+
+  .markdown tbody tr:last-child td {
+    border-bottom: 0;
+  }
+
+  .markdown pre code {
+    @apply bg-transparent p-0 text-slate-100;
+  }
+
+  .markdown code::before,
+  .markdown code::after {
+    content: "";
+  }
+}

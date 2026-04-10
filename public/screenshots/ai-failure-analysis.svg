@@ -1,0 +1,44 @@
+<svg width="1200" height="760" viewBox="0 0 1200 760" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="760" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#020617" />
+      <stop offset="1" stop-color="#1E293B" />
+    </linearGradient>
+    <linearGradient id="ai" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#06B6D4" stop-opacity="0.25" />
+      <stop offset="1" stop-color="#22D3EE" stop-opacity="0.08" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="760" rx="22" fill="url(#bg)" />
+  <rect x="24" y="24" width="1152" height="712" rx="18" fill="#0B1220" stroke="#334155" />
+
+  <rect x="56" y="64" width="290" height="26" rx="10" fill="#E2E8F0" fill-opacity="0.16" />
+  <rect x="56" y="102" width="460" height="14" rx="7" fill="#64748B" />
+
+  <rect x="56" y="150" width="500" height="546" rx="16" fill="#111C30" stroke="#334155" />
+  <rect x="580" y="150" width="564" height="546" rx="16" fill="#111C30" stroke="#334155" />
+
+  <rect x="88" y="190" width="436" height="52" rx="10" fill="#0F172A" stroke="#334155" />
+  <rect x="88" y="256" width="436" height="52" rx="10" fill="#0F172A" stroke="#334155" />
+  <rect x="88" y="322" width="436" height="52" rx="10" fill="#0F172A" stroke="#334155" />
+  <rect x="88" y="388" width="436" height="52" rx="10" fill="#0F172A" stroke="#334155" />
+
+  <rect x="612" y="190" width="500" height="230" rx="14" fill="url(#ai)" stroke="#06B6D4" stroke-opacity="0.45" />
+  <rect x="612" y="438" width="500" height="226" rx="14" fill="#0F172A" stroke="#334155" />
+
+  <rect x="648" y="232" width="150" height="12" rx="6" fill="#E2E8F0" fill-opacity="0.34" />
+  <rect x="648" y="258" width="420" height="12" rx="6" fill="#94A3B8" fill-opacity="0.5" />
+  <rect x="648" y="280" width="390" height="12" rx="6" fill="#94A3B8" fill-opacity="0.45" />
+  <rect x="648" y="302" width="410" height="12" rx="6" fill="#94A3B8" fill-opacity="0.4" />
+
+  <circle cx="672" cy="474" r="10" fill="#22D3EE" />
+  <rect x="692" y="468" width="374" height="12" rx="6" fill="#E2E8F0" fill-opacity="0.28" />
+  <circle cx="672" cy="520" r="10" fill="#38BDF8" />
+  <rect x="692" y="514" width="340" height="12" rx="6" fill="#E2E8F0" fill-opacity="0.24" />
+  <circle cx="672" cy="566" r="10" fill="#0EA5E9" />
+  <rect x="692" y="560" width="358" height="12" rx="6" fill="#E2E8F0" fill-opacity="0.22" />
+
+  <text x="56" y="726" fill="#94A3B8" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="600">
+    AI Failure Analysis Mockup
+  </text>
+</svg>
