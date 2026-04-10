@@ -33,15 +33,15 @@ Cree un archivo `.env` junto al archivo compose:
 ```bash
 cat > .env <<'EOF'
 # Required
-JWT_SECRET=change-me-to-a-random-string
+JWT_SECRET=replace-with-a-long-random-secret
+POSTGRES_PASSWORD=replace-with-a-strong-postgres-password
+MINIO_ROOT_PASSWORD=replace-with-a-strong-minio-password
 
 # Optional — override defaults if needed
 # PLATFORM_VERSION=latest
 # POSTGRES_USER=postgres
-# POSTGRES_PASSWORD=postgres
 # POSTGRES_DB=test_ops
 # MINIO_ROOT_USER=minioadmin
-# MINIO_ROOT_PASSWORD=minioadmin
 # NEXT_PUBLIC_API_URL=http://localhost:3001
 # FRONTEND_URL=http://localhost:3000
 EOF
@@ -56,10 +56,10 @@ EOF
 | `JWT_SECRET` | *(obligatorio)* | Clave secreta para firmar tokens JWT |
 | `PLATFORM_VERSION` | `latest` | Etiqueta de imagen Docker (`latest`, `v1.0.0`, etc.) |
 | `POSTGRES_USER` | `postgres` | Usuario de PostgreSQL |
-| `POSTGRES_PASSWORD` | `postgres` | Contrasena de PostgreSQL |
+| `POSTGRES_PASSWORD` | *(obligatorio)* | Contrasena de PostgreSQL |
 | `POSTGRES_DB` | `test_ops` | Nombre de la base de datos |
 | `MINIO_ROOT_USER` | `minioadmin` | Usuario administrador de MinIO |
-| `MINIO_ROOT_PASSWORD` | `minioadmin` | Contrasena de administrador de MinIO |
+| `MINIO_ROOT_PASSWORD` | *(obligatorio)* | Contrasena de administrador de MinIO |
 | `NEXT_PUBLIC_API_URL` | `http://localhost:3001` | URL del backend visible para el navegador |
 | `FRONTEND_URL` | `http://localhost:3000` | URL del frontend para CORS |
 | `AI_ANALYSIS_LICENSE_PUBLIC_KEY` | *(vacio)* | Clave publica para verificacion de licencia AI Pro (opcional) |

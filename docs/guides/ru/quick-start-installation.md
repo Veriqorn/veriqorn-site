@@ -33,15 +33,15 @@ curl -fsSLO https://raw.githubusercontent.com/veriqorn/veriqorn-install/master/d
 ```bash
 cat > .env <<'EOF'
 # Required
-JWT_SECRET=change-me-to-a-random-string
+JWT_SECRET=replace-with-a-long-random-secret
+POSTGRES_PASSWORD=replace-with-a-strong-postgres-password
+MINIO_ROOT_PASSWORD=replace-with-a-strong-minio-password
 
 # Optional â€” override defaults if needed
 # PLATFORM_VERSION=latest
 # POSTGRES_USER=postgres
-# POSTGRES_PASSWORD=postgres
 # POSTGRES_DB=test_ops
 # MINIO_ROOT_USER=minioadmin
-# MINIO_ROOT_PASSWORD=minioadmin
 # NEXT_PUBLIC_API_URL=http://localhost:3001
 # FRONTEND_URL=http://localhost:3000
 EOF
@@ -56,10 +56,10 @@ EOF
 | `JWT_SECRET` | *(Ð¾Ð±ÑÐ·Ð°Ñ‚ÐµÐ»ÑŒÐ½Ð°)* | Ð¡ÐµÐºÑ€ÐµÑ‚Ð½Ñ‹Ð¹ ÐºÐ»ÑŽÑ‡ Ð´Ð»Ñ Ð¿Ð¾Ð´Ð¿Ð¸ÑÐ¸ JWT-Ñ‚Ð¾ÐºÐµÐ½Ð¾Ð² |
 | `PLATFORM_VERSION` | `latest` | Ð¢ÐµÐ³ Docker-Ð¾Ð±Ñ€Ð°Ð·Ð° (`latest`, `v1.0.0` Ð¸ Ñ‚.Ð´.) |
 | `POSTGRES_USER` | `postgres` | ÐŸÐ¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»ÑŒ PostgreSQL |
-| `POSTGRES_PASSWORD` | `postgres` | ÐŸÐ°Ñ€Ð¾Ð»ÑŒ PostgreSQL |
+| `POSTGRES_PASSWORD` | *(обязательна)* | ÐŸÐ°Ñ€Ð¾Ð»ÑŒ PostgreSQL |
 | `POSTGRES_DB` | `test_ops` | Ð˜Ð¼Ñ Ð±Ð°Ð·Ñ‹ Ð´Ð°Ð½Ð½Ñ‹Ñ… |
 | `MINIO_ROOT_USER` | `minioadmin` | ÐŸÐ¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»ÑŒ-Ð°Ð´Ð¼Ð¸Ð½Ð¸ÑÑ‚Ñ€Ð°Ñ‚Ð¾Ñ€ MinIO |
-| `MINIO_ROOT_PASSWORD` | `minioadmin` | ÐŸÐ°Ñ€Ð¾Ð»ÑŒ Ð°Ð´Ð¼Ð¸Ð½Ð¸ÑÑ‚Ñ€Ð°Ñ‚Ð¾Ñ€Ð° MinIO |
+| `MINIO_ROOT_PASSWORD` | *(обязательна)* | ÐŸÐ°Ñ€Ð¾Ð»ÑŒ Ð°Ð´Ð¼Ð¸Ð½Ð¸ÑÑ‚Ñ€Ð°Ñ‚Ð¾Ñ€Ð° MinIO |
 | `NEXT_PUBLIC_API_URL` | `http://localhost:3001` | URL Ð±ÑÐºÐµÐ½Ð´Ð°, Ð´Ð¾ÑÑ‚ÑƒÐ¿Ð½Ñ‹Ð¹ Ð¸Ð· Ð±Ñ€Ð°ÑƒÐ·ÐµÑ€Ð° |
 | `FRONTEND_URL` | `http://localhost:3000` | URL Ñ„Ñ€Ð¾Ð½Ñ‚ÐµÐ½Ð´Ð° Ð´Ð»Ñ CORS |
 | `AI_ANALYSIS_LICENSE_PUBLIC_KEY` | *(Ð¿ÑƒÑÑ‚Ð¾)* | ÐŸÑƒÐ±Ð»Ð¸Ñ‡Ð½Ñ‹Ð¹ ÐºÐ»ÑŽÑ‡ Ð´Ð»Ñ Ð¿Ñ€Ð¾Ð²ÐµÑ€ÐºÐ¸ Ð»Ð¸Ñ†ÐµÐ½Ð·Ð¸Ð¸ AI Pro (Ð½ÐµÐ¾Ð±ÑÐ·Ð°Ñ‚ÐµÐ»ÑŒÐ½Ð¾) |

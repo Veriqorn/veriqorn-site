@@ -2,7 +2,7 @@
 
 This guide describes how to update QA Report Platform in a self-hosted Docker setup without losing data.
 
-Use this flow when you already run the platform with `docker-compose.install.yml`.
+Use this flow when you already run the platform with `docker-compose.yml`.
 
 ---
 
@@ -21,8 +21,8 @@ Data is removed only if you explicitly delete volumes (for example `docker compo
 
 ## Prerequisites
 
-- A running deployment based on `docker-compose.install.yml`
-- Access to `.env.install`
+- A running deployment based on `docker-compose.yml`
+- Access to `.env`
 - Enough free disk space for backup archives
 
 ---
@@ -38,16 +38,16 @@ mkdir -p backups
 ### 1.1 Backup PostgreSQL
 
 ```bash
-docker compose --env-file .env.install -f docker-compose.install.yml exec -T postgres \
+docker compose --env-file .env -f docker-compose.yml exec -T postgres \
   pg_dump -U postgres test_ops > backups/postgres_pre_update.sql
 ```
 
-If you use custom DB credentials or database name, replace `postgres` and `test_ops` with your values from `.env.install`.
+If you use custom DB credentials or database name, replace `postgres` and `test_ops` with your values from `.env`.
 
 ### 1.2 Backup MinIO files
 
 ```bash
-docker compose --env-file .env.install -f docker-compose.install.yml cp \
+docker compose --env-file .env -f docker-compose.yml cp \
   minio:/data backups/minio_data_pre_update
 ```
 
@@ -55,7 +55,7 @@ docker compose --env-file .env.install -f docker-compose.install.yml cp \
 
 ## Step 2 - Choose Target Version
 
-Set the platform version in `.env.install`:
+Set the platform version in `.env`:
 
 ```env
 PLATFORM_VERSION=v1.2.0
@@ -68,8 +68,8 @@ If you keep `latest`, each update will pull the newest published image.
 ## Step 3 - Pull and Apply Update
 
 ```bash
-docker compose --env-file .env.install -f docker-compose.install.yml pull
-docker compose --env-file .env.install -f docker-compose.install.yml up -d
+docker compose --env-file .env -f docker-compose.yml pull
+docker compose --env-file .env -f docker-compose.yml up -d
 ```
 
 What happens:
@@ -86,8 +86,8 @@ What happens:
 Run checks:
 
 ```bash
-docker compose --env-file .env.install -f docker-compose.install.yml ps
-docker compose --env-file .env.install -f docker-compose.install.yml logs backend --tail 200
+docker compose --env-file .env -f docker-compose.yml ps
+docker compose --env-file .env -f docker-compose.yml logs backend --tail 200
 ```
 
 Then verify in UI:
@@ -103,12 +103,12 @@ Then verify in UI:
 
 If something goes wrong:
 
-1. Set previous version in `.env.install` (for example `PLATFORM_VERSION=v1.1.0`).
+1. Set previous version in `.env` (for example `PLATFORM_VERSION=v1.1.0`).
 2. Run:
 
 ```bash
-docker compose --env-file .env.install -f docker-compose.install.yml pull
-docker compose --env-file .env.install -f docker-compose.install.yml up -d
+docker compose --env-file .env -f docker-compose.yml pull
+docker compose --env-file .env -f docker-compose.yml up -d
 ```
 
 If rollback requires restoring data, use your backups from Step 1.
@@ -121,14 +121,14 @@ If rollback requires restoring data, use your backups from Step 1.
 
 ```bash
 cat backups/postgres_pre_update.sql | \
-docker compose --env-file .env.install -f docker-compose.install.yml exec -T postgres \
+docker compose --env-file .env -f docker-compose.yml exec -T postgres \
   psql -U postgres test_ops
 ```
 
 ### Restore MinIO files
 
 ```bash
-docker compose --env-file .env.install -f docker-compose.install.yml cp \
+docker compose --env-file .env -f docker-compose.yml cp \
   backups/minio_data_pre_update/. minio:/data
 ```
 
@@ -138,7 +138,7 @@ docker compose --env-file .env.install -f docker-compose.install.yml cp \
 
 Pro license activation is not baked into Docker images.
 
-- verification key is read from `AI_ANALYSIS_LICENSE_PUBLIC_KEY` in `.env.install`
+- verification key is read from `AI_ANALYSIS_LICENSE_PUBLIC_KEY` in `.env`
 - signed license envelope is stored in application settings (database)
 
 As long as your database is preserved, license state is preserved too.
@@ -148,6 +148,6 @@ As long as your database is preserved, license state is preserved too.
 ## Safety Checklist
 
 - Do not run `docker compose down -v` unless you intentionally want full data wipe.
-- Keep `.env.install` in backup and secret management.
+- Keep `.env` in backup and secret management.
 - Keep regular DB and MinIO backups before each production update.
 - Prefer pinned release tags over `latest` in production.

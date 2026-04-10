@@ -1,53 +1,52 @@
 # Veriqorn Site
 
-Public marketing site and documentation portal for Veriqorn.
+Standalone public marketing site and documentation portal for Veriqorn.
 
 ## Stack
-
 - Bun
 - React + Vite
 - TanStack Router
 - Tailwind CSS
 
-## Local Development
-
+## Run Locally
 ```bash
 bun install
 bun run dev
 ```
 
-## Production Build
-
+## Build
 ```bash
 bun run build
 bun run preview
 ```
 
 ## Repository Layout
+- `src/` - application routes and UI
+- `public/` - static assets such as `robots.txt` and `sitemap.xml`
+- `docs/guides/` - public markdown guides bundled into the site build
 
-- `src/` — application source code
-- `public/` — static assets, `robots.txt`, `sitemap.xml`
-- `docs/guides/` — localized markdown guides rendered by the site
-
-## Environment Variables
-
-Use `VITE_SITE_URL` to define the canonical production URL used for SEO metadata:
+## Environment Variable
+Set the public site URL for canonical and Open Graph links:
 
 ```bash
 VITE_SITE_URL=https://your-domain.example
 ```
 
-If not set, the site falls back to `https://veriqorn.dev`.
+If not set, the site falls back to `https://qa-report-platform.dev`.
 
-## Vercel Settings
+## Deployment
+Recommended targets: Vercel or Cloudflare Pages.
 
-- Framework Preset: `Vite`
-- Build Command: `bun install && bun run build`
-- Output Directory: `dist`
-- Root Directory: repository root
+Suggested settings:
+- Build command: `bun install && bun run build`
+- Output directory: `dist`
+- Root directory: repository root
 
-After deployment, update the production domain in `public/sitemap.xml` and `public/robots.txt` if needed.
+After deployment, keep `public/sitemap.xml` and `public/robots.txt` aligned with the public domain.
+
+## Related Repositories
+- Product source code: `https://github.com/veriqorn/veriqorn-platform`
+- Public installation assets: `https://github.com/veriqorn/veriqorn-install`
 
 ## License
-
-This repository is licensed under Apache-2.0.
+Apache-2.0
