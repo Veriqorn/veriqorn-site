@@ -12,8 +12,8 @@ Al actualizar, Docker reemplaza los contenedores de aplicacion (`backend`, `fron
 
 Sus datos se persisten en volumenes de Docker y no se eliminan durante una actualizacion normal:
 
-- Datos de PostgreSQL: `postgres_data`
-- Datos de MinIO: `minio_data`
+- Datos de PostgreSQL: el volumen definido por `VERIQORN_POSTGRES_VOLUME` (por defecto `veriqorn-postgres-data`)
+- Datos de MinIO: el volumen definido por `VERIQORN_MINIO_VOLUME` (por defecto `veriqorn-minio-data`)
 
 Los datos se eliminan unicamente si usted borra explicitamente los volumenes (por ejemplo `docker compose down -v`).
 
@@ -24,6 +24,8 @@ Los datos se eliminan unicamente si usted borra explicitamente los volumenes (po
 - Un despliegue en ejecucion basado en `docker-compose.yml`
 - Acceso a `.env`
 - Suficiente espacio libre en disco para los archivos de respaldo
+
+Para el contrato canonico de variables de entorno, mantenga `.env` alineado con `veriqorn-install/.env.example`.
 
 ---
 
@@ -76,7 +78,7 @@ Lo que sucede:
 
 - se descargan las nuevas imagenes desde GHCR
 - los contenedores se recrean con la nueva version de imagen
-- los volumenes existentes se reutilizan
+- los volumenes existentes de PostgreSQL y MinIO se reutilizan
 - el backend ejecuta las migraciones de BD al iniciar (`migrationsRun: true`)
 
 ---
@@ -148,6 +150,7 @@ Mientras su base de datos se conserve, el estado de la licencia tambien se conse
 ## Lista de verificacion de seguridad
 
 - No ejecute `docker compose down -v` a menos que desee intencionalmente una limpieza total de datos.
+- No cambie ni elimine `VERIQORN_POSTGRES_VOLUME` / `VERIQORN_MINIO_VOLUME` a menos que este migrando el almacenamiento de forma intencional.
 - Mantenga `.env` en respaldo y gestion de secretos.
 - Realice respaldos regulares de la BD y MinIO antes de cada actualizacion en produccion.
 - Prefiera etiquetas de release fijas en lugar de `latest` en produccion.

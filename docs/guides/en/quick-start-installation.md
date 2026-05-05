@@ -1,4 +1,4 @@
-# Quick Start — Installation Guide
+﻿# Quick Start â€” Installation Guide
 
 QA Report Platform ships as pre-built Docker images on GitHub Container Registry (GHCR). You can have the full platform running in under five minutes with a single `docker compose` command.
 
@@ -10,41 +10,29 @@ QA Report Platform ships as pre-built Docker images on GitHub Container Registry
 - Ports **3000**, **3001**, **5432**, **9000**, **9001** available on the host.
 - At least **2 GB** of free RAM for all services.
 
-No other dependencies are required — the compose file includes PostgreSQL, MinIO (S3-compatible storage), and automatic bucket initialization.
+No other dependencies are required â€” the compose file includes PostgreSQL, MinIO (S3-compatible storage), and automatic bucket initialization.
 
 ---
 
-## Step 1 — Download the Compose File
+## Step 1 â€” Download the Install Files
 
-Download the installation compose file from the repository:
+Download the installation compose file and environment example from the repository:
 
 ```bash
 curl -fsSLO https://raw.githubusercontent.com/veriqorn/veriqorn-install/master/docker-compose.yml
+curl -fsSLO https://raw.githubusercontent.com/veriqorn/veriqorn-install/master/.env.example
 ```
 
-Or copy it manually from the `veriqorn-install` repository root: `docker-compose.yml`.
+Or copy them manually from the `veriqorn-install` repository root: `docker-compose.yml` and `.env.example`.
 
 ---
 
-## Step 2 — Create the Environment File
+## Step 2 â€” Create the Environment File
 
-Create a `.env` file next to the compose file:
+Create `.env` next to the compose file, starting from the published example:
 
 ```bash
-cat > .env <<'EOF'
-# Required
-JWT_SECRET=replace-with-a-long-random-secret
-POSTGRES_PASSWORD=replace-with-a-strong-postgres-password
-MINIO_ROOT_PASSWORD=replace-with-a-strong-minio-password
-
-# Optional — override defaults if needed
-# PLATFORM_VERSION=latest
-# POSTGRES_USER=postgres
-# POSTGRES_DB=test_ops
-# MINIO_ROOT_USER=minioadmin
-# NEXT_PUBLIC_API_URL=http://localhost:3001
-# FRONTEND_URL=http://localhost:3000
-EOF
+cp .env.example .env
 ```
 
 > **Important:** Replace `JWT_SECRET` with a strong random value for production use.
@@ -58,15 +46,23 @@ EOF
 | `POSTGRES_USER` | `postgres` | PostgreSQL user |
 | `POSTGRES_PASSWORD` | *(required)* | PostgreSQL password |
 | `POSTGRES_DB` | `test_ops` | Database name |
+| `POSTGRES_HOST_PORT` | `5432` | PostgreSQL port exposed on the host |
+| `VERIQORN_POSTGRES_VOLUME` | `veriqorn-postgres-data` | Docker volume name for PostgreSQL data |
 | `MINIO_ROOT_USER` | `minioadmin` | MinIO admin user |
 | `MINIO_ROOT_PASSWORD` | *(required)* | MinIO admin password |
+| `MINIO_API_PORT` | `9000` | MinIO API port exposed on the host |
+| `MINIO_CONSOLE_PORT` | `9001` | MinIO console port exposed on the host |
+| `VERIQORN_MINIO_VOLUME` | `veriqorn-minio-data` | Docker volume name for MinIO object storage |
+| `FRONTEND_PORT` | `3000` | Frontend port exposed on the host |
+| `BACKEND_PORT` | `3001` | Backend port exposed on the host |
 | `NEXT_PUBLIC_API_URL` | `http://localhost:3001` | Backend URL visible to the browser |
 | `FRONTEND_URL` | `http://localhost:3000` | Frontend URL for CORS |
+| `CORS_ORIGINS` | `http://localhost:3000` | Allowed browser origins for the backend |
 | `AI_ANALYSIS_LICENSE_PUBLIC_KEY` | *(empty)* | Public key for AI Pro license verification (optional) |
 
 ---
 
-## Step 3 — Start the Platform
+## Step 3 â€” Start the Platform
 
 ```bash
 docker compose -f docker-compose.yml up -d
@@ -84,7 +80,7 @@ You should see five services: `frontend`, `backend`, `postgres`, `minio`, and `m
 
 ---
 
-## Step 4 — Open the Platform
+## Step 4 â€” Open the Platform
 
 | Service | URL |
 |---------|-----|
@@ -103,33 +99,46 @@ You should see five services: `frontend`, `backend`, `postgres`, `minio`, and `m
 
 ---
 
-## Step 5 — Upload Your First Results
+## Step 5 â€” Upload Your First Results
 
 Authenticate and upload Allure results to verify the installation:
 
 ```bash
-# 1. Login and get a JWT token
-TOKEN=$(curl -s -X POST http://localhost:3001/auth/login \
+# 1. Create a session cookie
+curl -s -c veriqorn.cookies -X POST http://localhost:3001/api/v1/auth/session \
   -H "Content-Type: application/json" \
-  -d '{"email":"admin@example.com","password":"admin123"}' \
-  | grep -o '"access_token":"[^"]*"' | cut -d'"' -f4)
+  -d '{"email":"admin@example.com","password":"admin123"}'
 
-# 2. Upload a single result file
-curl -X POST http://localhost:3001/upload/allure-results \
-  -H "Authorization: Bearer $TOKEN" \
+# 2. Upload a single result file through the normalized import route
+curl -X POST http://localhost:3001/api/v1/projects/default/imports/allure-jobs \
+  -b veriqorn.cookies \
   -F "file=@/path/to/your-result.json" \
   -F "runName=First Run" \
+  -F "sourceKind=uploaded_file" \
   -F "environment=local"
 
 # 3. Or upload a ZIP from CI
-curl -X POST http://localhost:3001/upload/ci/allure-results \
-  -H "Authorization: Bearer $TOKEN" \
+curl -X POST http://localhost:3001/api/v1/projects/default/imports/allure-jobs \
+  -b veriqorn.cookies \
   -F "file=@allure-results.zip" \
   -F "runName=CI Run" \
-  -F "project=my-project"
+  -F "sourceKind=ci_archive" \
+  -F "branch=main"
 ```
 
-Open [http://localhost:3000](http://localhost:3000) — your launch should appear on the Launches page.
+Open [http://localhost:3000](http://localhost:3000) â€” your launch should appear on the Launches page.
+
+---
+
+## Data Persistence
+
+Normal application updates do not remove your data.
+
+- PostgreSQL data is stored in the Docker volume named by `VERIQORN_POSTGRES_VOLUME`.
+- MinIO artifacts are stored in the Docker volume named by `VERIQORN_MINIO_VOLUME`.
+- `docker compose pull` plus `docker compose up -d` recreates containers, but reuses those volumes.
+
+Only `docker compose down -v` removes persisted application data.
 
 ---
 
@@ -171,7 +180,7 @@ Available tags are listed on the [Veriqorn packages page](https://github.com/org
 # Stop all services (data is preserved in volumes)
 docker compose -f docker-compose.yml down
 
-# Stop and remove all data (database, files)
+# Stop and remove all persisted data (database, files, artifacts)
 docker compose -f docker-compose.yml down -v
 ```
 
@@ -182,7 +191,7 @@ docker compose -f docker-compose.yml down -v
 | Symptom | Cause | Fix |
 |---------|-------|-----|
 | `JWT_SECRET is required` error on startup | Missing `.env` file or empty `JWT_SECRET` | Create `.env` with a `JWT_SECRET` value |
-| Backend exits with database connection error | PostgreSQL not ready yet | Wait 10-15 seconds and check again — the healthcheck ensures ordered startup |
+| Backend exits with database connection error | PostgreSQL not ready yet | Wait 10-15 seconds and check again â€” the healthcheck ensures ordered startup |
 | Frontend shows "Network Error" | Backend is not reachable from the browser | Verify `NEXT_PUBLIC_API_URL` matches the backend's public address |
 | Cannot pull images from GHCR | Images are private or rate-limited | Check that images are public, or `docker login ghcr.io` with a GitHub token |
 | Port 3000/3001 already in use | Another service occupies the port | Stop the conflicting service or remap ports in the compose file |
@@ -194,3 +203,4 @@ docker compose -f docker-compose.yml down -v
 - **CI/CD integration**: See the upload examples above or configure a [Test Rerun pipeline](test-rerun-setup.md).
 - **AI Pro features**: Install an AI Pro license to enable failure analysis, repository indexing, and coverage intelligence. See [AI Pro License](ai-pro-license.md).
 - **LLM connection**: Connect a local or cloud LLM provider for AI analysis. See [LLM Connection](ai-llm-connection.md).
+

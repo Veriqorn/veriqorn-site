@@ -1,196 +1,194 @@
-# Быстрый старт — Руководство по установке
+# Быстрый старт - Руководство по установке
 
-QA Report Platform поставляется в виде готовых Docker-образов в GitHub Container Registry (GHCR). Вы можете запустить платформу целиком менее чем за пять минут одной командой `docker compose`.
+QA Report Platform поставляется в виде готовых Docker-образов в GitHub Container Registry (GHCR). Полную платформу можно запустить менее чем за пять минут одной командой `docker compose`.
 
 ---
 
 ## Предварительные требования
 
-- **Docker** 20.10+ и **Docker Compose** v2 (или плагин `docker-compose`).
-- Порты **3000**, **3001**, **5432**, **9000**, **9001** должны быть свободны на хосте.
+- **Docker** 20.10+ и **Docker Compose** v2.
+- Свободные порты **3000**, **3001**, **5432**, **9000**, **9001** на хосте.
 - Минимум **2 ГБ** свободной оперативной памяти для всех сервисов.
 
-Других зависимостей не требуется — compose-файл уже включает PostgreSQL, MinIO (S3-совместимое хранилище) и автоматическую инициализацию бакетов.
+Дополнительные зависимости не требуются: compose-файл уже включает PostgreSQL, MinIO и автоматическую инициализацию бакетов.
 
 ---
 
-## Шаг 1 — Скачайте Compose-файл
+## Шаг 1 - Скачайте установочные файлы
 
-Загрузите установочный compose-файл из репозитория:
+Скачайте установочный compose-файл и пример файла окружения из репозитория:
 
 ```bash
 curl -fsSLO https://raw.githubusercontent.com/veriqorn/veriqorn-install/master/docker-compose.yml
+curl -fsSLO https://raw.githubusercontent.com/veriqorn/veriqorn-install/master/.env.example
 ```
 
-Или скопируйте его вручную из корня репозитория: `docker-compose.yml`.
+Либо скопируйте их вручную из корня репозитория `veriqorn-install`: `docker-compose.yml` и `.env.example`.
 
 ---
 
-## Шаг 2 — Создайте файл окружения
+## Шаг 2 - Подготовьте файл окружения
 
-Создайте файл `.env` рядом с compose-файлом:
+Создайте `.env` рядом с compose-файлом на основе опубликованного примера:
 
 ```bash
-cat > .env <<'EOF'
-# Required
-JWT_SECRET=replace-with-a-long-random-secret
-POSTGRES_PASSWORD=replace-with-a-strong-postgres-password
-MINIO_ROOT_PASSWORD=replace-with-a-strong-minio-password
-
-# Optional — override defaults if needed
-# PLATFORM_VERSION=latest
-# POSTGRES_USER=postgres
-# POSTGRES_DB=test_ops
-# MINIO_ROOT_USER=minioadmin
-# NEXT_PUBLIC_API_URL=http://localhost:3001
-# FRONTEND_URL=http://localhost:3000
-EOF
+cp .env.example .env
 ```
 
-> **Важно:** Замените `JWT_SECRET` на надёжное случайное значение для продакшен-среды.
+Обязательно задайте безопасные значения как минимум для:
 
-### Справочник переменных окружения
+- `JWT_SECRET`
+- `POSTGRES_PASSWORD`
+- `MINIO_ROOT_PASSWORD`
 
-| Переменная | По умолчанию | Описание |
+### Основные переменные окружения
+
+| Переменная | По умолчанию | Назначение |
 |----------|---------|-------------|
-| `JWT_SECRET` | *(обязательна)* | Секретный ключ для подписи JWT-токенов |
-| `PLATFORM_VERSION` | `latest` | Тег Docker-образа (`latest`, `v1.0.0` и т.д.) |
+| `JWT_SECRET` | *(обязательна)* | Секрет для подписи JWT-токенов |
+| `PLATFORM_VERSION` | `latest` | Тег Docker-образов |
 | `POSTGRES_USER` | `postgres` | Пользователь PostgreSQL |
 | `POSTGRES_PASSWORD` | *(обязательна)* | Пароль PostgreSQL |
 | `POSTGRES_DB` | `test_ops` | Имя базы данных |
-| `MINIO_ROOT_USER` | `minioadmin` | Пользователь-администратор MinIO |
+| `POSTGRES_HOST_PORT` | `5432` | Порт PostgreSQL на хосте |
+| `VERIQORN_POSTGRES_VOLUME` | `veriqorn-postgres-data` | Имя Docker volume для данных PostgreSQL |
+| `MINIO_ROOT_USER` | `minioadmin` | Администратор MinIO |
 | `MINIO_ROOT_PASSWORD` | *(обязательна)* | Пароль администратора MinIO |
-| `NEXT_PUBLIC_API_URL` | `http://localhost:3001` | URL бэкенда, доступный из браузера |
-| `FRONTEND_URL` | `http://localhost:3000` | URL фронтенда для CORS |
-| `AI_ANALYSIS_LICENSE_PUBLIC_KEY` | *(пусто)* | Публичный ключ для проверки лицензии AI Pro (необязательно) |
+| `MINIO_API_PORT` | `9000` | Порт API MinIO на хосте |
+| `MINIO_CONSOLE_PORT` | `9001` | Порт консоли MinIO на хосте |
+| `VERIQORN_MINIO_VOLUME` | `veriqorn-minio-data` | Имя Docker volume для артефактов MinIO |
+| `FRONTEND_PORT` | `3000` | Порт frontend на хосте |
+| `BACKEND_PORT` | `3001` | Порт backend на хосте |
+| `NEXT_PUBLIC_API_URL` | `http://localhost:3001` | URL backend, доступный из браузера |
+| `FRONTEND_URL` | `http://localhost:3000` | URL frontend для CORS |
+| `CORS_ORIGINS` | `http://localhost:3000` | Разрешённые browser origins для backend |
+| `AI_ANALYSIS_LICENSE_PUBLIC_KEY` | *(пусто)* | Публичный ключ для проверки AI Pro лицензии |
 
 ---
 
-## Шаг 3 — Запустите платформу
+## Шаг 3 - Запустите платформу
 
 ```bash
 docker compose -f docker-compose.yml up -d
 ```
 
-Docker загрузит образы из GHCR и запустит все сервисы. Первый запуск может занять 1–2 минуты, пока скачиваются образы и инициализируется база данных.
+Docker скачает образы из GHCR и поднимет все сервисы. Первый запуск может занять 1-2 минуты, пока инициализируются контейнеры и база данных.
 
-Убедитесь, что все контейнеры запущены:
+Проверьте состояние:
 
 ```bash
 docker compose -f docker-compose.yml ps
 ```
 
-Вы должны увидеть пять сервисов: `frontend`, `backend`, `postgres`, `minio` и `minio-init` (завершается после создания бакетов).
+Вы должны увидеть сервисы `frontend`, `backend`, `postgres`, `minio` и `minio-init`. Контейнер `minio-init` завершится после создания бакетов.
 
 ---
 
-## Шаг 4 — Откройте платформу
+## Шаг 4 - Откройте платформу
 
 | Сервис | URL |
 |---------|-----|
-| **Frontend** (UI) | [http://localhost:3000](http://localhost:3000) |
-| **Backend** (API) | [http://localhost:3001](http://localhost:3001) |
-| **MinIO Console** | [http://localhost:9001](http://localhost:9001) |
+| Frontend | [http://localhost:3000](http://localhost:3000) |
+| Backend API | [http://localhost:3001](http://localhost:3001) |
+| MinIO Console | [http://localhost:9001](http://localhost:9001) |
 
-### Учётные данные по умолчанию
+### Учётные записи по умолчанию
 
-| Пользователь | Email | Пароль |
+| Роль | Email | Пароль |
 |------|-------|----------|
 | Администратор | `admin@example.com` | `admin123` |
 | Пользователь | `user@example.com` | `user123` |
 
-> Смените пароли по умолчанию после первого входа в продакшен-среде.
+После первого входа в production-среде сразу замените эти пароли.
 
 ---
 
-## Шаг 5 — Загрузите первые результаты
+## Шаг 5 - Загрузите первые результаты
 
-Авторизуйтесь и загрузите результаты Allure для проверки установки:
+Для проверки установки можно авторизоваться и загрузить Allure-результаты:
 
 ```bash
-# 1. Login and get a JWT token
-TOKEN=$(curl -s -X POST http://localhost:3001/auth/login \
+# 1. Создать сессионную cookie
+curl -s -c veriqorn.cookies -X POST http://localhost:3001/api/v1/auth/session \
   -H "Content-Type: application/json" \
-  -d '{"email":"admin@example.com","password":"admin123"}' \
-  | grep -o '"access_token":"[^"]*"' | cut -d'"' -f4)
+  -d '{"email":"admin@example.com","password":"admin123"}'
 
-# 2. Upload a single result file
-curl -X POST http://localhost:3001/upload/allure-results \
-  -H "Authorization: Bearer $TOKEN" \
+# 2. Загрузить одиночный result-файл
+curl -X POST http://localhost:3001/api/v1/projects/default/imports/allure-jobs \
+  -b veriqorn.cookies \
   -F "file=@/path/to/your-result.json" \
   -F "runName=First Run" \
+  -F "sourceKind=uploaded_file" \
   -F "environment=local"
 
-# 3. Or upload a ZIP from CI
-curl -X POST http://localhost:3001/upload/ci/allure-results \
-  -H "Authorization: Bearer $TOKEN" \
+# 3. Или загрузить ZIP-архив из CI
+curl -X POST http://localhost:3001/api/v1/projects/default/imports/allure-jobs \
+  -b veriqorn.cookies \
   -F "file=@allure-results.zip" \
   -F "runName=CI Run" \
-  -F "project=my-project"
+  -F "sourceKind=ci_archive" \
+  -F "branch=main"
 ```
 
-Откройте [http://localhost:3000](http://localhost:3000) — ваш запуск должен появиться на странице Launches.
+После этого откройте [http://localhost:3000](http://localhost:3000) - новый прогон должен появиться в интерфейсе.
+
+---
+
+## Сохранность данных
+
+Обычные обновления приложения не удаляют ваши данные.
+
+- Данные PostgreSQL хранятся в Docker volume, заданном через `VERIQORN_POSTGRES_VOLUME`.
+- Артефакты MinIO хранятся в Docker volume, заданном через `VERIQORN_MINIO_VOLUME`.
+- Команды `docker compose pull` и `docker compose up -d` пересоздают контейнеры, но переиспользуют те же volume.
+
+Данные удаляются только при явном `docker compose down -v`.
 
 ---
 
 ## Обновление
 
-Чтобы обновиться до новой версии:
+Чтобы обновиться до более новой версии:
 
 ```bash
-# Pull new images
 docker compose -f docker-compose.yml pull
-
-# Restart with zero downtime
 docker compose -f docker-compose.yml up -d
 ```
 
-Или укажите конкретную версию в `.env`:
+Для фиксации конкретной версии укажите её в `.env`:
 
-```bash
+```env
 PLATFORM_VERSION=v1.2.0
 ```
-
----
-
-## Фиксация версии
-
-По умолчанию `PLATFORM_VERSION=latest` загружает последнюю сборку. Для продакшена рекомендуется зафиксировать конкретный релизный тег:
-
-```bash
-PLATFORM_VERSION=v1.0.0
-```
-
-Доступные теги перечислены на [странице GitHub Packages](https://github.com/orgs/veriqorn/packages).
 
 ---
 
 ## Остановка и очистка
 
 ```bash
-# Stop all services (data is preserved in volumes)
+# Остановить сервисы, сохранив данные
 docker compose -f docker-compose.yml down
 
-# Stop and remove all data (database, files)
+# Остановить сервисы и удалить все persisted data
 docker compose -f docker-compose.yml down -v
 ```
 
 ---
 
-## Устранение неполадок
+## Диагностика
 
-| Симптом | Причина | Решение |
-|---------|-------|-----|
-| Ошибка `JWT_SECRET is required` при запуске | Отсутствует файл `.env` или пустой `JWT_SECRET` | Создайте `.env` со значением `JWT_SECRET` |
-| Бэкенд завершается с ошибкой подключения к базе данных | PostgreSQL ещё не готов | Подождите 10–15 секунд и проверьте снова — healthcheck обеспечивает порядок запуска |
-| Фронтенд показывает "Network Error" | Бэкенд недоступен из браузера | Проверьте, что `NEXT_PUBLIC_API_URL` соответствует публичному адресу бэкенда |
-| Не удаётся загрузить образы из GHCR | Образы приватные или действует ограничение запросов | Убедитесь, что образы публичные, или выполните `docker login ghcr.io` с токеном GitHub |
-| Порт 3000/3001 уже занят | Другой сервис использует этот порт | Остановите конфликтующий сервис или переназначьте порты в compose-файле |
+| Симптом | Причина | Что делать |
+|---------|---------|------------|
+| `JWT_SECRET is required` при старте | Не создан `.env` или переменная пуста | Заполните `.env` |
+| Backend падает с ошибкой подключения к БД | PostgreSQL ещё не готов | Подождите 10-15 секунд и проверьте снова |
+| Frontend показывает `Network Error` | Браузер не может достучаться до backend | Проверьте `NEXT_PUBLIC_API_URL` |
+| Не скачиваются образы из GHCR | Ограничения доступа или rate limit | Проверьте доступность образов или выполните `docker login ghcr.io` |
+| Порты 3000/3001 заняты | Их использует другой процесс | Освободите порты или переназначьте их в `.env` |
 
 ---
 
-## Дальнейшие шаги
+## Что дальше
 
-- **Интеграция с CI/CD**: См. примеры загрузки выше или настройте [пайплайн повторного запуска тестов](test-rerun-setup.md).
-- **Функции AI Pro**: Установите лицензию AI Pro для доступа к анализу сбоев, индексации репозитория и интеллектуальному покрытию. См. [Лицензия AI Pro](ai-pro-license.md).
-- **Подключение LLM**: Подключите локальный или облачный LLM-провайдер для AI-анализа. См. [Подключение LLM](ai-llm-connection.md).
+- Для CI/CD и повторных запусков см. [Test Rerun setup](test-rerun-setup.md).
+- Для AI-функций см. [AI Pro License](ai-pro-license.md).
+- Для подключения LLM см. [LLM Connection](ai-llm-connection.md).

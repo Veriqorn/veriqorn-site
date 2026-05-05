@@ -20,6 +20,8 @@ AI_ANALYSIS_MONOREPO_ROOT=/path/to/your/project
 
 Este es el directorio base desde el cual se resuelven las rutas relativas de los repositorios. Si no se establece, se utiliza por defecto el directorio de trabajo del proceso backend.
 
+En una instalacion self-hosted con Docker, configure este valor en el entorno del despliegue del contenedor backend. Debe apuntar al directorio del servidor donde los repositorios fuente estan disponibles para indexacion.
+
 ## Paso 2. Registrar repositorios
 
 Los repositorios definen el alcance de lo que se indexa. Registralos a traves de la interfaz de Settings o la API:

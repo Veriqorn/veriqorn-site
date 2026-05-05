@@ -1,4 +1,4 @@
-# Inicio Rapido — Guia de Instalacion
+﻿# Inicio Rapido â€” Guia de Instalacion
 
 QA Report Platform se distribuye como imagenes Docker preconstruidas en GitHub Container Registry (GHCR). Puede tener la plataforma completa funcionando en menos de cinco minutos con un solo comando `docker compose`.
 
@@ -10,41 +10,29 @@ QA Report Platform se distribuye como imagenes Docker preconstruidas en GitHub C
 - Puertos **3000**, **3001**, **5432**, **9000**, **9001** disponibles en el host.
 - Al menos **2 GB** de RAM libre para todos los servicios.
 
-No se requieren otras dependencias — el archivo compose incluye PostgreSQL, MinIO (almacenamiento compatible con S3) e inicializacion automatica de buckets.
+No se requieren otras dependencias â€” el archivo compose incluye PostgreSQL, MinIO (almacenamiento compatible con S3) e inicializacion automatica de buckets.
 
 ---
 
-## Paso 1 — Descargar el archivo Compose
+## Paso 1 â€” Descargar los archivos de instalacion
 
-Descargue el archivo compose de instalacion desde el repositorio:
+Descargue el archivo compose de instalacion y el ejemplo de entorno desde el repositorio:
 
 ```bash
 curl -fsSLO https://raw.githubusercontent.com/veriqorn/veriqorn-install/master/docker-compose.yml
+curl -fsSLO https://raw.githubusercontent.com/veriqorn/veriqorn-install/master/.env.example
 ```
 
-O copielo manualmente desde la raiz del repositorio `veriqorn-install`: `docker-compose.yml`.
+O copielos manualmente desde la raiz del repositorio `veriqorn-install`: `docker-compose.yml` y `.env.example`.
 
 ---
 
-## Paso 2 — Crear el archivo de entorno
+## Paso 2 â€” Crear el archivo de entorno
 
-Cree un archivo `.env` junto al archivo compose:
+Cree `.env` junto al archivo compose a partir del ejemplo publicado:
 
 ```bash
-cat > .env <<'EOF'
-# Required
-JWT_SECRET=replace-with-a-long-random-secret
-POSTGRES_PASSWORD=replace-with-a-strong-postgres-password
-MINIO_ROOT_PASSWORD=replace-with-a-strong-minio-password
-
-# Optional — override defaults if needed
-# PLATFORM_VERSION=latest
-# POSTGRES_USER=postgres
-# POSTGRES_DB=test_ops
-# MINIO_ROOT_USER=minioadmin
-# NEXT_PUBLIC_API_URL=http://localhost:3001
-# FRONTEND_URL=http://localhost:3000
-EOF
+cp .env.example .env
 ```
 
 > **Importante:** Reemplace `JWT_SECRET` con un valor aleatorio seguro para uso en produccion.
@@ -58,15 +46,23 @@ EOF
 | `POSTGRES_USER` | `postgres` | Usuario de PostgreSQL |
 | `POSTGRES_PASSWORD` | *(obligatorio)* | Contrasena de PostgreSQL |
 | `POSTGRES_DB` | `test_ops` | Nombre de la base de datos |
+| `POSTGRES_HOST_PORT` | `5432` | Puerto de PostgreSQL expuesto en el host |
+| `VERIQORN_POSTGRES_VOLUME` | `veriqorn-postgres-data` | Nombre del volumen Docker para los datos de PostgreSQL |
 | `MINIO_ROOT_USER` | `minioadmin` | Usuario administrador de MinIO |
 | `MINIO_ROOT_PASSWORD` | *(obligatorio)* | Contrasena de administrador de MinIO |
+| `MINIO_API_PORT` | `9000` | Puerto de la API de MinIO expuesto en el host |
+| `MINIO_CONSOLE_PORT` | `9001` | Puerto de la consola de MinIO expuesto en el host |
+| `VERIQORN_MINIO_VOLUME` | `veriqorn-minio-data` | Nombre del volumen Docker para el almacenamiento de objetos de MinIO |
+| `FRONTEND_PORT` | `3000` | Puerto del frontend expuesto en el host |
+| `BACKEND_PORT` | `3001` | Puerto del backend expuesto en el host |
 | `NEXT_PUBLIC_API_URL` | `http://localhost:3001` | URL del backend visible para el navegador |
 | `FRONTEND_URL` | `http://localhost:3000` | URL del frontend para CORS |
+| `CORS_ORIGINS` | `http://localhost:3000` | Origenes del navegador permitidos para el backend |
 | `AI_ANALYSIS_LICENSE_PUBLIC_KEY` | *(vacio)* | Clave publica para verificacion de licencia AI Pro (opcional) |
 
 ---
 
-## Paso 3 — Iniciar la plataforma
+## Paso 3 â€” Iniciar la plataforma
 
 ```bash
 docker compose -f docker-compose.yml up -d
@@ -84,7 +80,7 @@ Deberia ver cinco servicios: `frontend`, `backend`, `postgres`, `minio` y `minio
 
 ---
 
-## Paso 4 — Abrir la plataforma
+## Paso 4 â€” Abrir la plataforma
 
 | Servicio | URL |
 |----------|-----|
@@ -103,33 +99,46 @@ Deberia ver cinco servicios: `frontend`, `backend`, `postgres`, `minio` y `minio
 
 ---
 
-## Paso 5 — Subir sus primeros resultados
+## Paso 5 â€” Subir sus primeros resultados
 
 Autentiquese y suba resultados de Allure para verificar la instalacion:
 
 ```bash
-# 1. Login and get a JWT token
-TOKEN=$(curl -s -X POST http://localhost:3001/auth/login \
+# 1. Create a session cookie
+curl -s -c veriqorn.cookies -X POST http://localhost:3001/api/v1/auth/session \
   -H "Content-Type: application/json" \
-  -d '{"email":"admin@example.com","password":"admin123"}' \
-  | grep -o '"access_token":"[^"]*"' | cut -d'"' -f4)
+  -d '{"email":"admin@example.com","password":"admin123"}'
 
-# 2. Upload a single result file
-curl -X POST http://localhost:3001/upload/allure-results \
-  -H "Authorization: Bearer $TOKEN" \
+# 2. Upload a single result file through the normalized import route
+curl -X POST http://localhost:3001/api/v1/projects/default/imports/allure-jobs \
+  -b veriqorn.cookies \
   -F "file=@/path/to/your-result.json" \
   -F "runName=First Run" \
+  -F "sourceKind=uploaded_file" \
   -F "environment=local"
 
 # 3. Or upload a ZIP from CI
-curl -X POST http://localhost:3001/upload/ci/allure-results \
-  -H "Authorization: Bearer $TOKEN" \
+curl -X POST http://localhost:3001/api/v1/projects/default/imports/allure-jobs \
+  -b veriqorn.cookies \
   -F "file=@allure-results.zip" \
   -F "runName=CI Run" \
-  -F "project=my-project"
+  -F "sourceKind=ci_archive" \
+  -F "branch=main"
 ```
 
-Abra [http://localhost:3000](http://localhost:3000) — su ejecucion deberia aparecer en la pagina de Lanzamientos.
+Abra [http://localhost:3000](http://localhost:3000) â€” su ejecucion deberia aparecer en la pagina de Lanzamientos.
+
+---
+
+## Persistencia de datos
+
+Las actualizaciones normales de la aplicacion no eliminan sus datos.
+
+- Los datos de PostgreSQL se almacenan en el volumen Docker definido por `VERIQORN_POSTGRES_VOLUME`.
+- Los artefactos de MinIO se almacenan en el volumen Docker definido por `VERIQORN_MINIO_VOLUME`.
+- `docker compose pull` junto con `docker compose up -d` recrea los contenedores, pero reutiliza esos volumenes.
+
+Solo `docker compose down -v` elimina los datos persistidos de la aplicacion.
 
 ---
 
@@ -171,7 +180,7 @@ Las etiquetas disponibles se listan en la [pagina de paquetes de Veriqorn](https
 # Stop all services (data is preserved in volumes)
 docker compose -f docker-compose.yml down
 
-# Stop and remove all data (database, files)
+# Stop and remove all persisted data (database, files, artifacts)
 docker compose -f docker-compose.yml down -v
 ```
 
@@ -182,7 +191,7 @@ docker compose -f docker-compose.yml down -v
 | Sintoma | Causa | Solucion |
 |---------|-------|----------|
 | Error `JWT_SECRET is required` al iniciar | Falta el archivo `.env` o `JWT_SECRET` esta vacio | Cree un archivo `.env` con un valor para `JWT_SECRET` |
-| El backend se detiene con error de conexion a la base de datos | PostgreSQL aun no esta listo | Espere 10-15 segundos y verifique de nuevo — el healthcheck garantiza el inicio ordenado |
+| El backend se detiene con error de conexion a la base de datos | PostgreSQL aun no esta listo | Espere 10-15 segundos y verifique de nuevo â€” el healthcheck garantiza el inicio ordenado |
 | El frontend muestra "Network Error" | El backend no es accesible desde el navegador | Verifique que `NEXT_PUBLIC_API_URL` coincida con la direccion publica del backend |
 | No se pueden descargar imagenes de GHCR | Las imagenes son privadas o tienen limite de tasa | Verifique que las imagenes sean publicas, o ejecute `docker login ghcr.io` con un token de GitHub |
 | El puerto 3000/3001 ya esta en uso | Otro servicio ocupa el puerto | Detenga el servicio en conflicto o reasigne los puertos en el archivo compose |
@@ -194,3 +203,4 @@ docker compose -f docker-compose.yml down -v
 - **Integracion CI/CD**: Consulte los ejemplos de carga anteriores o configure un [pipeline de Test Rerun](test-rerun-setup.md).
 - **Funcionalidades AI Pro**: Instale una licencia AI Pro para habilitar el analisis de fallos, la indexacion de repositorios y la inteligencia de cobertura. Consulte [Licencia AI Pro](ai-pro-license.md).
 - **Conexion LLM**: Conecte un proveedor de LLM local o en la nube para el analisis con IA. Consulte [Conexion LLM](ai-llm-connection.md).
+

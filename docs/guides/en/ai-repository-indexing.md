@@ -20,6 +20,8 @@ AI_ANALYSIS_MONOREPO_ROOT=/path/to/your/project
 
 This is the base directory from which relative repository paths are resolved. If not set, defaults to the backend process working directory.
 
+In a self-hosted Docker install, set this in the deployment environment for the backend container. It should point to the directory on the server where the source repositories are available for indexing.
+
 ## Step 2. Register repositories
 
 Repositories define the scope of what gets indexed. Register them via the Settings UI or API:

@@ -56,7 +56,7 @@ QA Report Platform incluye un modulo de IA opcional que agrega analisis intelige
 ## Inicio rapido
 
 ```bash
-# 1. Set environment variables in backend .env
+# 1. Establecer variables de entorno del despliegue
 AI_ANALYSIS_DEFAULT_MODE=pro_self_hosted
 AI_ANALYSIS_LICENSE_PUBLIC_KEY="-----BEGIN PUBLIC KEY-----\n..."
 AI_ANALYSIS_MONOREPO_ROOT=/path/to/your/project
@@ -75,6 +75,8 @@ POST /ai-analysis/index/repositories
 # 5. Open Coverage Intelligence page in UI
 # → /projects/{projectId}/coverage
 ```
+
+Establezca estos valores en el entorno utilizado por su despliegue self-hosted, por ejemplo en el archivo `.env` junto a `veriqorn-install/docker-compose.yml`.
 
 ## Operaciones de recuperacion (Vector + Fallback)
 

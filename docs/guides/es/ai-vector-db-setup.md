@@ -35,39 +35,13 @@ Consulte tambien:
 
 ---
 
-## 3) Instalar y conectar PostgreSQL
+## 3) PostgreSQL y supuestos de despliegue
 
-### Opcion A (recomendada para desarrollo local)
+Esta guia publica asume que la plataforma ya esta desplegada mediante el flujo self-hosted soportado.
 
-Utilice el archivo compose existente:
+Si utilizo `veriqorn-install/docker-compose.yml`, PostgreSQL ya esta incluido y el backend ya se conecta al servicio interno `postgres`. No se requiere configuracion adicional de PostgreSQL para esta guia.
 
-```bash
-docker-compose -f docker-compose.dev.yml up
-```
-
-En `docker-compose.dev.yml` el backend ya recibe:
-
-```env
-DATABASE_URL=postgresql://postgres:postgres@postgres:5432/test_ops
-```
-
-### Opcion B (PostgreSQL local sin Docker)
-
-Ejemplo para `backend/.env`:
-
-```env
-DATABASE_URL=postgres://user:password@localhost:5432/qa_report
-JWT_SECRET=supersecret
-AI_ANALYSIS_MONOREPO_ROOT=C:/path/to/your/monorepo
-```
-
-Despues de eso:
-
-```bash
-npm install --prefix backend
-npm run migration:run --prefix backend
-npm run dev --prefix backend
-```
+Esta pagina no cubre flujos de desarrollo local basados en codigo fuente ni workflows internos de depuracion.
 
 ---
 

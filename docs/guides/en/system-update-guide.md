@@ -12,8 +12,8 @@ When you update, Docker replaces application containers (`backend`, `frontend`) 
 
 Your data is persisted in Docker volumes and is not removed during a normal update:
 
-- PostgreSQL data: `postgres_data`
-- MinIO data: `minio_data`
+- PostgreSQL data: the volume named by `VERIQORN_POSTGRES_VOLUME` (default `veriqorn-postgres-data`)
+- MinIO data: the volume named by `VERIQORN_MINIO_VOLUME` (default `veriqorn-minio-data`)
 
 Data is removed only if you explicitly delete volumes (for example `docker compose down -v`).
 
@@ -24,6 +24,8 @@ Data is removed only if you explicitly delete volumes (for example `docker compo
 - A running deployment based on `docker-compose.yml`
 - Access to `.env`
 - Enough free disk space for backup archives
+
+For the canonical environment contract, keep `.env` aligned with `veriqorn-install/.env.example`.
 
 ---
 
@@ -76,7 +78,7 @@ What happens:
 
 - new images are downloaded from GHCR
 - containers are recreated with the new image version
-- existing volumes are reused
+- existing PostgreSQL and MinIO volumes are reused
 - backend runs DB migrations on startup (`migrationsRun: true`)
 
 ---
@@ -148,6 +150,7 @@ As long as your database is preserved, license state is preserved too.
 ## Safety Checklist
 
 - Do not run `docker compose down -v` unless you intentionally want full data wipe.
+- Do not rename or remove `VERIQORN_POSTGRES_VOLUME` / `VERIQORN_MINIO_VOLUME` unless you are intentionally migrating storage.
 - Keep `.env` in backup and secret management.
 - Keep regular DB and MinIO backups before each production update.
 - Prefer pinned release tags over `latest` in production.

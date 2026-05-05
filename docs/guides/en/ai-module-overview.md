@@ -56,7 +56,7 @@ QA Report Platform includes an optional AI module that adds intelligent failure 
 ## Quick Start
 
 ```bash
-# 1. Set environment variables in backend .env
+# 1. Set deployment environment variables
 AI_ANALYSIS_DEFAULT_MODE=pro_self_hosted
 AI_ANALYSIS_LICENSE_PUBLIC_KEY="-----BEGIN PUBLIC KEY-----\n..."
 AI_ANALYSIS_MONOREPO_ROOT=/path/to/your/project
@@ -75,6 +75,8 @@ POST /ai-analysis/index/repositories
 # 5. Open Coverage Intelligence page in UI
 # → /projects/{projectId}/coverage
 ```
+
+Set these values in the environment used by your self-hosted deployment, for example the `.env` file next to `veriqorn-install/docker-compose.yml`.
 
 ## Retrieval Operations (Vector + Fallback)
 
