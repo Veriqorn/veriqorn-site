@@ -1,4 +1,4 @@
-﻿# Quick Start â€” Installation Guide
+﻿# Quick Start — Installation Guide
 
 QA Report Platform ships as pre-built Docker images on GitHub Container Registry (GHCR). You can have the full platform running in under five minutes with a single `docker compose` command.
 
@@ -10,11 +10,11 @@ QA Report Platform ships as pre-built Docker images on GitHub Container Registry
 - Ports **3000**, **3001**, **5432**, **9000**, **9001** available on the host.
 - At least **2 GB** of free RAM for all services.
 
-No other dependencies are required â€” the compose file includes PostgreSQL, MinIO (S3-compatible storage), and automatic bucket initialization.
+No other dependencies are required — the compose file includes PostgreSQL, MinIO (S3-compatible storage), and automatic bucket initialization.
 
 ---
 
-## Step 1 â€” Download the Install Files
+## Step 1 — Download the Install Files
 
 Download the installation compose file and environment example from the repository:
 
@@ -27,7 +27,7 @@ Or copy them manually from the `veriqorn-install` repository root: `docker-compo
 
 ---
 
-## Step 2 â€” Create the Environment File
+## Step 2 — Create the Environment File
 
 Create `.env` next to the compose file, starting from the published example:
 
@@ -62,7 +62,7 @@ cp .env.example .env
 
 ---
 
-## Step 3 â€” Start the Platform
+## Step 3 — Start the Platform
 
 ```bash
 docker compose -f docker-compose.yml up -d
@@ -80,7 +80,7 @@ You should see five services: `frontend`, `backend`, `postgres`, `minio`, and `m
 
 ---
 
-## Step 4 â€” Open the Platform
+## Step 4 — Open the Platform
 
 | Service | URL |
 |---------|-----|
@@ -99,7 +99,7 @@ You should see five services: `frontend`, `backend`, `postgres`, `minio`, and `m
 
 ---
 
-## Step 5 â€” Upload Your First Results
+## Step 5 — Upload Your First Results
 
 Authenticate and upload Allure results to verify the installation:
 
@@ -126,7 +126,7 @@ curl -X POST http://localhost:3001/api/v1/projects/default/imports/allure-jobs \
   -F "branch=main"
 ```
 
-Open [http://localhost:3000](http://localhost:3000) â€” your launch should appear on the Launches page.
+Open [http://localhost:3000](http://localhost:3000) — your launch should appear on the Launches page.
 
 ---
 
@@ -191,7 +191,7 @@ docker compose -f docker-compose.yml down -v
 | Symptom | Cause | Fix |
 |---------|-------|-----|
 | `JWT_SECRET is required` error on startup | Missing `.env` file or empty `JWT_SECRET` | Create `.env` with a `JWT_SECRET` value |
-| Backend exits with database connection error | PostgreSQL not ready yet | Wait 10-15 seconds and check again â€” the healthcheck ensures ordered startup |
+| Backend exits with database connection error | PostgreSQL not ready yet | Wait 10-15 seconds and check again — the healthcheck ensures ordered startup |
 | Frontend shows "Network Error" | Backend is not reachable from the browser | Verify `NEXT_PUBLIC_API_URL` matches the backend's public address |
 | Cannot pull images from GHCR | Images are private or rate-limited | Check that images are public, or `docker login ghcr.io` with a GitHub token |
 | Port 3000/3001 already in use | Another service occupies the port | Stop the conflicting service or remap ports in the compose file |

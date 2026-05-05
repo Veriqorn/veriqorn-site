@@ -1,4 +1,4 @@
-﻿# Inicio Rapido â€” Guia de Instalacion
+﻿# Inicio Rapido — Guia de Instalacion
 
 QA Report Platform se distribuye como imagenes Docker preconstruidas en GitHub Container Registry (GHCR). Puede tener la plataforma completa funcionando en menos de cinco minutos con un solo comando `docker compose`.
 
@@ -10,11 +10,11 @@ QA Report Platform se distribuye como imagenes Docker preconstruidas en GitHub C
 - Puertos **3000**, **3001**, **5432**, **9000**, **9001** disponibles en el host.
 - Al menos **2 GB** de RAM libre para todos los servicios.
 
-No se requieren otras dependencias â€” el archivo compose incluye PostgreSQL, MinIO (almacenamiento compatible con S3) e inicializacion automatica de buckets.
+No se requieren otras dependencias — el archivo compose incluye PostgreSQL, MinIO (almacenamiento compatible con S3) e inicializacion automatica de buckets.
 
 ---
 
-## Paso 1 â€” Descargar los archivos de instalacion
+## Paso 1 — Descargar los archivos de instalacion
 
 Descargue el archivo compose de instalacion y el ejemplo de entorno desde el repositorio:
 
@@ -27,7 +27,7 @@ O copielos manualmente desde la raiz del repositorio `veriqorn-install`: `docker
 
 ---
 
-## Paso 2 â€” Crear el archivo de entorno
+## Paso 2 — Crear el archivo de entorno
 
 Cree `.env` junto al archivo compose a partir del ejemplo publicado:
 
@@ -62,7 +62,7 @@ cp .env.example .env
 
 ---
 
-## Paso 3 â€” Iniciar la plataforma
+## Paso 3 — Iniciar la plataforma
 
 ```bash
 docker compose -f docker-compose.yml up -d
@@ -80,7 +80,7 @@ Deberia ver cinco servicios: `frontend`, `backend`, `postgres`, `minio` y `minio
 
 ---
 
-## Paso 4 â€” Abrir la plataforma
+## Paso 4 — Abrir la plataforma
 
 | Servicio | URL |
 |----------|-----|
@@ -99,7 +99,7 @@ Deberia ver cinco servicios: `frontend`, `backend`, `postgres`, `minio` y `minio
 
 ---
 
-## Paso 5 â€” Subir sus primeros resultados
+## Paso 5 — Subir sus primeros resultados
 
 Autentiquese y suba resultados de Allure para verificar la instalacion:
 
@@ -126,7 +126,7 @@ curl -X POST http://localhost:3001/api/v1/projects/default/imports/allure-jobs \
   -F "branch=main"
 ```
 
-Abra [http://localhost:3000](http://localhost:3000) â€” su ejecucion deberia aparecer en la pagina de Lanzamientos.
+Abra [http://localhost:3000](http://localhost:3000) — su ejecucion deberia aparecer en la pagina de Lanzamientos.
 
 ---
 
@@ -191,7 +191,7 @@ docker compose -f docker-compose.yml down -v
 | Sintoma | Causa | Solucion |
 |---------|-------|----------|
 | Error `JWT_SECRET is required` al iniciar | Falta el archivo `.env` o `JWT_SECRET` esta vacio | Cree un archivo `.env` con un valor para `JWT_SECRET` |
-| El backend se detiene con error de conexion a la base de datos | PostgreSQL aun no esta listo | Espere 10-15 segundos y verifique de nuevo â€” el healthcheck garantiza el inicio ordenado |
+| El backend se detiene con error de conexion a la base de datos | PostgreSQL aun no esta listo | Espere 10-15 segundos y verifique de nuevo — el healthcheck garantiza el inicio ordenado |
 | El frontend muestra "Network Error" | El backend no es accesible desde el navegador | Verifique que `NEXT_PUBLIC_API_URL` coincida con la direccion publica del backend |
 | No se pueden descargar imagenes de GHCR | Las imagenes son privadas o tienen limite de tasa | Verifique que las imagenes sean publicas, o ejecute `docker login ghcr.io` con un token de GitHub |
 | El puerto 3000/3001 ya esta en uso | Otro servicio ocupa el puerto | Detenga el servicio en conflicto o reasigne los puertos en el archivo compose |
