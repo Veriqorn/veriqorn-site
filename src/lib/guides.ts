@@ -156,15 +156,18 @@ function buildGuides(modules: Record<string, string>): GuideDocument[] {
     .map(([path, content]) => {
       const fileName = path.split("/").pop() ?? "guide.md";
       const slug = fileName.replace(/\.md$/, "");
-      const titleMatch = content.match(/^#\s+(.+)$/m);
+      // Some editors save UTF-8 Markdown with a BOM, which must not prevent
+      // the document's first H1 from being recognised as its navigation title.
+      const normalizedContent = content.replace(/^\uFEFF/, "");
+      const titleMatch = normalizedContent.match(/^#\s+(.+)$/m);
       const title = titleMatch?.[1]?.trim() ?? toTitleFromSlug(slug);
 
       return {
         slug,
         title,
-        summary: extractSummary(content),
-        content,
-        headings: extractHeadings(content),
+        summary: extractSummary(normalizedContent),
+        content: normalizedContent,
+        headings: extractHeadings(normalizedContent),
       };
     })
     .sort((a, b) => {
