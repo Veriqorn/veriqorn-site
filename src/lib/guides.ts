@@ -46,6 +46,7 @@ const modulesByLanguage: Record<Language, Record<string, string>> = {
 const GUIDE_ORDER: string[] = [
   "quick-start-installation",
   "system-update-guide",
+  "in-app-updates",
   "ai-module-overview",
   "ai-llm-connection",
   "ai-repository-indexing",

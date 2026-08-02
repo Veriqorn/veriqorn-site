@@ -56,11 +56,25 @@ cp .env.example .env
 | `FRONTEND_PORT` | `3000` | Puerto del frontend expuesto en el host |
 | `BACKEND_PORT` | `3001` | Puerto del backend expuesto en el host |
 | `NEXT_PUBLIC_API_URL` | `http://localhost:3001` | URL del backend visible para el navegador |
+| `NEXT_PUBLIC_KB_URL` | `http://localhost:5174` | URL del sitio standalone de Knowledge Base, si esta desplegado |
 | `FRONTEND_URL` | `http://localhost:3000` | URL del frontend para CORS |
 | `CORS_ORIGINS` | `http://localhost:3000` | Origenes del navegador permitidos para el backend |
 | `AI_ANALYSIS_LICENSE_PUBLIC_KEY` | *(vacio)* | Clave publica para verificacion de licencia AI Pro (opcional) |
 
 ---
+
+### Verificacion de acceso a imagenes
+
+Antes de entregar la instalacion a un cliente, verifique que las imagenes
+publicadas sean legibles desde el entorno destino:
+
+```bash
+docker pull ghcr.io/veriqorn/veriqorn-backend:latest
+docker pull ghcr.io/veriqorn/veriqorn-frontend:latest
+```
+
+Si algun pull devuelve `unauthorized`, el package de GHCR no es publico o el
+host necesita `docker login ghcr.io` con un token que pueda leer el package.
 
 ## Paso 3 — Iniciar la plataforma
 
