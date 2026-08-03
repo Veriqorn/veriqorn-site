@@ -1,4 +1,4 @@
-# Guia de Actualizacion del Sistema (Self-hosted)
+# Actualizaciones de la plataforma (Self-hosted)
 
 Esta guia describe como actualizar QA Report Platform en una configuracion Docker self-hosted sin perder datos.
 
@@ -154,3 +154,29 @@ Mientras su base de datos se conserve, el estado de la licencia tambien se conse
 - Mantenga `.env` en respaldo y gestion de secretos.
 - Realice respaldos regulares de la BD y MinIO antes de cada actualizacion en produccion.
 - Prefiera etiquetas de release fijas en lugar de `latest` en produccion.
+
+---
+
+## Actualizaciones desde la interfaz
+
+Un administrador de la plataforma puede iniciar actualizaciones habituales en **Configuracion → Actualizaciones de la plataforma**. La configuracion inicial debe hacerla un operador de servidor de confianza.
+
+Agregue un secreto unico a `.env`; no reutilice `JWT_SECRET`, contrasenas de base de datos ni secretos de otra instalacion:
+
+```env
+PLATFORM_UPDATE_AGENT_TOKEN=reemplace-por-un-secreto-aleatorio-de-al-menos-32-caracteres
+```
+
+Despues recree la instalacion una vez para que Docker cree el servicio privado `update-agent`:
+
+```bash
+docker compose --env-file .env -f docker-compose.yml up -d
+```
+
+El agente no se publica en un puerto del host. Selecciona la ultima version estable, descarga las imagenes de Veriqorn, registra sus digests inmutables, actualiza `PLATFORM_VERSION`, recrea los servicios de aplicacion y espera el health check del backend. Los volumenes de PostgreSQL y MinIO se conservan.
+
+1. Abra **Configuracion → Actualizaciones de la plataforma**.
+2. Revise la version disponible y sus notas.
+3. Seleccione **Instalar actualizacion** y espere el estado informado por el trabajo.
+
+Solo el agente de actualizacion tiene acceso al Docker socket, equivalente a acceso root al servidor. No exponga el agente mediante un reverse proxy o puerto del host, limite el acceso a `.env` y rote `PLATFORM_UPDATE_AGENT_TOKEN` si puede haberse expuesto. No hay rollback automatico si falla el health check, porque la version puede haber aplicado una migracion irreversible. Use las copias de seguridad y el procedimiento de recuperacion anterior.

@@ -204,6 +204,7 @@ docker compose -f docker-compose.yml down -v
 
 ## Что дальше
 
-- Для CI/CD и повторных запусков см. [Test Rerun setup](test-rerun-setup.md).
+- **Передача результатов автотестов**: настройте CI, чтобы после каждого прогона он загружал Allure-результаты. См. [Передача результатов автотестов в Veriqorn](test-results-ci-integration.md).
+- **Повторный запуск тестов**: настройте [pipeline Test Rerun](test-rerun-setup.md), чтобы запускать выбранные тесты из прогона.
 - Для AI-функций см. [AI Pro License](ai-pro-license.md).
 - Для подключения LLM см. [LLM Connection](ai-llm-connection.md).

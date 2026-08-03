@@ -214,7 +214,8 @@ docker compose -f docker-compose.yml down -v
 
 ## Next Steps
 
-- **CI/CD integration**: See the upload examples above or configure a [Test Rerun pipeline](test-rerun-setup.md).
+- **Send results from automated tests**: Configure your CI to upload Allure results after every run. See [Send automated test results to Veriqorn](test-results-ci-integration.md).
+- **Test reruns**: Configure a [Test Rerun pipeline](test-rerun-setup.md) to trigger selected tests from a launch.
 - **AI Pro features**: Install an AI Pro license to enable failure analysis, repository indexing, and coverage intelligence. See [AI Pro License](ai-pro-license.md).
 - **LLM connection**: Connect a local or cloud LLM provider for AI analysis. See [LLM Connection](ai-llm-connection.md).
 

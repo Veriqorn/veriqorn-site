@@ -45,8 +45,7 @@ const modulesByLanguage: Record<Language, Record<string, string>> = {
  */
 const GUIDE_ORDER: string[] = [
   "quick-start-installation",
-  "system-update-guide",
-  "in-app-updates",
+  "test-results-ci-integration",
   "ai-module-overview",
   "ai-llm-connection",
   "ai-repository-indexing",
@@ -60,6 +59,7 @@ const GUIDE_ORDER: string[] = [
   "test-rerun-setup",
   "external-connectors",
   "ai-pro-license",
+  "system-update-guide",
 ];
 
 export function toHeadingId(text: string): string {

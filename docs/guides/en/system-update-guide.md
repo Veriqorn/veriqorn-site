@@ -1,4 +1,4 @@
-# System Update Guide (Self-hosted)
+# Platform Updates (Self-hosted)
 
 This guide describes how to update QA Report Platform in a self-hosted Docker setup without losing data.
 
@@ -26,6 +26,26 @@ Data is removed only if you explicitly delete volumes (for example `docker compo
 - Enough free disk space for backup archives
 
 For the canonical environment contract, keep `.env` aligned with `veriqorn-install/.env.example`.
+
+### Optional: enable updates from the platform UI
+
+Platform administrators can start routine updates from **Settings → Platform Updates**. This requires a one-time setup by a trusted server operator.
+
+Add a unique secret to `.env` (never reuse `JWT_SECRET`, database passwords, or a secret from another installation):
+
+```env
+PLATFORM_UPDATE_AGENT_TOKEN=replace-with-a-random-secret-of-at-least-32-characters
+```
+
+Then recreate the installation once so Docker creates the private `update-agent` service:
+
+```bash
+docker compose --env-file .env -f docker-compose.yml up -d
+```
+
+The agent is not exposed on a host port. It selects the latest stable release, pulls the Veriqorn application images, records their immutable digests, updates `PLATFORM_VERSION`, recreates the application services, and waits for the backend health check. PostgreSQL and MinIO volumes are preserved.
+
+The update agent is the only service with Docker socket access. That access is root-equivalent on the server: do not expose the agent through a port or reverse proxy, restrict access to `.env`, and rotate `PLATFORM_UPDATE_AGENT_TOKEN` if it may have been exposed.
 
 ---
 
@@ -80,6 +100,16 @@ What happens:
 - containers are recreated with the new image version
 - existing PostgreSQL and MinIO volumes are reused
 - backend runs DB migrations on startup (`migrationsRun: true`)
+
+### Or install an update from the UI
+
+When the optional update agent is configured, a platform administrator can:
+
+1. Open **Settings → Platform Updates**.
+2. Review the available release and release notes.
+3. Select **Install update** and wait for the reported job status.
+
+The agent does not automatically roll back after a failed health check, because a release may already have applied an irreversible database migration. Keep the backup and recovery procedure below available for manual recovery.
 
 ---
 
