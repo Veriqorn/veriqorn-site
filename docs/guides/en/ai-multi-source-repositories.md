@@ -23,6 +23,18 @@ QA Report Platform supports indexing code from multiple sources for AI-powered f
 2. An AI Pro license with `indexing` feature is activated.
 3. Git is installed on the server (required for remote repository cloning).
 
+For filesystem-backed repositories, configure the directories the backend may read. Paths outside this allowlist are rejected.
+
+```env
+LOCAL_REPOSITORY_ROOTS=/srv/veriqorn/repositories,/srv/veriqorn/shared-code
+```
+
+For Allure imports from an existing directory, use the separate import root:
+
+```env
+ALLURE_IMPORT_ROOT=/srv/veriqorn/imports
+```
+
 See also:
 - [AI Module Overview](./ai-module-overview.md)
 - [Repository Indexing](./ai-repository-indexing.md)

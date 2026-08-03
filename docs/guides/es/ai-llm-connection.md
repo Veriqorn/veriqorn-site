@@ -1,5 +1,7 @@
 # Conexion LLM
 
+> **Seguridad de conexiones salientes:** antes de configurar un LLM, agregue el hostname del proveedor a `OUTBOUND_ALLOWED_HOSTS` en el entorno del backend, por ejemplo `OUTBOUND_ALLOWED_HOSTS=api.openai.com,ollama.internal.example`. Las solicitudes a hosts no permitidos se bloquean. Use solo hostnames, sin esquema ni ruta, y reinicie el backend después del cambio.
+
 El modulo de IA utiliza un LLM para las explicaciones del analisis de fallos y las recomendaciones de cobertura. Sin un LLM configurado, el sistema opera en **modo de fallback deterministico** — aun devuelve resultados estructurados utilizando coincidencia lexica y puntuacion heuristica, pero sin explicaciones en lenguaje natural.
 
 ## Proveedores soportados

@@ -16,6 +16,19 @@ The AI module uses an LLM for failure analysis explanations and coverage recomme
 
 ## Configuration via Settings UI
 
+## Deployment allowlist
+
+Before saving or testing an LLM connection, add its hostname to the backend
+deployment environment. Requests to hosts not listed here are blocked.
+
+```env
+OUTBOUND_ALLOWED_HOSTS=api.openai.com,ollama.internal.example
+```
+
+Use hostnames only (no scheme or path). Internal services must be explicitly
+listed; wildcard subdomains such as `*.example.com` are supported. Restart the
+backend after changing the deployment environment.
+
 1. Open **Settings** in the sidebar
 2. Go to the **AI Analysis** tab
 3. In the **LLM connection** section, select your **Provider** from the dropdown

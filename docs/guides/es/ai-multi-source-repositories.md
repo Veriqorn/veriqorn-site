@@ -19,6 +19,18 @@ QA Report Platform permite indexar código desde múltiples fuentes para el aná
 
 ## 2) Configuración por UI
 
+Antes de añadir rutas locales, configure los directorios que el backend puede leer. Las rutas fuera de esta lista se rechazan:
+
+```env
+LOCAL_REPOSITORY_ROOTS=/srv/veriqorn/repositories,/srv/veriqorn/shared-code
+```
+
+Para importar resultados Allure desde una carpeta existente, use un directorio raíz separado:
+
+```env
+ALLURE_IMPORT_ROOT=/srv/veriqorn/imports
+```
+
 1. Abra **Settings > AI Analysis > Repository context**.
 2. Haga clic en **Add repository**.
 3. Seleccione el **Source type**.

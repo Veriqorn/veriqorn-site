@@ -23,6 +23,18 @@ QA Report Platform поддерживает индексацию кода из �
 2. Активирована AI Pro лицензия с фичей `indexing`.
 3. На сервере установлен Git (для клонирования удалённых репозиториев).
 
+Для локальных репозиториев укажите каталоги, из которых backend может читать код. Пути вне этого списка отклоняются:
+
+```env
+LOCAL_REPOSITORY_ROOTS=/srv/veriqorn/repositories,/srv/veriqorn/shared-code
+```
+
+Для импорта Allure из существующей папки используйте отдельный корень:
+
+```env
+ALLURE_IMPORT_ROOT=/srv/veriqorn/imports
+```
+
 ---
 
 ## 3) Настройка через UI

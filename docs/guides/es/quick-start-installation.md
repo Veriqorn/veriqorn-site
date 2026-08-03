@@ -21,6 +21,8 @@ Descargue el archivo compose de instalacion y el ejemplo de entorno desde el rep
 ```bash
 curl -fsSLO https://raw.githubusercontent.com/veriqorn/veriqorn-install/master/docker-compose.yml
 curl -fsSLO https://raw.githubusercontent.com/veriqorn/veriqorn-install/master/.env.example
+curl -fsSLO https://raw.githubusercontent.com/veriqorn/veriqorn-install/master/preflight.ps1
+curl -fsSLO https://raw.githubusercontent.com/veriqorn/veriqorn-install/master/preflight.sh
 ```
 
 O copielos manualmente desde la raiz del repositorio `veriqorn-install`: `docker-compose.yml` y `.env.example`.
@@ -35,13 +37,17 @@ Cree `.env` junto al archivo compose a partir del ejemplo publicado:
 cp .env.example .env
 ```
 
-> **Importante:** Reemplace `JWT_SECRET` con un valor aleatorio seguro para uso en produccion.
+> **Importante:** Reemplace `JWT_SECRET` y establezca un par unico de
+> `BACKEND_BOOTSTRAP_ADMIN_EMAIL` / `BACKEND_BOOTSTRAP_ADMIN_PASSWORD` para el
+> primer administrador. La plataforma no crea usuarios predeterminados.
 
 ### Referencia de variables de entorno
 
 | Variable | Valor por defecto | Descripcion |
 |----------|-------------------|-------------|
 | `JWT_SECRET` | *(obligatorio)* | Clave secreta para firmar tokens JWT |
+| `BACKEND_BOOTSTRAP_ADMIN_EMAIL` | *(obligatorio en el primer inicio)* | Email del primer administrador para una base vacia |
+| `BACKEND_BOOTSTRAP_ADMIN_PASSWORD` | *(obligatorio en el primer inicio)* | Contrasena unica de 12+ caracteres para ese administrador |
 | `PLATFORM_VERSION` | `latest` | Etiqueta de imagen Docker (`latest`, `v1.0.0`, etc.) |
 | `POSTGRES_USER` | `postgres` | Usuario de PostgreSQL |
 | `POSTGRES_PASSWORD` | *(obligatorio)* | Contrasena de PostgreSQL |
@@ -50,6 +56,8 @@ cp .env.example .env
 | `VERIQORN_POSTGRES_VOLUME` | `veriqorn-postgres-data` | Nombre del volumen Docker para los datos de PostgreSQL |
 | `MINIO_ROOT_USER` | `minioadmin` | Usuario administrador de MinIO |
 | `MINIO_ROOT_PASSWORD` | *(obligatorio)* | Contrasena de administrador de MinIO |
+| `MINIO_SERVICE_ACCESS_KEY` | `veriqorn-app` | Cuenta interna de MinIO solo para el backend |
+| `MINIO_SERVICE_SECRET_KEY` | *(obligatorio)* | Secreto de la cuenta MinIO del backend con privilegios minimos |
 | `MINIO_API_PORT` | `9000` | Puerto de la API de MinIO expuesto en el host |
 | `MINIO_CONSOLE_PORT` | `9001` | Puerto de la consola de MinIO expuesto en el host |
 | `VERIQORN_MINIO_VOLUME` | `veriqorn-minio-data` | Nombre del volumen Docker para el almacenamiento de objetos de MinIO |
@@ -75,6 +83,27 @@ docker pull ghcr.io/veriqorn/veriqorn-frontend:latest
 
 Si algun pull devuelve `unauthorized`, el package de GHCR no es publico o el
 host necesita `docker login ghcr.io` con un token que pueda leer el package.
+
+### Verificacion de configuracion
+
+Antes de iniciar, valide los secretos y la configuracion de Compose sin mostrar
+ningun valor secreto:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\preflight.ps1
+```
+
+En Linux, ejecute:
+
+```bash
+chmod +x ./preflight.sh
+./preflight.sh
+```
+
+`MINIO_SERVICE_ACCESS_KEY` es una cuenta interna del backend para artefactos,
+trazas y capturas. Los usuarios de Veriqorn no inician sesion en MinIO: el
+backend valida primero su acceso al proyecto y despues usa esta cuenta de
+servicio para acceder al almacenamiento.
 
 ## Paso 3 — Iniciar la plataforma
 
@@ -102,14 +131,11 @@ Deberia ver cinco servicios: `frontend`, `backend`, `postgres`, `minio` y `minio
 | **Backend** (API) | [http://localhost:3001](http://localhost:3001) |
 | **Consola de MinIO** | [http://localhost:9001](http://localhost:9001) |
 
-### Credenciales por defecto
+### Primer inicio de sesion
 
-| Usuario | Email | Contrasena |
-|---------|-------|------------|
-| Admin | `admin@example.com` | `admin123` |
-| User | `user@example.com` | `user123` |
-
-> Cambie las contrasenas por defecto despues del primer inicio de sesion en despliegues de produccion.
+Inicie sesion con el email y la contrasena establecidos en las variables de
+bootstrap. Despues del primer acceso correcto, elimine
+`BACKEND_BOOTSTRAP_ADMIN_PASSWORD` de `.env`.
 
 ---
 
@@ -121,7 +147,7 @@ Autentiquese y suba resultados de Allure para verificar la instalacion:
 # 1. Create a session cookie
 curl -s -c veriqorn.cookies -X POST http://localhost:3001/api/v1/auth/session \
   -H "Content-Type: application/json" \
-  -d '{"email":"admin@example.com","password":"admin123"}'
+  -d '{"email":"YOUR_BOOTSTRAP_ADMIN_EMAIL","password":"YOUR_BOOTSTRAP_ADMIN_PASSWORD"}'
 
 # 2. Upload a single result file through the normalized import route
 curl -X POST http://localhost:3001/api/v1/projects/default/imports/allure-jobs \
@@ -173,6 +199,10 @@ O fije una version especifica en `.env`:
 ```bash
 PLATFORM_VERSION=v1.2.0
 ```
+
+El agente de actualizacion incluido verifica las firmas keyless de Cosign de
+ambos digests de imagen antes de activar una version nueva. No cambie
+`UPDATE_COSIGN_IDENTITY` salvo que publique imagenes propias desde otro workflow firmado.
 
 ---
 

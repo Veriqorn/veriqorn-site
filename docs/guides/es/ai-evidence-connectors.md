@@ -1,5 +1,7 @@
 # Conectores de Evidencia
 
+> **Seguridad de conexiones salientes:** antes de configurar un conector, agregue su hostname a `OUTBOUND_ALLOWED_HOSTS` en el entorno del backend. Por ejemplo: `OUTBOUND_ALLOWED_HOSTS=sentry.io,grafana.internal.example,kibana.internal.example`. Los hosts no permitidos se bloquean y la prueba no devuelve el cuerpo de la respuesta del servicio.
+
 Los conectores de evidencia permiten al modulo de IA obtener contexto adicional de herramientas externas de observabilidad al analizar fallos en los tests.
 
 ## Conectores compatibles

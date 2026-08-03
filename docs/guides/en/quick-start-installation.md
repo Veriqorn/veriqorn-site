@@ -21,6 +21,9 @@ Download the installation compose file and environment example from the reposito
 ```bash
 curl -fsSLO https://raw.githubusercontent.com/veriqorn/veriqorn-install/master/docker-compose.yml
 curl -fsSLO https://raw.githubusercontent.com/veriqorn/veriqorn-install/master/.env.example
+curl -fsSLO https://raw.githubusercontent.com/veriqorn/veriqorn-install/master/Caddyfile
+curl -fsSLO https://raw.githubusercontent.com/veriqorn/veriqorn-install/master/preflight.ps1
+curl -fsSLO https://raw.githubusercontent.com/veriqorn/veriqorn-install/master/preflight.sh
 ```
 
 Or copy them manually from the `veriqorn-install` repository root: `docker-compose.yml` and `.env.example`.
@@ -35,13 +38,17 @@ Create `.env` next to the compose file, starting from the published example:
 cp .env.example .env
 ```
 
-> **Important:** Replace `JWT_SECRET` with a strong random value for production use.
+> **Important:** Replace `JWT_SECRET` with a strong random value and set a unique
+> `BACKEND_BOOTSTRAP_ADMIN_EMAIL` / `BACKEND_BOOTSTRAP_ADMIN_PASSWORD` pair for
+> the first administrator. The platform does not create default application users.
 
 ### Environment variables reference
 
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `JWT_SECRET` | *(required)* | Secret key for signing JWT tokens |
+| `BACKEND_BOOTSTRAP_ADMIN_EMAIL` | *(required on first start)* | First administrator email for an empty database |
+| `BACKEND_BOOTSTRAP_ADMIN_PASSWORD` | *(required on first start)* | Unique 12+ character password for that administrator |
 | `PLATFORM_VERSION` | `latest` | Docker image tag (`latest`, `v1.0.0`, etc.) |
 | `POSTGRES_USER` | `postgres` | PostgreSQL user |
 | `POSTGRES_PASSWORD` | *(required)* | PostgreSQL password |
@@ -50,6 +57,8 @@ cp .env.example .env
 | `VERIQORN_POSTGRES_VOLUME` | `veriqorn-postgres-data` | Docker volume name for PostgreSQL data |
 | `MINIO_ROOT_USER` | `minioadmin` | MinIO admin user |
 | `MINIO_ROOT_PASSWORD` | *(required)* | MinIO admin password |
+| `MINIO_SERVICE_ACCESS_KEY` | `veriqorn-app` | Internal backend-only MinIO account |
+| `MINIO_SERVICE_SECRET_KEY` | *(required)* | Secret for the least-privilege backend MinIO account |
 | `MINIO_API_PORT` | `9000` | MinIO API port exposed on the host |
 | `MINIO_CONSOLE_PORT` | `9001` | MinIO console port exposed on the host |
 | `VERIQORN_MINIO_VOLUME` | `veriqorn-minio-data` | Docker volume name for MinIO object storage |
@@ -59,6 +68,8 @@ cp .env.example .env
 | `NEXT_PUBLIC_KB_URL` | `http://localhost:5174` | Standalone Knowledge Base site URL, if deployed |
 | `FRONTEND_URL` | `http://localhost:3000` | Frontend URL for CORS |
 | `CORS_ORIGINS` | `http://localhost:3000` | Allowed browser origins for the backend |
+| `VERIQORN_PUBLIC_HOST` | *(empty)* | Public DNS name used by the optional TLS profile |
+| `BACKEND_SECURE_COOKIES` | `false` | Set to `true` when terminating TLS |
 | `AI_ANALYSIS_LICENSE_PUBLIC_KEY` | *(empty)* | Public key for AI Pro license verification (optional) |
 
 ---
@@ -76,11 +87,54 @@ docker pull ghcr.io/veriqorn/veriqorn-frontend:latest
 If either pull returns `unauthorized`, the GHCR package is not public or the
 host needs `docker login ghcr.io` with a token that can read the package.
 
+### Configuration preflight
+
+Before starting, validate secrets and Compose configuration without printing any
+secret values:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\preflight.ps1
+```
+
+On Linux, run:
+
+```bash
+chmod +x ./preflight.sh
+./preflight.sh
+```
+
+`MINIO_SERVICE_ACCESS_KEY` is an internal account used only by the backend to
+store artifacts, traces, and screenshots. Veriqorn users never sign in to
+MinIO: their project permissions are checked by the backend before it uses this
+service account.
+
 ## Step 3 — Start the Platform
 
 ```bash
 docker compose -f docker-compose.yml up -d
 ```
+
+### Production TLS
+
+For an Internet-facing installation, point a public DNS record to the host and
+set these values in `.env` before starting the TLS profile:
+
+```env
+VERIQORN_PUBLIC_HOST=veriqorn.example.com
+FRONTEND_URL=https://veriqorn.example.com
+CORS_ORIGINS=https://veriqorn.example.com
+NEXT_PUBLIC_API_URL=https://veriqorn.example.com
+BACKEND_SECURE_COOKIES=true
+```
+
+Then start Caddy, which obtains and renews the HTTPS certificate automatically:
+
+```bash
+docker compose --profile tls -f docker-compose.yml up -d
+```
+
+The application, PostgreSQL, and MinIO ports are bound to loopback only; expose
+only ports 80 and 443 through the host firewall or load balancer.
 
 Docker will pull the images from GHCR and start all services. First startup may take 1-2 minutes while images download and the database initializes.
 
@@ -102,14 +156,11 @@ You should see five services: `frontend`, `backend`, `postgres`, `minio`, and `m
 | **Backend** (API) | [http://localhost:3001](http://localhost:3001) |
 | **MinIO Console** | [http://localhost:9001](http://localhost:9001) |
 
-### Default credentials
+### First sign-in
 
-| User | Email | Password |
-|------|-------|----------|
-| Admin | `admin@example.com` | `admin123` |
-| User | `user@example.com` | `user123` |
-
-> Change default passwords after the first login in production deployments.
+Sign in with the administrator email and password set in the bootstrap variables.
+After confirming access, remove `BACKEND_BOOTSTRAP_ADMIN_PASSWORD` from `.env`;
+it is only used when the database is empty.
 
 ---
 
@@ -121,7 +172,7 @@ Authenticate and upload Allure results to verify the installation:
 # 1. Create a session cookie
 curl -s -c veriqorn.cookies -X POST http://localhost:3001/api/v1/auth/session \
   -H "Content-Type: application/json" \
-  -d '{"email":"admin@example.com","password":"admin123"}'
+  -d '{"email":"YOUR_BOOTSTRAP_ADMIN_EMAIL","password":"YOUR_BOOTSTRAP_ADMIN_PASSWORD"}'
 
 # 2. Upload a single result file through the normalized import route
 curl -X POST http://localhost:3001/api/v1/projects/default/imports/allure-jobs \
@@ -173,6 +224,10 @@ Or pin a specific version in `.env`:
 ```bash
 PLATFORM_VERSION=v1.2.0
 ```
+
+The bundled update agent verifies the keyless Cosign signature of both image
+digests before activating an update. Do not loosen `UPDATE_COSIGN_IDENTITY`
+unless you intentionally publish images from a different signed workflow.
 
 ---
 

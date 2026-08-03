@@ -1,5 +1,15 @@
 # Evidence Connectors
 
+## Deployment allowlist
+
+Before configuring or testing a connector, allowlist its hostname in the backend deployment environment. Connector requests to unlisted hosts are blocked and response bodies are never returned by the connection test.
+
+```env
+OUTBOUND_ALLOWED_HOSTS=sentry.io,grafana.internal.example,kibana.internal.example
+```
+
+Use hostnames only; explicitly list internal services. Wildcard subdomains such as `*.internal.example` are supported. Restart the backend after changing this value.
+
 Evidence connectors allow the AI module to pull additional context from external observability tools when analyzing test failures.
 
 ## Supported connectors

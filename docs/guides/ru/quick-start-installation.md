@@ -21,6 +21,8 @@ QA Report Platform поставляется в виде готовых Docker-о
 ```bash
 curl -fsSLO https://raw.githubusercontent.com/veriqorn/veriqorn-install/master/docker-compose.yml
 curl -fsSLO https://raw.githubusercontent.com/veriqorn/veriqorn-install/master/.env.example
+curl -fsSLO https://raw.githubusercontent.com/veriqorn/veriqorn-install/master/preflight.ps1
+curl -fsSLO https://raw.githubusercontent.com/veriqorn/veriqorn-install/master/preflight.sh
 ```
 
 Либо скопируйте их вручную из корня репозитория `veriqorn-install`: `docker-compose.yml` и `.env.example`.
@@ -40,12 +42,16 @@ cp .env.example .env
 - `JWT_SECRET`
 - `POSTGRES_PASSWORD`
 - `MINIO_ROOT_PASSWORD`
+- `BACKEND_BOOTSTRAP_ADMIN_EMAIL`
+- `BACKEND_BOOTSTRAP_ADMIN_PASSWORD`
 
 ### Основные переменные окружения
 
 | Переменная | По умолчанию | Назначение |
 |----------|---------|-------------|
 | `JWT_SECRET` | *(обязательна)* | Секрет для подписи JWT-токенов |
+| `BACKEND_BOOTSTRAP_ADMIN_EMAIL` | *(нужна при первом запуске)* | Email первого администратора для пустой БД |
+| `BACKEND_BOOTSTRAP_ADMIN_PASSWORD` | *(нужен при первом запуске)* | Уникальный пароль первого администратора длиной от 12 символов |
 | `PLATFORM_VERSION` | `latest` | Тег Docker-образов |
 | `POSTGRES_USER` | `postgres` | Пользователь PostgreSQL |
 | `POSTGRES_PASSWORD` | *(обязательна)* | Пароль PostgreSQL |
@@ -54,6 +60,8 @@ cp .env.example .env
 | `VERIQORN_POSTGRES_VOLUME` | `veriqorn-postgres-data` | Имя Docker volume для данных PostgreSQL |
 | `MINIO_ROOT_USER` | `minioadmin` | Администратор MinIO |
 | `MINIO_ROOT_PASSWORD` | *(обязательна)* | Пароль администратора MinIO |
+| `MINIO_SERVICE_ACCESS_KEY` | `veriqorn-app` | Внутренняя учётная запись MinIO только для backend |
+| `MINIO_SERVICE_SECRET_KEY` | *(обязательна)* | Секрет сервисной учётной записи backend с минимальными правами |
 | `MINIO_API_PORT` | `9000` | Порт API MinIO на хосте |
 | `MINIO_CONSOLE_PORT` | `9001` | Порт консоли MinIO на хосте |
 | `VERIQORN_MINIO_VOLUME` | `veriqorn-minio-data` | Имя Docker volume для артефактов MinIO |
@@ -81,6 +89,27 @@ docker pull ghcr.io/veriqorn/veriqorn-frontend:latest
 или на хосте нужен `docker login ghcr.io` с токеном, у которого есть доступ на
 чтение package.
 
+### Проверка конфигурации
+
+Перед запуском проверьте секреты и Compose-конфигурацию, не выводя значения
+секретов:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\preflight.ps1
+```
+
+На Linux выполните:
+
+```bash
+chmod +x ./preflight.sh
+./preflight.sh
+```
+
+`MINIO_SERVICE_ACCESS_KEY` — внутренний сервисный пользователь backend для
+артефактов, трасс и скриншотов. Пользователи Veriqorn не входят в MinIO: backend
+сначала проверяет их доступ к проекту, а затем обращается к хранилищу от имени
+сервисной учётной записи.
+
 ## Шаг 3 - Запустите платформу
 
 ```bash
@@ -107,14 +136,11 @@ docker compose -f docker-compose.yml ps
 | Backend API | [http://localhost:3001](http://localhost:3001) |
 | MinIO Console | [http://localhost:9001](http://localhost:9001) |
 
-### Учётные записи по умолчанию
+### Первый вход
 
-| Роль | Email | Пароль |
-|------|-------|----------|
-| Администратор | `admin@example.com` | `admin123` |
-| Пользователь | `user@example.com` | `user123` |
-
-После первого входа в production-среде сразу замените эти пароли.
+Войдите с email и паролем администратора из переменных bootstrap. Платформа не
+создаёт учётные записи и пароли по умолчанию. После первого успешного входа
+удалите `BACKEND_BOOTSTRAP_ADMIN_PASSWORD` из `.env`.
 
 ---
 
@@ -126,7 +152,7 @@ docker compose -f docker-compose.yml ps
 # 1. Создать сессионную cookie
 curl -s -c veriqorn.cookies -X POST http://localhost:3001/api/v1/auth/session \
   -H "Content-Type: application/json" \
-  -d '{"email":"admin@example.com","password":"admin123"}'
+  -d '{"email":"YOUR_BOOTSTRAP_ADMIN_EMAIL","password":"YOUR_BOOTSTRAP_ADMIN_PASSWORD"}'
 
 # 2. Загрузить одиночный result-файл
 curl -X POST http://localhost:3001/api/v1/projects/default/imports/allure-jobs \
@@ -175,6 +201,10 @@ docker compose -f docker-compose.yml up -d
 ```env
 PLATFORM_VERSION=v1.2.0
 ```
+
+Встроенный агент обновления перед активацией новой версии проверяет keyless
+Cosign-подписи обоих image digest. Не меняйте `UPDATE_COSIGN_IDENTITY`, если не
+публикуете собственные образы из другого подписанного workflow.
 
 ---
 
