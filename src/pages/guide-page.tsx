@@ -2,6 +2,7 @@ import {
   useEffect,
   useRef,
   useState,
+  type AnchorHTMLAttributes,
   type HTMLAttributes,
   type ReactNode,
 } from "react";
@@ -310,6 +311,31 @@ export function GuidePage() {
     );
   };
 
+  const renderLink = ({ href, children, ...props }: AnchorHTMLAttributes<HTMLAnchorElement>) => {
+    const guideLink = href?.match(/^(?:\.\/)?([^/?#]+)\.md(?:#(.*))?$/);
+    const targetSlug = guideLink?.[1];
+    const targetGuideExists = targetSlug && guides.some((candidate) => candidate.slug === targetSlug);
+
+    if (targetSlug && targetGuideExists) {
+      return (
+        <Link
+          to="/docs/$slug"
+          params={{ slug: targetSlug }}
+          hash={guideLink?.[2] ? decodeURIComponent(guideLink[2]) : undefined}
+          {...props}
+        >
+          {children}
+        </Link>
+      );
+    }
+
+    return (
+      <a href={href} {...props}>
+        {children}
+      </a>
+    );
+  };
+
   return (
     <div className="pb-16 pt-8">
       <div className="grid items-start gap-6 lg:grid-cols-[220px_minmax(0,1fr)] 2xl:grid-cols-[240px_minmax(0,1fr)]">
@@ -338,6 +364,7 @@ export function GuidePage() {
                 <ReactMarkdown
                   remarkPlugins={[remarkGfm]}
                   components={{
+                    a: renderLink,
                     h2: (props: MarkdownHeadingProps) => renderHeading("h2", props),
                     h3: (props: MarkdownHeadingProps) => renderHeading("h3", props),
                     table: ({ node, ...props }) => (
