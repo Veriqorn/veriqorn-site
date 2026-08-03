@@ -140,7 +140,9 @@ docker compose -f docker-compose.yml ps
 
 Войдите с email и паролем администратора из переменных bootstrap. Платформа не
 создаёт учётные записи и пароли по умолчанию. После первого успешного входа
-удалите `BACKEND_BOOTSTRAP_ADMIN_PASSWORD` из `.env`.
+удалите из `.env` обе переменные: `BACKEND_BOOTSTRAP_ADMIN_EMAIL` и
+`BACKEND_BOOTSTRAP_ADMIN_PASSWORD`. Bootstrap-учётные данные задаются только
+парой и используются лишь для пустой БД.
 
 ---
 

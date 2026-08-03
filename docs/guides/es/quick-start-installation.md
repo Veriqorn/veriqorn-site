@@ -135,7 +135,9 @@ Deberia ver cinco servicios: `frontend`, `backend`, `postgres`, `minio` y `minio
 
 Inicie sesion con el email y la contrasena establecidos en las variables de
 bootstrap. Despues del primer acceso correcto, elimine
-`BACKEND_BOOTSTRAP_ADMIN_PASSWORD` de `.env`.
+ambas variables de `.env`: `BACKEND_BOOTSTRAP_ADMIN_EMAIL` y
+`BACKEND_BOOTSTRAP_ADMIN_PASSWORD`. Las credenciales bootstrap se configuran
+solo como un par y se usan unicamente cuando la base de datos esta vacia.
 
 ---
 

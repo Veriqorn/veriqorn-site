@@ -39,7 +39,7 @@ Agregue a su configuración MCP:
 {
   "mcpServers": {
     "qa-platform": {
-      "url": "http://your-server:3001/mcp/sse",
+      "url": "https://veriqorn.example.com/mcp/sse",
       "headers": {
         "Authorization": "Bearer qarp_su_clave_api"
       }
@@ -68,6 +68,8 @@ Lista todos los archivos indexados con filtrado opcional por prefijo de ruta.
 
 ## Seguridad
 
+- Use la URL HTTPS expuesta por el reverse proxy de produccion; no exponga el puerto del backend directamente a Internet.
+- MCP no esta disponible para el rol de plataforma `kb_viewer`. Use una cuenta de administrador o de usuario normal con acceso al proyecto de destino.
 - Las claves API se hashean con SHA-256 antes de almacenarse
 - Las claves pueden tener fecha de expiración
 - Cada clave está vinculada al usuario que la creó

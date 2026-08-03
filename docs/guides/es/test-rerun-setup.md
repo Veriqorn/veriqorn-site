@@ -14,6 +14,8 @@ Esta guia explica como configurar el pipeline de re-ejecucion de extremo a extre
 
 ---
 
+> **Seguridad de conexiones salientes:** Agregue el hostname de cada webhook de CI y agente de test-rerun a `OUTBOUND_ALLOWED_HOSTS` en el entorno del backend. Las solicitudes a hosts fuera de esta allowlist se bloquean; use solo hostnames, sin esquema ni ruta.
+
 ## Paso 1 — Abrir la configuracion de Re-ejecucion
 
 1. Ve a **Settings** en la barra lateral izquierda.

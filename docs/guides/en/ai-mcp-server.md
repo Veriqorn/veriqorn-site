@@ -51,7 +51,7 @@ Add to your MCP configuration (`settings.json` or `claude_desktop_config.json`):
 {
   "mcpServers": {
     "qa-platform": {
-      "url": "http://your-server:3001/mcp/sse",
+      "url": "https://veriqorn.example.com/mcp/sse",
       "headers": {
         "Authorization": "Bearer qarp_your_api_key_here"
       }
@@ -127,6 +127,8 @@ curl -X DELETE http://localhost:3001/profile/api-keys/1 \
 
 ## Security
 
+- Use the HTTPS URL exposed by the production reverse proxy; do not expose the backend port directly to the Internet.
+- MCP is unavailable to the `kb_viewer` platform role. Use an administrator or standard user account with access to the target project.
 - API keys are hashed with SHA-256 before storage — the raw key is never persisted
 - Keys can have optional expiration dates
 - Each key is scoped to the user who created it

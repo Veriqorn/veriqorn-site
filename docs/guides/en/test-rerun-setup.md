@@ -14,6 +14,8 @@ This guide explains how to configure the rerun pipeline end-to-end.
 
 ---
 
+> **Outbound security:** Add the hostname of every CI webhook or test-rerun agent to `OUTBOUND_ALLOWED_HOSTS` in the backend environment. Requests to hosts outside this allowlist are blocked; use hostnames only, without a scheme or path.
+
 ## Step 1 — Open Rerun Settings
 
 1. Go to **Settings** in the left sidebar.

@@ -39,7 +39,7 @@ curl -X POST http://localhost:3001/profile/api-keys \
 {
   "mcpServers": {
     "qa-platform": {
-      "url": "http://your-server:3001/mcp/sse",
+      "url": "https://veriqorn.example.com/mcp/sse",
       "headers": {
         "Authorization": "Bearer qarp_ваш_api_ключ"
       }
@@ -68,6 +68,8 @@ curl -X POST http://localhost:3001/profile/api-keys \
 
 ## Безопасность
 
+- Используйте HTTPS URL production reverse-proxy; не публикуйте порт backend напрямую в Интернет.
+- MCP недоступен для платформенной роли `kb_viewer`. Используйте администратора или обычного пользователя с доступом к нужному проекту.
 - API-ключи хешируются SHA-256 перед сохранением — исходный ключ не хранится
 - Ключи могут иметь срок действия
 - Каждый ключ привязан к создавшему его пользователю

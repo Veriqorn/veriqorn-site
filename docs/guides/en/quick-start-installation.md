@@ -159,8 +159,9 @@ You should see five services: `frontend`, `backend`, `postgres`, `minio`, and `m
 ### First sign-in
 
 Sign in with the administrator email and password set in the bootstrap variables.
-After confirming access, remove `BACKEND_BOOTSTRAP_ADMIN_PASSWORD` from `.env`;
-it is only used when the database is empty.
+After confirming access, remove both `BACKEND_BOOTSTRAP_ADMIN_EMAIL` and
+`BACKEND_BOOTSTRAP_ADMIN_PASSWORD` from `.env`; bootstrap credentials must be
+configured as a pair and are used only when the database is empty.
 
 ---
 
