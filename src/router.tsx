@@ -12,6 +12,7 @@ import { HomePage } from "@/pages/home-page";
 import { DocsPage } from "@/pages/docs-page";
 import { GuidePage } from "@/pages/guide-page";
 import { PricingPage } from "@/pages/pricing-page";
+import { DemoPage } from "@/pages/demo-page";
 import { buttonVariants } from "@/components/ui/button";
 import { useLanguage } from "@/i18n/language-context";
 import { messages } from "@/i18n/messages";
@@ -113,6 +114,12 @@ function RootLayout() {
                 >
                   {t.ui.navPricing}
                 </Link>
+                <Link
+                  to="/demo"
+                  className="rounded-md px-3 py-2 text-sm font-medium text-slate-500 transition-colors hover:text-slate-900"
+                >
+                  Demo
+                </Link>
               </nav>
 
               <div className="flex flex-wrap items-center justify-between gap-3 lg:justify-end">
@@ -210,13 +217,19 @@ const pricingRoute = createRoute({
   component: PricingPage,
 });
 
+const demoRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/demo",
+  component: DemoPage,
+});
+
 const guideRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/docs/$slug",
   component: GuidePage,
 });
 
-const routeTree = rootRoute.addChildren([homeRoute, docsRoute, pricingRoute, guideRoute]);
+const routeTree = rootRoute.addChildren([homeRoute, docsRoute, pricingRoute, demoRoute, guideRoute]);
 
 export const router = createRouter({ routeTree });
 

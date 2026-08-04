@@ -81,6 +81,12 @@ export function HomePage() {
 
           <div className="flex flex-wrap gap-3">
             <Link
+              to="/demo"
+              className={buttonVariants({ size: "lg", className: "shadow-sm" })}
+            >
+              Посмотреть демо
+            </Link>
+            <Link
               to="/docs/$slug"
               params={{ slug: "quick-start-installation" }}
               hash=""
