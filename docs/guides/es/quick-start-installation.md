@@ -21,6 +21,7 @@ Descargue el archivo compose de instalacion y el ejemplo de entorno desde el rep
 ```bash
 curl -fsSLO https://raw.githubusercontent.com/veriqorn/veriqorn-install/master/docker-compose.yml
 curl -fsSLO https://raw.githubusercontent.com/veriqorn/veriqorn-install/master/.env.example
+curl -fsSLO https://raw.githubusercontent.com/veriqorn/veriqorn-install/master/Caddyfile
 curl -fsSLO https://raw.githubusercontent.com/veriqorn/veriqorn-install/master/preflight.ps1
 curl -fsSLO https://raw.githubusercontent.com/veriqorn/veriqorn-install/master/preflight.sh
 ```
@@ -122,6 +123,35 @@ docker compose -f docker-compose.yml ps
 Deberia ver cinco servicios: `frontend`, `backend`, `postgres`, `minio` y `minio-init` (termina despues de crear los buckets).
 
 ---
+
+### TLS de producción
+
+Para una instalación pública, dirija un registro DNS de su dominio al servidor
+y configure estos valores en `.env`, sustituyendo `veriqorn.example.com` por su
+dominio:
+
+```env
+VERIQORN_PUBLIC_HOST=veriqorn.example.com
+FRONTEND_URL=https://veriqorn.example.com
+CORS_ORIGINS=https://veriqorn.example.com
+NEXT_PUBLIC_API_URL=https://veriqorn.example.com
+BACKEND_SECURE_COOKIES=true
+```
+
+Compruebe la configuración de producción antes de iniciar:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\preflight.ps1 -Production
+```
+
+En Linux ejecute `./preflight.sh .env --production`. Después inicie el perfil
+TLS: Caddy obtiene y renueva automáticamente el certificado. Exponga a Internet
+solo los puertos 80 y 443; mantenga backend, PostgreSQL y MinIO vinculados a
+loopback tal como está definido en el archivo Compose.
+
+```bash
+docker compose --profile tls -f docker-compose.yml up -d
+```
 
 ## Paso 4 — Abrir la plataforma
 
