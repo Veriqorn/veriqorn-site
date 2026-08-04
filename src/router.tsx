@@ -6,6 +6,8 @@ import {
   createRouter,
   useRouterState,
 } from "@tanstack/react-router";
+import { ExternalLink, Github, Tag } from "lucide-react";
+import { useEffect, useState } from "react";
 import { HomePage } from "@/pages/home-page";
 import { DocsPage } from "@/pages/docs-page";
 import { GuidePage } from "@/pages/guide-page";
@@ -13,7 +15,61 @@ import { PricingPage } from "@/pages/pricing-page";
 import { buttonVariants } from "@/components/ui/button";
 import { useLanguage } from "@/i18n/language-context";
 import { messages } from "@/i18n/messages";
+import { siteConfig } from "@/lib/site-config";
 import { cn } from "@/lib/utils";
+
+type GitHubRelease = {
+  html_url: string;
+  name: string | null;
+  tag_name: string;
+};
+
+function PlatformReleaseLinks() {
+  const [release, setRelease] = useState<GitHubRelease | null>(null);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    void fetch(siteConfig.latestInstallReleaseApiUrl, {
+      headers: { Accept: "application/vnd.github+json" },
+      signal: controller.signal,
+    })
+      .then((response) => (response.ok ? response.json() : null))
+      .then((data: GitHubRelease | null) => setRelease(data))
+      .catch(() => undefined);
+
+    return () => controller.abort();
+  }, []);
+
+  const versionLabel = release?.tag_name ?? "Latest release";
+
+  return (
+    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-medium text-slate-500">
+      <a
+        href={release?.html_url ?? siteConfig.installReleasesUrl}
+        target="_blank"
+        rel="noreferrer"
+        className="inline-flex items-center gap-1 rounded-md px-1 py-1 transition-colors hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+        title={release?.name ?? "View Veriqorn release notes"}
+      >
+        <Tag className="h-3.5 w-3.5" aria-hidden="true" />
+        <span>{versionLabel}</span>
+        <ExternalLink className="h-3 w-3" aria-hidden="true" />
+      </a>
+      <a
+        href={siteConfig.installRepositoryUrl}
+        target="_blank"
+        rel="noreferrer"
+        className="inline-flex items-center gap-1 rounded-md px-1 py-1 transition-colors hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+        aria-label="Open Veriqorn installation repository on GitHub"
+      >
+        <Github className="h-3.5 w-3.5" aria-hidden="true" />
+        <span>Install</span>
+        <ExternalLink className="h-3 w-3" aria-hidden="true" />
+      </a>
+    </div>
+  );
+}
 
 function RootLayout() {
   const { language, setLanguage } = useLanguage();
@@ -64,6 +120,8 @@ function RootLayout() {
               </nav>
 
               <div className="flex flex-wrap items-center justify-between gap-3 lg:justify-end">
+                <PlatformReleaseLinks />
+
                 <div className="flex items-center gap-1 rounded-md border border-slate-200 bg-white px-1 py-1">
                   <span className="px-1 text-xs font-medium text-slate-400">
                     {t.ui.languageLabel}
