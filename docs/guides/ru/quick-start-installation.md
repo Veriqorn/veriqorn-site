@@ -230,7 +230,7 @@ docker compose -f docker-compose.yml up -d
 Для фиксации конкретной версии укажите её в `.env`:
 
 ```env
-PLATFORM_VERSION=v1.2.0
+PLATFORM_VERSION=v0.1.0
 ```
 
 Встроенный агент обновления перед активацией новой версии проверяет keyless

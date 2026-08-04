@@ -223,7 +223,7 @@ docker compose -f docker-compose.yml up -d
 Or pin a specific version in `.env`:
 
 ```bash
-PLATFORM_VERSION=v1.2.0
+PLATFORM_VERSION=v0.1.0
 ```
 
 The bundled update agent verifies the keyless Cosign signature of both image

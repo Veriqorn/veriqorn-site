@@ -229,7 +229,7 @@ docker compose -f docker-compose.yml up -d
 O fije una version especifica en `.env`:
 
 ```bash
-PLATFORM_VERSION=v1.2.0
+PLATFORM_VERSION=v0.1.0
 ```
 
 El agente de actualizacion incluido verifica las firmas keyless de Cosign de
