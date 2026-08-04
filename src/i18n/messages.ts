@@ -40,6 +40,7 @@ export type AppMessages = {
     heroDescription: string;
     ctaChoosePlan: string;
     ctaOpenDocs: string;
+    ctaDemo: string;
     problemTitle: string;
     problemDescription: string;
     problemPoints: string[];
@@ -143,6 +144,7 @@ export const messages: Record<Language, AppMessages> = {
         "Veriqorn превращает результаты тестов в понятные выводы — чтобы ваша команда тратила меньше времени на догадки и больше на уверенную разработку.",
       ctaChoosePlan: "Начать бесплатно",
       ctaOpenDocs: "Документация",
+      ctaDemo: "Посмотреть демо",
       problemTitle: "Результаты тестов — это шум. Контекст теряется.",
       problemDescription:
         "Большинство команд тонут в результатах тестов, не понимая что пошло не так и почему. Знания теряются между запусками.",
@@ -358,6 +360,7 @@ export const messages: Record<Language, AppMessages> = {
         "Veriqorn turns test results into clear reasoning — so your team spends less time guessing and more time shipping with confidence.",
       ctaChoosePlan: "Get started",
       ctaOpenDocs: "Read the docs",
+      ctaDemo: "View demo",
       problemTitle: "Test results are noise. Context is missing.",
       problemDescription:
         "Most teams drown in test output without understanding what went wrong or why. The knowledge disappears between runs.",
@@ -575,6 +578,7 @@ export const messages: Record<Language, AppMessages> = {
         "Veriqorn convierte los resultados de tests en razonamiento claro — para que tu equipo pase menos tiempo adivinando y más tiempo entregando con confianza.",
       ctaChoosePlan: "Comenzar gratis",
       ctaOpenDocs: "Leer la documentación",
+      ctaDemo: "Ver demo",
       problemTitle: "Los resultados son ruido. Falta contexto.",
       problemDescription:
         "La mayoría de los equipos se ahogan en resultados de tests sin entender qué salió mal ni por qué. El conocimiento desaparece entre ejecuciones.",

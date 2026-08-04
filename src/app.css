@@ -47,6 +47,14 @@
 }
 
 @layer components {
+  .demo-platform {
+    font-family: "Space Grotesk", sans-serif;
+    background-image:
+      radial-gradient(circle at top left, rgba(7, 166, 184, 0.14), transparent 32%),
+      radial-gradient(circle at top right, rgba(248, 128, 88, 0.12), transparent 26%),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.75), rgba(244, 237, 228, 0.94));
+  }
+
   .container-shell {
     @apply mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8;
   }

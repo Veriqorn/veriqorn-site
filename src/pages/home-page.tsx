@@ -84,7 +84,7 @@ export function HomePage() {
               to="/demo"
               className={buttonVariants({ size: "lg", className: "shadow-sm" })}
             >
-              Посмотреть демо
+              {t.home.ctaDemo}
             </Link>
             <Link
               to="/docs/$slug"
