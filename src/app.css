@@ -55,6 +55,11 @@
       linear-gradient(180deg, rgba(255, 255, 255, 0.75), rgba(244, 237, 228, 0.94));
   }
 
+  /* The launch page never renders a global analysis card in the product. */
+  .demo-platform .border-violet-200 {
+    display: none;
+  }
+
   .container-shell {
     @apply mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8;
   }
