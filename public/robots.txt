@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://veriqorn.dev/sitemap.xml
+Sitemap: https://veriqorn.vercel.app/sitemap.xml

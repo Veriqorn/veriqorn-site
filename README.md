@@ -32,7 +32,7 @@ Set the public site URL for canonical and Open Graph links:
 VITE_SITE_URL=https://your-domain.example
 ```
 
-If not set, the site falls back to `https://qa-report-platform.dev`.
+If not set, the site falls back to `https://veriqorn.vercel.app`.
 
 ## Deployment
 Recommended targets: Vercel or Cloudflare Pages.

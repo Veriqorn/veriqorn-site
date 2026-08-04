@@ -1,4 +1,4 @@
-const fallbackSiteUrl = "https://veriqorn.dev";
+const fallbackSiteUrl = "https://veriqorn.vercel.app";
 
 const envSiteUrl = import.meta.env.VITE_SITE_URL;
 
