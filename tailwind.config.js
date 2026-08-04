@@ -1,6 +1,6 @@
 import typography from "@tailwindcss/typography";
-var config = {
-    darkMode: ["class"],
+const config = {
+    darkMode: "class",
     content: ["./index.html", "./src/**/*.{ts,tsx}"],
     theme: {
         extend: {

@@ -60,6 +60,18 @@
     display: none;
   }
 
+  .demo-platform [data-demo-view="launch"] > header:first-child,
+  .demo-platform [data-demo-view="results"] > header:first-child,
+  .demo-platform [data-demo-view="test"] > header:first-child {
+    display: none;
+  }
+
+  .demo-platform [data-demo-view="launch"] > .mt-6,
+  .demo-platform [data-demo-view="results"] > .mt-6,
+  .demo-platform [data-demo-view="test"] > .mt-6 {
+    display: none;
+  }
+
   .container-shell {
     @apply mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8;
   }
