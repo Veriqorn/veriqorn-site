@@ -34,6 +34,10 @@ VITE_SITE_URL=https://your-domain.example
 
 If not set, the site falls back to `https://veriqorn.vercel.app`.
 
+Set `VITE_PLATFORM_VERSION` during a site deployment to override the built-in
+platform version (`v0.1.0`). For automated public release metadata, see
+[`docs/public-release-manifest.md`](docs/public-release-manifest.md).
+
 ## Deployment
 Recommended targets: Vercel or Cloudflare Pages.
 

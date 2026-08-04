@@ -18,39 +18,35 @@ import { messages } from "@/i18n/messages";
 import { siteConfig } from "@/lib/site-config";
 import { cn } from "@/lib/utils";
 
-type GitHubRelease = {
-  html_url: string;
-  name: string | null;
-  tag_name: string;
+type PublicReleaseManifest = {
+  version: string;
+  releaseNotesUrl?: string;
 };
 
 function PlatformReleaseLinks() {
-  const [release, setRelease] = useState<GitHubRelease | null>(null);
+  const [release, setRelease] = useState<PublicReleaseManifest | null>(null);
 
   useEffect(() => {
     const controller = new AbortController();
 
-    void fetch(siteConfig.latestInstallReleaseApiUrl, {
-      headers: { Accept: "application/vnd.github+json" },
-      signal: controller.signal,
-    })
+    void fetch(siteConfig.latestReleaseManifestUrl, { signal: controller.signal })
       .then((response) => (response.ok ? response.json() : null))
-      .then((data: GitHubRelease | null) => setRelease(data))
+      .then((data: PublicReleaseManifest | null) => setRelease(data))
       .catch(() => undefined);
 
     return () => controller.abort();
   }, []);
 
-  const versionLabel = release?.tag_name ?? "Latest release";
+  const versionLabel = release?.version ?? siteConfig.platformVersion;
 
   return (
     <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-medium text-slate-500">
       <a
-        href={release?.html_url ?? siteConfig.installReleasesUrl}
+        href={release?.releaseNotesUrl ?? siteConfig.installRepositoryUrl}
         target="_blank"
         rel="noreferrer"
         className="inline-flex items-center gap-1 rounded-md px-1 py-1 transition-colors hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-        title={release?.name ?? "View Veriqorn release notes"}
+        title="View Veriqorn release notes"
       >
         <Tag className="h-3.5 w-3.5" aria-hidden="true" />
         <span>{versionLabel}</span>
