@@ -72,18 +72,22 @@
     display: none;
   }
 
-  .demo-platform div[style*="conic-gradient"] {
-    animation: demo-donut-in 900ms cubic-bezier(.22, .8, .32, 1) both;
-  }
-
   .demo-platform span[style*="width"] {
     transform-origin: left center;
     animation: demo-bar-fill 750ms cubic-bezier(.22, .8, .32, 1) both;
   }
 
-  @keyframes demo-donut-in {
-    from { transform: rotate(-90deg) scale(.72); opacity: .25; }
-    to { transform: rotate(0) scale(1); opacity: 1; }
+  .demo-platform [aria-label="Pass rate chart"] {
+    width: 9rem;
+    height: 9rem;
+    min-width: 9rem;
+    flex: 0 0 9rem;
+    aspect-ratio: 1;
+  }
+
+  .demo-platform article {
+    grid-column: 1 / -1;
+    width: 100%;
   }
 
   @keyframes demo-bar-fill {
