@@ -75,6 +75,10 @@ function RootLayout() {
   const isDocsRoute = pathname === "/docs" || pathname.startsWith("/docs/");
   const isDemoRoute = pathname === "/demo";
 
+  if (isDemoRoute) {
+    return <Outlet />;
+  }
+
   return (
     <div className="min-h-screen">
       <header className="sticky top-0 z-30 border-b border-slate-200 bg-slate-50/90 backdrop-blur">
@@ -184,11 +188,7 @@ function RootLayout() {
 
       <main
         className={cn(
-          isDocsRoute
-            ? "docs-container-shell min-w-0"
-            : isDemoRoute
-              ? "min-w-0"
-              : "container-shell min-w-0",
+          isDocsRoute ? "docs-container-shell min-w-0" : "container-shell min-w-0",
         )}
       >
         <Outlet />

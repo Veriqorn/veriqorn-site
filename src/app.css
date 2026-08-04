@@ -48,28 +48,60 @@
 
 @layer components {
   .demo-platform {
-    font-family: "Space Grotesk", sans-serif;
+    min-height: 100vh;
+    font-family: Aptos, "Segoe UI Variable Text", "Trebuchet MS", sans-serif;
+    color: #181f2d;
     background-image:
-      radial-gradient(circle at top left, rgba(7, 166, 184, 0.14), transparent 32%),
-      radial-gradient(circle at top right, rgba(248, 128, 88, 0.12), transparent 26%),
-      linear-gradient(180deg, rgba(255, 255, 255, 0.75), rgba(244, 237, 228, 0.94));
+      radial-gradient(circle at 15% 0%, rgba(197, 221, 246, 0.64), transparent 34%),
+      radial-gradient(circle at 79% 0%, rgba(255, 232, 193, 0.5), transparent 35%),
+      linear-gradient(180deg, #eef4fb 0%, #e8f0f8 100%);
   }
 
-  /* The launch page never renders a global analysis card in the product. */
-  .demo-platform .border-violet-200 {
+  .demo-platform .eyebrow {
+    color: #697386;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.19em;
+    text-transform: uppercase;
+  }
+
+  .demo-platform button,
+  .demo-platform input,
+  .demo-platform select {
+    font: inherit;
+  }
+
+  .demo-platform button {
+    transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease,
+      box-shadow 160ms ease, transform 160ms ease;
+  }
+
+  .demo-platform button:active:not(:disabled) {
+    transform: translateY(1px);
+  }
+
+  .demo-platform .rounded-xl {
+    border-radius: 1.25rem;
+  }
+
+  .demo-platform [data-demo-view] > .mt-6.mb-5 {
     display: none;
   }
 
-  .demo-platform [data-demo-view="launch"] > header:first-child,
-  .demo-platform [data-demo-view="results"] > header:first-child,
-  .demo-platform [data-demo-view="test"] > header:first-child {
-    display: none;
+  .demo-platform [data-demo-view] > .mt-6.mb-5 + * {
+    margin-top: 1.5rem;
   }
 
-  .demo-platform [data-demo-view="launch"] > .mt-6,
-  .demo-platform [data-demo-view="results"] > .mt-6,
-  .demo-platform [data-demo-view="test"] > .mt-6 {
-    display: none;
+  .demo-platform [data-demo-view="overview"] > header h1 {
+    color: transparent;
+    position: relative;
+  }
+
+  .demo-platform [data-demo-view="overview"] > header h1::after {
+    content: "Dashboard";
+    color: #172337;
+    inset: 0;
+    position: absolute;
   }
 
   .demo-platform span[style*="width"] {
