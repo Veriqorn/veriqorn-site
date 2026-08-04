@@ -73,6 +73,7 @@ function RootLayout() {
   const t = messages[language];
   const pathname = useRouterState({ select: (state) => state.location.pathname });
   const isDocsRoute = pathname === "/docs" || pathname.startsWith("/docs/");
+  const isDemoRoute = pathname === "/demo";
 
   return (
     <div className="min-h-screen">
@@ -181,7 +182,15 @@ function RootLayout() {
         </div>
       </header>
 
-      <main className={cn(isDocsRoute ? "docs-container-shell min-w-0" : "container-shell min-w-0")}>
+      <main
+        className={cn(
+          isDocsRoute
+            ? "docs-container-shell min-w-0"
+            : isDemoRoute
+              ? "min-w-0"
+              : "container-shell min-w-0",
+        )}
+      >
         <Outlet />
       </main>
 

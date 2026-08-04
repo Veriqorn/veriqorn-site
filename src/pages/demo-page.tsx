@@ -83,7 +83,7 @@ export function DemoPage() {
   };
 
   return (
-    <div className="demo-platform -mx-4 my-0 overflow-hidden border-x border-[#d9d0c4] sm:-mx-6 lg:-mx-8">
+    <div className="demo-platform m-0 overflow-hidden border-x border-[#d9d0c4]">
       <div className="flex min-h-[calc(100vh-9rem)] bg-[#faf8f5]">
         <aside className="hidden w-[20.5rem] shrink-0 flex-col border-r border-white/10 bg-[#172337] p-3 text-[#f2eee7] shadow-[28px_0_90px_rgba(9,16,30,0.28)] lg:flex">
           <div className="mb-6 flex items-start gap-3 px-3 py-2"><div className="grid h-12 w-12 place-items-center rounded-[1.1rem] border border-white/10 bg-white/10 text-sm font-bold tracking-[0.2em] text-white">VQ</div><div className="min-w-0 pt-1"><p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-white/40">Project</p><button className="mt-1 flex items-center gap-1 text-sm font-medium text-white/80">Acme Store <ChevronRight className="h-3.5 w-3.5 rotate-90" /></button></div></div>
@@ -93,7 +93,7 @@ export function DemoPage() {
         </aside>
 
         <div className="min-w-0 flex-1">
-          <main data-demo-view={view} className="mx-auto w-full max-w-[1600px] p-4 md:p-6">
+          <main data-demo-view={view} className="w-full p-4 md:p-6">
             <header className="relative overflow-hidden rounded-xl border border-[#d9d0c4] bg-white/95 px-6 py-6 shadow-[0_18px_50px_-28px_rgba(15,23,42,0.28)] sm:px-8"><div className="absolute inset-x-0 top-0 h-24 bg-[linear-gradient(90deg,rgba(7,166,184,0.12),rgba(248,128,88,0.12),transparent)]" /><div className="relative flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between"><div>{["launch", "results", "test"].includes(view) && <button onClick={() => setView(view === "test" ? "results" : "launches")} className="mb-2 text-xs font-semibold text-[#16788a] hover:underline">← Back to {view === "test" ? "test results" : "launches"}</button>}<h1 className="text-3xl font-semibold tracking-tight text-[#172337]">{view === "launch" ? selectedRun.title : view === "results" ? "Test results" : view === "test" ? selectedTest.name : activeSection}</h1></div><div className="flex items-center gap-2"><span className="rounded-full border border-[#d9d0c4] bg-white px-3 py-1 text-xs font-medium text-slate-600">Acme Store</span><span className="rounded-full bg-emerald-600 px-3 py-1 text-xs font-semibold text-white">AI Pro</span><Link to="/" className="rounded-xl border border-[#d9d0c4] bg-white px-3 py-2 text-xs font-semibold text-slate-600 hover:bg-[#f4ede4]">Exit demo</Link></div></div></header>
             <div className="mt-6 mb-5 rounded-xl border border-[#d9d0c4] bg-white/95 px-4 py-3 text-sm text-slate-600 shadow-[0_18px_50px_-28px_rgba(15,23,42,0.28)]"><span className="font-bold text-[#172337]">Demo workspace.</span> Explore freely — all launches, tests, and AI insights are simulated.</div>
             {view === "launches" ? <LaunchesPageDemo onOpen={(run) => { setSelectedRun(run); setView("launch"); }} /> : view === "launch" ? <LaunchDetailDemo run={selectedRun} onOpenTest={(test) => { setSelectedTest(test); setView("test"); }} /> : view === "results" ? <ResultsExplorerDemo onOpenTest={(test) => { setSelectedTest(test); setView("test"); }} /> : view === "test" ? <TestResultDemo test={selectedTest} /> : false ? <div>
