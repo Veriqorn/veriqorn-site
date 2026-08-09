@@ -1,136 +1,94 @@
-# Activating Pro License
+# Activating an AI Pro license
 
-The AI module operates in two modes:
+AI Pro works without a permanent Internet connection. Each license is issued
+for one Veriqorn installation, so copying its JSON file to another company or
+environment does not activate AI Pro there.
 
-- **`oss_stub`** (default) — all AI features are disabled, platform works as a standard reporting tool
-- **`pro_self_hosted`** — AI features are enabled after license verification
+## 1. Configure the verification key
 
-## Step 1. Set the edition mode
-
-Add to your backend `.env` file:
-
-```env
-AI_ANALYSIS_DEFAULT_MODE=pro_self_hosted
-```
-
-Or configure at runtime via the Settings API:
-
-```bash
-curl -X POST http://localhost:3001/settings/aiAnalysisMode \
-  -H "Content-Type: application/json" \
-  -b "auth_token=<your-jwt>" \
-  -d '{ "value": "pro_self_hosted" }'
-```
-
-## Step 2. Set the license verification key
-
-The platform verifies licenses using Ed25519/RSA public key cryptography. Set the public key as an environment variable:
+Your Veriqorn contact provides an Ed25519 public verification key. Set it in
+the backend environment before activating a license:
 
 ```env
 AI_ANALYSIS_LICENSE_PUBLIC_KEY="-----BEGIN PUBLIC KEY-----
-MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE...
+...provided public key...
 -----END PUBLIC KEY-----"
 ```
 
-The key can be provided in PEM format or as a base64-encoded SPKI (DER) blob.
+Restart the backend after changing environment variables. The private signing
+key stays with Veriqorn and must never be placed in a customer environment.
 
-## Step 3. Install the license
+## 2. Export an activation request
 
-A license is a JSON object with a signed payload:
+An administrator opens **Settings → General → Plan** and selects **Download
+activation request**. The browser downloads
+`veriqorn-activation-request.json` from the installation that will use AI Pro.
+
+The equivalent API call is available for automated workflows:
+
+```bash
+curl http://localhost:3001/api/v1/ai/license-activation-request \
+  -b "auth_token=<your-jwt>" \
+  -o veriqorn-activation-request.json
+```
+
+Send this JSON file to Veriqorn through your approved support channel. It
+contains the installation identifier and public key needed to bind a license;
+it does not contain your test results, projects, or private signing secrets.
+
+For another production, staging, or air-gapped installation, export a separate
+request and obtain a separate license.
+
+## 3. Receive and install the license
+
+Veriqorn returns a signed license envelope similar to this:
 
 ```json
 {
   "payload": {
+    "version": 2,
     "licenseId": "lic_abc123",
+    "customerId": "your-company",
     "customer": "Your Company",
-    "issuedAt": "2025-01-01T00:00:00Z",
-    "expiresAt": "2026-12-31T23:59:59Z",
-    "features": ["*"]
+    "issuedAt": "2026-08-09T00:00:00.000Z",
+    "expiresAt": "2030-12-31T23:59:59.999Z",
+    "features": ["analysis", "indexing", "retrieval", "connector:all"],
+    "installationId": "installation-id",
+    "installationKeyFingerprint": "installation-key-fingerprint"
   },
-  "signature": "base64-encoded-signature"
+  "signature": "base64-signature"
 }
 ```
 
-### Via Settings UI (recommended)
-
-1. Open **Settings > General**
-2. In the **Plan** section, click **Activate License**
-3. Paste the full license JSON into the textarea
-4. Click **Activate**
-5. On success, the license status updates immediately — the "Pro is locked" banner disappears and all AI features become available
-
-### Via API
+In **Settings → General → Plan**, select **Activate License**, choose the JSON
+file issued by Veriqorn, and select **Activate License** again. You may also
+paste the complete JSON into the dialog. An administrator can activate it
+through the API for automated workflows:
 
 ```bash
-# Using the activation endpoint (auto-sets mode to pro_self_hosted)
-curl -X POST http://localhost:3001/ai-analysis/license/activate \
+curl -X POST http://localhost:3001/api/v1/ai/license-activations \
   -H "Content-Type: application/json" \
   -b "auth_token=<your-jwt>" \
-  -d '{ "license": "{ \"payload\": {...}, \"signature\": \"...\" }" }'
-
-# Or directly via Settings API
-curl -X POST http://localhost:3001/settings/aiAnalysisLicense \
-  -H "Content-Type: application/json" \
-  -b "auth_token=<your-jwt>" \
-  -d '{ "value": { "payload": {...}, "signature": "..." } }'
+  --data-binary @veriqorn-license.json
 ```
 
-The activation endpoint automatically sets the edition mode to `pro_self_hosted`.
+Activation automatically switches the installation to `pro_self_hosted` mode.
 
-## Step 4. Verify
+## 4. Verify
 
 ```bash
-curl http://localhost:3001/ai-analysis/capabilities \
+curl http://localhost:3001/api/v1/ai/capabilities \
   -b "auth_token=<your-jwt>"
 ```
 
-Expected response:
-
-```json
-{
-  "mode": "pro_self_hosted",
-  "status": "licensed",
-  "licensed": true,
-  "features": {
-    "analysis": { "enabled": true },
-    "indexing": { "enabled": true },
-    "retrieval": { "enabled": true },
-    "kibanaConnector": { "enabled": true },
-    "sentryConnector": { "enabled": true },
-    "grafanaConnector": { "enabled": true }
-  }
-}
-```
-
-## Feature tokens
-
-The `features` array in the license payload controls which capabilities are enabled:
-
-| Token | Effect |
-|-------|--------|
-| `*` or `all` | Enables everything |
-| `analysis` | AI failure analysis |
-| `indexing` | Repository indexing |
-| `retrieval` | Semantic evidence retrieval |
-| `connector:all` | All evidence connectors |
-| `connector:kibana` | Kibana connector only |
-| `connector:sentry` | Sentry connector only |
-| `connector:grafana` | Grafana connector only |
+The response should show `"status": "licensed"` and the features included in
+your license.
 
 ## Troubleshooting
 
-| Symptom | Cause | Fix |
-|---------|-------|-----|
-| `status: "stub"` | Mode is `oss_stub` | Set `AI_ANALYSIS_DEFAULT_MODE=pro_self_hosted` |
-| `status: "invalid"` | License not configured | Install license via Settings API |
-| `status: "invalid"`, signature fail | Wrong public key | Verify `AI_ANALYSIS_LICENSE_PUBLIC_KEY` matches the signing key |
-| `status: "expired"` | License expired | Install a new license with a future `expiresAt` |
-| Feature shows `enabled: false` | Token missing from license | Add the required feature token to `payload.features` |
-
-## Upgrade URL (optional)
-
-To display a custom upgrade link in the UI when features are locked:
-
-```env
-AI_ANALYSIS_UPGRADE_URL=https://your-company.com/upgrade
-```
+| Symptom | Resolution |
+|---|---|
+| `status: "invalid"` and verification-key error | Ensure `AI_ANALYSIS_LICENSE_PUBLIC_KEY` is the public key supplied by Veriqorn, then restart the backend. |
+| `status: "invalid"` and “different installation” | Request a license for this installation by exporting a new activation request. |
+| `status: "expired"` | Contact Veriqorn for a renewal. |
+| A feature is disabled | The feature is not included in the license. Contact Veriqorn to change the entitlement. |
