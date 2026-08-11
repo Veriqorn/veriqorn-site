@@ -103,7 +103,7 @@ curl http://localhost:1234/v1/models
 # Should return a JSON list with your loaded model
 ```
 
-### 3. Настройте в QA Report Platform
+### 3. Настройте в Veriqorn
 
 **Через Settings UI:**
 

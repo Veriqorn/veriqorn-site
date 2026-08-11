@@ -1,6 +1,6 @@
 # Platform Updates (Self-hosted)
 
-This guide describes how to update QA Report Platform in a self-hosted Docker setup without losing data.
+This guide describes how to update Veriqorn in a self-hosted Docker setup without losing data.
 
 Use this flow when you already run the platform with `docker-compose.yml`.
 

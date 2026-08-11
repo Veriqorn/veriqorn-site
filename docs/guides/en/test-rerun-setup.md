@@ -1,6 +1,6 @@
 # Test Rerun — Setup Guide
 
-QA Report Platform allows you to re-run failed or selected tests directly from a launch page. New results replace the old ones **in the same run** — no separate child launches are created.
+Veriqorn allows you to re-run failed or selected tests directly from a launch page. New results replace the old ones **in the same run** — no separate child launches are created.
 
 This guide explains how to configure the rerun pipeline end-to-end.
 

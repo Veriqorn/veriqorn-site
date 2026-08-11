@@ -62,7 +62,7 @@ Cada unidad tambien tiene una puntuacion de confianza basada en la completitud d
 
 ### 1. Abrir la pagina de Cobertura
 
-Navega a **Coverage** en la barra lateral (visible solo con licencia Pro), o accede a:
+Navega a **Coverage** en la barra lateral (visible solo con una licencia Enterprise AI), o accede a:
 
 ```
 /projects/{projectId}/coverage
@@ -191,7 +191,7 @@ Despues de cambiar los pesos, reconstruye el inventario y vuelve a consultar el 
 
 ## Limitaciones actuales
 
-- **Las unidades de cobertura son definidas por la plataforma** — el catalogo cubre la superficie propia de QA Report Platform (APIs, flujos de UI, operaciones de dominio). La definicion de unidades personalizadas esta planificada.
+- **Las unidades de cobertura son definidas por la plataforma** — el catalogo cubre la superficie propia de Veriqorn (APIs, flujos de UI, operaciones de dominio). La definicion de unidades personalizadas esta planificada.
 - **El mapeo de tests es heuristico** — los tests se asocian a las unidades mediante coincidencia de palabras clave en los nombres de los tests. Las anotaciones explicitas de test a unidad estan planificadas.
 - **Sin actualizaciones incrementales** — reconstruir el inventario re-escanea todo. Las actualizaciones incrementales de evidencia estan planificadas.
 - **Las recomendaciones son basadas en plantillas** — cuando no hay un LLM configurado, los escenarios usan plantillas estructuradas. Con un LLM conectado, se generan sugerencias mas ricas en lenguaje natural.

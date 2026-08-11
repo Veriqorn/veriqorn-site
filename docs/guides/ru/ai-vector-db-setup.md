@@ -1,6 +1,6 @@
 # Настройка AI Vector DB (PostgreSQL + Qdrant)
 
-Этот гайд описывает, как устроено хранилище данных для AI retrieval в QA Report Platform:
+Этот гайд описывает, как устроено хранилище данных для AI retrieval в Veriqorn:
 
 - **PostgreSQL** - основная база платформы для настроек, каталогов и метаданных.
 - **Qdrant** - векторная база для ANN/semantic retrieval.

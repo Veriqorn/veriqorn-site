@@ -1,6 +1,6 @@
 # Configuracion de AI Vector DB (PostgreSQL + Qdrant)
 
-Esta guia describe como configurar el almacenamiento de datos para la recuperacion con IA en QA Report Platform:
+Esta guia describe como configurar el almacenamiento de datos para la recuperacion con IA en Veriqorn:
 
 - **PostgreSQL** — la base de datos principal de la plataforma (configuraciones, catalogos, metadatos).
 - **Qdrant** — una base de datos vectorial para recuperacion ANN/semantica (opcion orientada a produccion).
@@ -31,7 +31,7 @@ Claves de configuracion principales:
 Consulte tambien:
 - [Vision general del modulo de IA](./ai-module-overview.md)
 - [Indexacion de repositorios](./ai-repository-indexing.md)
-- [Activacion de la licencia Pro](./ai-pro-license.md)
+- [Activacion de la licencia Enterprise AI](./ai-pro-license.md)
 
 ---
 

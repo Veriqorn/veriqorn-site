@@ -1,6 +1,6 @@
 # Multi-Source Repository Setup
 
-QA Report Platform supports indexing code from multiple sources for AI-powered failure analysis. You can connect local paths, network shares, or remote Git repositories (GitHub, GitLab, Bitbucket, Azure DevOps).
+Veriqorn supports indexing code from multiple sources for AI-powered failure analysis. You can connect local paths, network shares, or remote Git repositories (GitHub, GitLab, Bitbucket, Azure DevOps).
 
 ---
 
@@ -38,7 +38,7 @@ ALLURE_IMPORT_ROOT=/srv/veriqorn/imports
 See also:
 - [AI Module Overview](./ai-module-overview.md)
 - [Repository Indexing](./ai-repository-indexing.md)
-- [Activating Pro License](./ai-pro-license.md)
+- [Activating Enterprise AI License](./ai-pro-license.md)
 
 ---
 

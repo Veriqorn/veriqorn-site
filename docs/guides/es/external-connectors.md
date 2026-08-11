@@ -1,6 +1,6 @@
 # Conectores de Sistemas Externos
 
-QA Report Platform permite consultar sistemas externos (Sentry, Kibana, Grafana, etc.) para obtener evidencia adicional durante el analisis de fallos con IA. Esta guia explica la arquitectura de plugins y como agregar nuevos tipos de conectores.
+Veriqorn permite consultar sistemas externos (Sentry, Kibana, Grafana, etc.) para obtener evidencia adicional durante el analisis de fallos con Enterprise AI. Esta guia explica la arquitectura de plugins y como agregar nuevos tipos de conectores.
 
 ## Arquitectura
 

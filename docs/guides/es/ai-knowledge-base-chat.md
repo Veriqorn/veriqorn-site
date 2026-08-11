@@ -77,7 +77,7 @@ curl -X POST http://localhost:3001/chat/conversations/1/messages/stream \
 
 | Problema | Causa | Solución |
 |----------|-------|----------|
-| "AI Analysis Pro is required" | Sin licencia Pro o token `retrieval` | Active la licencia con token retrieval |
+| Se requiere entitlement Enterprise AI | Falta una licencia Enterprise AI o el entitlement `retrieval` | Active una licencia con el entitlement `retrieval` |
 | Respuestas vacías o genéricas | Código no indexado o consulta muy general | Ejecute la indexación, luego pregunte más específicamente |
 | Streaming no funciona | SSE bloqueado por proxy | Verifique que el proxy permite `text/event-stream` |
 

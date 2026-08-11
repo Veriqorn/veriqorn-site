@@ -110,7 +110,7 @@ data: {"type":"done","message":{...}}
 
 | Problem | Cause | Fix |
 |---------|-------|-----|
-| "AI Analysis Pro is required" | Missing Pro license or `retrieval` feature | Activate license with retrieval token |
+| Enterprise AI entitlement required | Missing Enterprise AI license or `retrieval` entitlement | Activate a license with the `retrieval` entitlement |
 | Empty or generic answers | Code not indexed or query too vague | Run indexing, then ask more specific questions |
 | Streaming not working | SSE blocked by proxy | Check that reverse proxy allows `text/event-stream` |
 | Slow responses | Large context or slow LLM | Reduce `topK` or use a faster model |

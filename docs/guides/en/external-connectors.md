@@ -1,6 +1,6 @@
 # External System Connectors
 
-The QA Report Platform supports querying external systems (Sentry, Kibana, Grafana, etc.) for additional evidence during AI failure analysis. This guide explains the plugin architecture and how to add new connector types.
+Veriqorn supports querying external systems (Sentry, Kibana, Grafana, etc.) for additional evidence during Enterprise AI failure analysis. This guide explains the plugin architecture and how to add new connector types.
 
 ## Architecture
 

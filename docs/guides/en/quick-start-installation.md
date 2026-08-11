@@ -1,6 +1,6 @@
 ﻿# Quick Start — Installation Guide
 
-QA Report Platform ships as pre-built Docker images on GitHub Container Registry (GHCR). You can have the full platform running in under five minutes with a single `docker compose` command.
+Veriqorn ships as pre-built Docker images on GitHub Container Registry (GHCR). You can have the Community platform running in under five minutes with a single `docker compose` command.
 
 ---
 

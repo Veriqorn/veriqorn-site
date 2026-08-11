@@ -1,6 +1,6 @@
 # Re-ejecucion de Tests — Guia de Configuracion
 
-QA Report Platform permite re-ejecutar tests fallidos o seleccionados directamente desde la pagina de un launch. Los nuevos resultados reemplazan a los anteriores **en la misma ejecucion** — no se crean launches secundarios separados.
+Veriqorn permite re-ejecutar tests fallidos o seleccionados directamente desde la pagina de un launch. Los nuevos resultados reemplazan a los anteriores **en la misma ejecucion** — no se crean launches secundarios separados.
 
 Esta guia explica como configurar el pipeline de re-ejecucion de extremo a extremo.
 

@@ -1,6 +1,6 @@
 # Configuración de repositorios multi-fuente
 
-QA Report Platform permite indexar código desde múltiples fuentes para el análisis con IA: rutas locales, carpetas de red y repositorios Git remotos (GitHub, GitLab, Bitbucket, Azure DevOps).
+Veriqorn permite indexar código desde múltiples fuentes para el análisis con IA: rutas locales, carpetas de red y repositorios Git remotos (GitHub, GitLab, Bitbucket, Azure DevOps).
 
 ---
 

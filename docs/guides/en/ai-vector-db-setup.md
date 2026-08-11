@@ -1,6 +1,6 @@
 # AI Vector DB Setup (PostgreSQL + Qdrant)
 
-This guide describes how to configure data storage for AI retrieval in QA Report Platform:
+This guide describes how to configure data storage for AI retrieval in Veriqorn:
 
 - **PostgreSQL** — the platform's primary database (settings, catalogs, metadata).
 - **Qdrant** — a vector database for ANN/semantic retrieval (production-oriented choice).
@@ -31,7 +31,7 @@ Key settings keys:
 See also:
 - [AI Module Overview](./ai-module-overview.md)
 - [Repository Indexing](./ai-repository-indexing.md)
-- [Activating Pro License](./ai-pro-license.md)
+- [Activating Enterprise AI License](./ai-pro-license.md)
 
 ---
 

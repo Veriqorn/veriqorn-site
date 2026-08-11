@@ -62,7 +62,7 @@ Each unit also has a confidence score based on evidence completeness, mapping pr
 
 ### 1. Open the Coverage page
 
-Navigate to **Coverage** in the sidebar (visible only with Pro license), or go to:
+Navigate to **Coverage** in the sidebar (visible only with an Enterprise AI license), or go to:
 
 ```
 /projects/{projectId}/coverage
@@ -111,7 +111,7 @@ Click **Generate Recommendations** to get AI-assisted suggestions for what to te
 
 ## API reference
 
-All endpoints require JWT authentication and an active Pro license.
+All endpoints require JWT authentication and an active Enterprise AI license.
 
 ### Rebuild inventory
 
@@ -191,7 +191,7 @@ After changing weights, rebuild the inventory and re-check the summary — score
 
 ## Current limitations
 
-- **Coverage units are platform-defined** — the catalog covers the QA Report Platform's own surface (APIs, UI flows, domain operations). Custom unit definitions are planned.
+- **Coverage units are platform-defined** — the catalog covers Veriqorn's own surface (APIs, UI flows, domain operations). Custom unit definitions are planned.
 - **Test mapping is heuristic** — tests are matched to units by keyword matching on test names. Explicit test-to-unit annotations are planned.
 - **No incremental updates** — rebuilding the inventory re-scans everything. Incremental evidence updates are planned.
 - **Recommendations are template-based** — when no LLM is configured, scenarios use structured templates. With an LLM connected, richer natural-language suggestions are generated.

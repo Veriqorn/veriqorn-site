@@ -1,6 +1,6 @@
 # Быстрый старт - Руководство по установке
 
-QA Report Platform поставляется в виде готовых Docker-образов в GitHub Container Registry (GHCR). Полную платформу можно запустить менее чем за пять минут одной командой `docker compose`.
+Veriqorn поставляется в виде готовых Docker-образов в GitHub Container Registry (GHCR). Community-платформу можно запустить менее чем за пять минут одной командой `docker compose`.
 
 ---
 

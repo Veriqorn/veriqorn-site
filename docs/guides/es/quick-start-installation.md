@@ -1,6 +1,6 @@
 ﻿# Inicio Rapido — Guia de Instalacion
 
-QA Report Platform se distribuye como imagenes Docker preconstruidas en GitHub Container Registry (GHCR). Puede tener la plataforma completa funcionando en menos de cinco minutos con un solo comando `docker compose`.
+Veriqorn se distribuye como imagenes Docker preconstruidas en GitHub Container Registry (GHCR). Puede tener la plataforma Community funcionando en menos de cinco minutos con un solo comando `docker compose`.
 
 ---
 
