@@ -11,7 +11,7 @@ const siteUrl =
 const platformVersion =
   typeof envPlatformVersion === "string" && envPlatformVersion.trim().length > 0
     ? envPlatformVersion.trim()
-    : "v0.1.0";
+    : "v0.2.7";
 
 export const siteConfig = {
   name: "Veriqorn",
