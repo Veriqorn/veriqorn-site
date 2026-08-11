@@ -1,95 +1,87 @@
-# Activacion de la licencia AI Pro
+# Activación de una licencia Enterprise de Veriqorn
 
-AI Pro funciona sin una conexion permanente a Internet. Cada licencia se emite
-para una instalacion de Veriqorn: copiar el JSON a otra empresa o entorno no
-activa AI Pro alli.
+Veriqorn Community funciona sin licencia de producto. Las capacidades de
+Enterprise AI funcionan offline con una licencia firmada y vinculada a una sola
+instalación. Copiar el JSON a otro servidor no activa Enterprise allí.
 
-## 1. Configure la clave de verificacion
+## Antes de comenzar
 
-Su contacto de Veriqorn le proporcionara una clave publica Ed25519. Configurela
-en el entorno del backend antes de activar la licencia:
+Use el overlay Enterprise del repositorio público de instalación. Monta la
+licencia como solo lectura y la imagen Enterprise ya contiene la clave pública
+de Veriqorn para verificar firmas. El cliente nunca recibe la clave privada
+emisora de Veriqorn.
 
-```env
-AI_ANALYSIS_LICENSE_PUBLIC_KEY="-----BEGIN PUBLIC KEY-----
-...clave publica proporcionada por Veriqorn...
------END PUBLIC KEY-----"
-```
+Genere y conserve `VERIQORN_INSTALLATION_KEY_ENCRYPTION_KEY`: un secreto
+base64url de 32 bytes que cifra la identidad privada local de la instalación.
 
-Reinicie el backend despues de cambiar las variables de entorno. La clave
-privada de firma permanece en Veriqorn y nunca debe entrar al entorno del
-cliente.
+## 1. Exporte una solicitud de activación
 
-## 2. Exporte una solicitud de activacion
-
-Un administrador abre **Settings → General → Plan** y selecciona **Download
-activation request**. El navegador descarga
-`veriqorn-activation-request.json` desde la instalacion que usara AI Pro.
-
-La llamada API equivalente esta disponible para flujos automatizados:
+Inicie una vez la instalación Enterprise. Un administrador descarga la
+solicitud en **Settings → Plan** o llama a:
 
 ```bash
-curl http://localhost:3001/api/v1/ai/license-activation-request \
-  -b "auth_token=<su-jwt>" \
+curl http://localhost:3001/api/v1/edition/license-activation-request \
+  -b "auth_token=<su-sesión>" \
   -o veriqorn-activation-request.json
 ```
 
-Envie este JSON a Veriqorn por el canal de soporte acordado. Contiene el
-identificador de la instalacion y la clave publica necesaria para vincular la
-licencia; no contiene resultados de pruebas, proyectos ni secretos de firma.
+Envíe este JSON a Veriqorn por el canal acordado. Contiene el ID, la clave
+pública y el fingerprint de la instalación; no contiene resultados de pruebas,
+proyectos, claves privadas de instalación ni claves de firma de Veriqorn.
 
-Cada instalacion de produccion, staging o red aislada necesita su propia
-solicitud y licencia.
+Cada instalación de producción, staging o aislada necesita su propia solicitud
+y licencia.
 
-## 3. Reciba e instale la licencia
+## 2. Reciba y monte la licencia
 
-Veriqorn devolvera un envelope firmado similar al siguiente:
+Veriqorn firma una licencia schema-v3 con su clave privada emisora. Incluye el
+payload, firma Ed25519 con `keyId`, vencimiento, vínculo de instalación y los
+entitlements concedidos, como `ai.analysis` o `ai.rag`.
 
-```json
-{
-  "payload": {
-    "version": 2,
-    "licenseId": "lic_abc123",
-    "customerId": "your-company",
-    "customer": "Your Company",
-    "issuedAt": "2026-08-09T00:00:00.000Z",
-    "expiresAt": "2030-12-31T23:59:59.999Z",
-    "features": ["analysis", "indexing", "retrieval", "connector:all"],
-    "installationId": "installation-id",
-    "installationKeyFingerprint": "installation-key-fingerprint"
-  },
-  "signature": "base64-signature"
-}
+Guarde el JSON fuera de Git y configure su ruta:
+
+```env
+VERIQORN_LICENSE_FILE=./licenses/veriqorn-license.json
 ```
 
-En **Settings → General → Plan**, seleccione **Activate License**, elija el
-archivo JSON emitido por Veriqorn y seleccione **Activate License** de nuevo.
-Tambien puede pegar el JSON completo en el dialogo. Un administrador puede
-activarlo mediante la API para flujos automatizados:
+```bash
+docker compose --env-file .env --env-file .env.enterprise \
+  -f docker-compose.yml -f compose.enterprise.yml up -d
+```
+
+También puede activarlo mediante API administrativa:
 
 ```bash
-curl -X POST http://localhost:3001/api/v1/ai/license-activations \
+curl -X POST http://localhost:3001/api/v1/edition/license-activations \
   -H "Content-Type: application/json" \
-  -b "auth_token=<su-jwt>" \
+  -b "auth_token=<su-sesión>" \
   --data-binary @veriqorn-license.json
 ```
 
-La activacion cambia automaticamente la instalacion al modo `pro_self_hosted`.
-
-## 4. Verifique el estado
+## 3. Verifique el estado
 
 ```bash
-curl http://localhost:3001/api/v1/ai/capabilities \
-  -b "auth_token=<su-jwt>"
+curl http://localhost:3001/api/v1/edition -b "auth_token=<su-sesión>"
 ```
 
-La respuesta debe mostrar `"status": "licensed"` y las funcionalidades de la
-licencia.
+La respuesta muestra el estado y solo los entitlements emitidos para esta
+instalación. La licencia no sustituye los permisos normales de usuario.
 
-## Solucion de problemas
+## Offline, renovación y recuperación
 
-| Sintoma | Solucion |
+- La verificación es local; no requiere conexión permanente.
+- Para renovar, Veriqorn emite un nuevo JSON para la misma instalación.
+- Para reemplazar un host o recuperar una identidad perdida, exporte una nueva
+  solicitud y pida una licencia de reemplazo.
+- Respalde juntos la base de datos, el JSON de licencia y el secreto de cifrado
+  de identidad. Nunca respalde ni distribuya la clave privada emisora de
+  Veriqorn.
+
+## Solución de problemas
+
+| Síntoma | Resolución |
 |---|---|
-| `status: "invalid"` y error de clave de verificacion | Compruebe que `AI_ANALYSIS_LICENSE_PUBLIC_KEY` contiene la clave de Veriqorn y reinicie el backend. |
-| `status: "invalid"` y mensaje de otra instalacion | Exporte una solicitud nueva desde esta instalacion y solicite una licencia propia. |
-| `status: "expired"` | Contacte con Veriqorn para renovar. |
-| Una funcionalidad esta deshabilitada | No esta incluida en la licencia. Contacte con Veriqorn para cambiar los permisos. |
+| `not_configured` | Verifique la imagen Enterprise y el montaje de licencia. |
+| `invalid` | Solicite de nuevo el JSON a Veriqorn y confirme que pertenece a esta instalación. |
+| `expired` | Solicite una renovación; Community sigue disponible. |
+| Capacidad no disponible | Confirme el entitlement y que la extensión Enterprise esté instalada. |
