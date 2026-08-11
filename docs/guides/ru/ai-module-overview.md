@@ -1,10 +1,10 @@
 # AI-модуль - Обзор
 
-QA Report Platform включает опциональный AI-модуль, который добавляет интеллектуальный анализ сбоев, code-aware оценку тестового покрытия и автоматические рекомендации по пробелам.
+Veriqorn Enterprise включает опциональные AI-возможности: интеллектуальный анализ сбоев, code-aware оценку тестового покрытия и автоматические рекомендации по пробелам.
 
 ## Редакции
 
-| Функция | Basic (OSS) | Pro |
+| Функция | Community (OSS) | Enterprise |
 |---------|-------------|-----|
 | Загрузка Allure-результатов и прогоны | Да | Да |
 | Дашборд и аналитика | Да | Да |
@@ -18,7 +18,7 @@ QA Report Platform включает опциональный AI-модуль, к
 
 ## Руководства
 
-1. [AI Pro License](./ai-pro-license.md) - активация AI-функций
+1. [Лицензия Enterprise AI](./ai-pro-license.md) - активация AI-функций
 2. [LLM Connection](./ai-llm-connection.md) - подключение LLM-провайдера
 3. [Repository Indexing](./ai-repository-indexing.md) - индексация вашей кодовой базы
 4. [Auto-Indexing](./ai-auto-indexing.md) - автоматическая переиндексация по коммитам
@@ -33,12 +33,11 @@ QA Report Platform включает опциональный AI-модуль, к
 ```bash
 # 1. Задайте переменные окружения развёртывания
 AI_ANALYSIS_DEFAULT_MODE=pro_self_hosted
-AI_ANALYSIS_LICENSE_PUBLIC_KEY="-----BEGIN PUBLIC KEY-----\n..."
 AI_ANALYSIS_MONOREPO_ROOT=/path/to/your/project
 
-# 2. Активируйте лицензию через API или Settings UI
-POST /settings/aiAnalysisLicense
-{ "value": { "payload": {...}, "signature": "..." } }
+# 2. Получите JSON-запрос активации, отправьте его в Veriqorn и импортируйте выданную лицензию
+GET /api/v1/edition/license-activation-request
+POST /api/v1/edition/license-activations
 
 # 3. Проверьте capabilities
 GET /ai-analysis/capabilities
@@ -50,11 +49,11 @@ POST /ai-analysis/index/repositories
 # /projects/{projectId}/coverage
 ```
 
-Задавайте эти значения в окружении self-hosted deployment, например в `.env` рядом с `veriqorn-install/docker-compose.yml`.
+Задавайте параметры развёртывания в Enterprise environment-файле. Публичный ключ проверки уже встроен в Enterprise-образ; issuer-ключ в `.env` добавлять не нужно.
 
 ## Retrieval Operations
 
-Рекомендуемый порядок rollout для self-hosted Pro:
+Рекомендуемый порядок rollout для self-hosted Enterprise:
 
 1. Начните с `aiAnalysisVectorProvider=lexical-fallback`.
 2. Переиндексируйте репозитории после включения code-aware chunk metadata.

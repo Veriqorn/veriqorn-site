@@ -4,7 +4,7 @@ La Inteligencia de Cobertura proporciona una vista a nivel de proyecto de la cal
 
 ## Requisitos previos
 
-- Licencia AI Pro activa ([ver guia de activacion](./ai-pro-license.md))
+- Licencia Enterprise AI activa ([ver guia de activacion](./ai-pro-license.md))
 - Indexado de repositorios configurado ([ver guia de indexado](./ai-repository-indexing.md)) — recomendado pero no obligatorio
 
 ## Conceptos
@@ -111,7 +111,7 @@ Haz clic en **Generate Recommendations** para obtener sugerencias asistidas por 
 
 ## Referencia de la API
 
-Todos los endpoints requieren autenticacion JWT y una licencia Pro activa.
+Todos los endpoints requieren autenticacion JWT y una licencia Enterprise AI activa.
 
 ### Reconstruir inventario
 

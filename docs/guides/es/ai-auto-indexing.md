@@ -4,7 +4,7 @@ La re-indexación automática mantiene su índice de código actualizado detecta
 
 ## Requisitos previos
 
-- Licencia AI Pro activa ([ver guía de activación](./ai-pro-license.md))
+- Licencia Enterprise AI activa ([ver guía de activación](./ai-pro-license.md))
 - Al menos un repositorio configurado ([ver guía de indexación](./ai-repository-indexing.md))
 - Para webhooks: su instancia de la plataforma debe ser accesible desde el proveedor Git
 

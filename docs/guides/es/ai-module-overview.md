@@ -1,10 +1,10 @@
 # Modulo de IA — Vision general
 
-QA Report Platform incluye un modulo de IA opcional que agrega analisis inteligente de fallos, puntuacion de cobertura de pruebas basada en codigo y recomendaciones automatizadas de brechas.
+Veriqorn Enterprise incluye capacidades de IA opcionales para analisis inteligente de fallos, puntuacion de cobertura basada en codigo y recomendaciones automatizadas de brechas.
 
 ## Ediciones
 
-| Funcionalidad | Basic (OSS) | Pro |
+| Funcionalidad | Community (OSS) | Enterprise |
 |---------------|-------------|-----|
 | Ingesta de Allure y lanzamientos | Si | Si |
 | Dashboard y analiticas | Si | Si |
@@ -41,7 +41,7 @@ QA Report Platform incluye un modulo de IA opcional que agrega analisis intelige
 
 ## Guias
 
-1. [Activar licencia Pro](./ai-pro-license.md) — habilitar funcionalidades de IA
+1. [Activar licencia Enterprise AI](./ai-pro-license.md) — habilitar funcionalidades de IA
 2. [Conexion LLM](./ai-llm-connection.md) — conectar un proveedor de LLM
 3. [Indexacion de repositorios](./ai-repository-indexing.md) — indexar su base de codigo
 4. [Auto-indexacion](./ai-auto-indexing.md) — re-indexacion automatica en commits
@@ -58,12 +58,11 @@ QA Report Platform incluye un modulo de IA opcional que agrega analisis intelige
 ```bash
 # 1. Establecer variables de entorno del despliegue
 AI_ANALYSIS_DEFAULT_MODE=pro_self_hosted
-AI_ANALYSIS_LICENSE_PUBLIC_KEY="-----BEGIN PUBLIC KEY-----\n..."
 AI_ANALYSIS_MONOREPO_ROOT=/path/to/your/project
 
-# 2. Configure license via API or Settings UI
-POST /settings/aiAnalysisLicense
-{ "value": { "payload": {...}, "signature": "..." } }
+# 2. Genere la solicitud de activacion, enviela a Veriqorn e importe la licencia emitida
+GET /api/v1/edition/license-activation-request
+POST /api/v1/edition/license-activations
 
 # 3. Verify capabilities
 GET /ai-analysis/capabilities
@@ -76,7 +75,7 @@ POST /ai-analysis/index/repositories
 # → /projects/{projectId}/coverage
 ```
 
-Establezca estos valores en el entorno utilizado por su despliegue self-hosted, por ejemplo en el archivo `.env` junto a `veriqorn-install/docker-compose.yml`.
+Establezca los valores de despliegue en el archivo de entorno Enterprise. La clave publica de verificacion esta incorporada en la imagen Enterprise; no agregue una clave de emisor a `.env`.
 
 ## Operaciones de recuperacion (Vector + Fallback)
 

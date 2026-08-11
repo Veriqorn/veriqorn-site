@@ -7,7 +7,7 @@ Repository indexing scans your project source code, applies AST-aware (heuristic
 
 ## Prerequisites
 
-- AI Pro license active ([see activation guide](./ai-pro-license.md))
+- Enterprise AI license active ([see activation guide](./ai-pro-license.md))
 - `indexing` feature token in your license
 
 ## Step 1. Set the monorepo root

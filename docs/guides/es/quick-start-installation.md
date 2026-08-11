@@ -68,7 +68,6 @@ cp .env.example .env
 | `NEXT_PUBLIC_KB_URL` | `http://localhost:5174` | URL del sitio standalone de Knowledge Base, si esta desplegado |
 | `FRONTEND_URL` | `http://localhost:3000` | URL del frontend para CORS |
 | `CORS_ORIGINS` | `http://localhost:3000` | Origenes del navegador permitidos para el backend |
-| `AI_ANALYSIS_LICENSE_PUBLIC_KEY` | *(vacio)* | Clave publica para verificacion de licencia AI Pro (opcional) |
 
 ---
 
@@ -278,6 +277,6 @@ docker compose -f docker-compose.yml down -v
 
 - **Enviar resultados desde pruebas automatizadas**: Configure su CI para cargar resultados de Allure despues de cada ejecucion. Consulte [Enviar resultados de pruebas automatizadas a Veriqorn](test-results-ci-integration.md).
 - **Reejecucion de pruebas**: Configure un [pipeline de Test Rerun](test-rerun-setup.md) para iniciar pruebas seleccionadas desde un lanzamiento.
-- **Funcionalidades AI Pro**: Instale una licencia AI Pro para habilitar el analisis de fallos, la indexacion de repositorios y la inteligencia de cobertura. Consulte [Licencia AI Pro](ai-pro-license.md).
+- **Funciones Enterprise AI**: Despliegue la superposicion Enterprise y active su licencia sin conexion para habilitar el analisis de fallos, la indexacion de repositorios y la inteligencia de cobertura. La imagen Enterprise ya incluye la clave publica de verificacion de Veriqorn. Consulte [Licencia Enterprise AI](ai-pro-license.md).
 - **Conexion LLM**: Conecte un proveedor de LLM local o en la nube para el analisis con IA. Consulte [Conexion LLM](ai-llm-connection.md).
 

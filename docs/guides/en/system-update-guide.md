@@ -127,7 +127,7 @@ Then verify in UI:
 - you can sign in
 - historical launches are still present
 - attachments and artifacts are still accessible
-- AI Pro status is still correct (if used)
+- Enterprise AI license status is still correct (if used)
 
 ---
 
@@ -166,12 +166,12 @@ docker compose --env-file .env -f docker-compose.yml cp \
 
 ---
 
-## Pro License During Update
+## Enterprise AI License During Update
 
-Pro license activation is not baked into Docker images.
+The Enterprise AI license document is not baked into Docker images.
 
-- verification key is read from `AI_ANALYSIS_LICENSE_PUBLIC_KEY` in `.env`
-- signed license envelope is stored in application settings (database)
+- the Veriqorn verification public key is embedded in the Enterprise image
+- the signed license envelope is loaded from the read-only `VERIQORN_LICENSE_FILE` mount or stored through the administrator activation endpoint
 
 As long as your database is preserved, license state is preserved too.
 

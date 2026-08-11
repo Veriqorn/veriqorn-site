@@ -72,7 +72,6 @@ cp .env.example .env
 | `NEXT_PUBLIC_KB_URL` | `http://localhost:5174` | URL standalone Knowledge Base, если он развёрнут отдельно |
 | `FRONTEND_URL` | `http://localhost:3000` | URL frontend для CORS |
 | `CORS_ORIGINS` | `http://localhost:3000` | Разрешённые browser origins для backend |
-| `AI_ANALYSIS_LICENSE_PUBLIC_KEY` | *(пусто)* | Публичный ключ для проверки AI Pro лицензии |
 
 ---
 
@@ -267,5 +266,5 @@ docker compose -f docker-compose.yml down -v
 
 - **Передача результатов автотестов**: настройте CI, чтобы после каждого прогона он загружал Allure-результаты. См. [Передача результатов автотестов в Veriqorn](test-results-ci-integration.md).
 - **Повторный запуск тестов**: настройте [pipeline Test Rerun](test-rerun-setup.md), чтобы запускать выбранные тесты из прогона.
-- Для AI-функций см. [AI Pro License](ai-pro-license.md).
+- Для Enterprise AI-функций разверните Enterprise overlay и активируйте офлайн-лицензию. Публичный ключ проверки уже встроен в Enterprise-образ: см. [лицензию Enterprise AI](ai-pro-license.md).
 - Для подключения LLM см. [LLM Connection](ai-llm-connection.md).

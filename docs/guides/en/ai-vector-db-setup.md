@@ -25,7 +25,7 @@ Key settings keys:
 ## 2) Prerequisites
 
 1. The backend (`http://localhost:3001`) and frontend (`http://localhost:3000`) are up and running.
-2. An AI Pro license has been activated (at minimum the `indexing` and `retrieval` features).
+2. An Enterprise AI license has been activated (at minimum the `indexing` and `retrieval` entitlements).
 3. `AI_ANALYSIS_MONOREPO_ROOT` is set (the source code root for indexing).
 
 See also:

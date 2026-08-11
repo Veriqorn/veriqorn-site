@@ -7,7 +7,7 @@ El indexado de repositorios escanea el codigo fuente de tu proyecto, aplica frag
 
 ## Requisitos previos
 
-- Licencia AI Pro activa ([ver guia de activacion](./ai-pro-license.md))
+- Licencia Enterprise AI activa ([ver guia de activacion](./ai-pro-license.md))
 - Token de funcionalidad `indexing` en tu licencia
 
 ## Paso 1. Establecer la raiz del monorepo

@@ -4,7 +4,7 @@ El Chat de Base de Conocimiento permite hacer preguntas sobre su código indexad
 
 ## Requisitos previos
 
-- Licencia AI Pro activa ([ver guía de activación](./ai-pro-license.md))
+- Licencia Enterprise AI activa ([ver guía de activación](./ai-pro-license.md))
 - Token de función `retrieval` en su licencia
 - Al menos un repositorio indexado ([ver guía de indexación](./ai-repository-indexing.md))
 - Conexión LLM configurada ([ver configuración LLM](./ai-llm-connection.md))

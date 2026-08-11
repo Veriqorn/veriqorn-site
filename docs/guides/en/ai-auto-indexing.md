@@ -4,7 +4,7 @@ Automatic re-indexing keeps your code index fresh by detecting new commits on th
 
 ## Prerequisites
 
-- AI Pro license active ([see activation guide](./ai-pro-license.md))
+- Enterprise AI license active ([see activation guide](./ai-pro-license.md))
 - At least one repository configured ([see indexing guide](./ai-repository-indexing.md))
 - For webhooks: your platform instance must be accessible from the Git provider
 

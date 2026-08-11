@@ -4,7 +4,7 @@ La plataforma expone un servidor MCP (Model Context Protocol) que permite a los 
 
 ## Requisitos previos
 
-- Licencia AI Pro activa ([ver guía de activación](./ai-pro-license.md))
+- Licencia Enterprise AI activa ([ver guía de activación](./ai-pro-license.md))
 - Al menos un repositorio indexado ([ver guía de indexación](./ai-repository-indexing.md))
 - Conexión LLM configurada para la herramienta `ask_about_code` ([ver configuración LLM](./ai-llm-connection.md))
 

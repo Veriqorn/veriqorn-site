@@ -4,7 +4,7 @@ The Knowledge Base Chat lets you ask questions about your indexed codebase in a 
 
 ## Prerequisites
 
-- AI Pro license active ([see activation guide](./ai-pro-license.md))
+- Enterprise AI license active ([see activation guide](./ai-pro-license.md))
 - `retrieval` feature token in your license
 - At least one repository indexed ([see indexing guide](./ai-repository-indexing.md))
 - LLM connection configured ([see LLM setup](./ai-llm-connection.md))

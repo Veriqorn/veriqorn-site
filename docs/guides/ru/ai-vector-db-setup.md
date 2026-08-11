@@ -26,14 +26,14 @@
 ## 2) Предварительные условия
 
 1. Backend (`http://localhost:3001`) и frontend (`http://localhost:3000`) уже запущены.
-2. Активирована AI Pro лицензия как минимум с возможностями `indexing` и `retrieval`.
+2. Активирована лицензия Enterprise AI как минимум с entitlement `indexing` и `retrieval`.
 3. Настроен `AI_ANALYSIS_MONOREPO_ROOT` - корневой путь к исходникам, которые будут индексироваться.
 
 См. также:
 
 - [AI Module Overview](./ai-module-overview.md)
 - [Repository Indexing](./ai-repository-indexing.md)
-- [AI Pro License](./ai-pro-license.md)
+- [Лицензия Enterprise AI](./ai-pro-license.md)
 
 ---
 

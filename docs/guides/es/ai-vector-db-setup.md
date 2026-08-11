@@ -25,7 +25,7 @@ Claves de configuracion principales:
 ## 2) Requisitos previos
 
 1. El backend (`http://localhost:3001`) y el frontend (`http://localhost:3000`) estan en ejecucion.
-2. Se ha activado una licencia AI Pro (como minimo las funcionalidades `indexing` y `retrieval`).
+2. Se ha activado una licencia Enterprise AI (como minimo los entitlements `indexing` y `retrieval`).
 3. `AI_ANALYSIS_MONOREPO_ROOT` esta configurado (la raiz del codigo fuente para la indexacion).
 
 Consulte tambien:

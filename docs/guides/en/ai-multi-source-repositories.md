@@ -20,7 +20,7 @@ QA Report Platform supports indexing code from multiple sources for AI-powered f
 ## 2) Prerequisites
 
 1. The platform backend is running (`http://localhost:3001`).
-2. An AI Pro license with `indexing` feature is activated.
+2. An Enterprise AI license with the `indexing` entitlement is activated.
 3. Git is installed on the server (required for remote repository cloning).
 
 For filesystem-backed repositories, configure the directories the backend may read. Paths outside this allowlist are rejected.
@@ -217,4 +217,4 @@ Existing configurations without `sourceType` are automatically treated as `local
 - [AI Module Overview](./ai-module-overview.md)
 - [Repository Indexing](./ai-repository-indexing.md)
 - [Vector DB Setup](./ai-vector-db-setup.md)
-- [AI Pro License](./ai-pro-license.md)
+- [Enterprise AI License](./ai-pro-license.md)

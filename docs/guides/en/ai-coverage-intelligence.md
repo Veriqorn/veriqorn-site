@@ -4,7 +4,7 @@ Coverage Intelligence provides a project-scoped view of test coverage quality us
 
 ## Prerequisites
 
-- AI Pro license active ([see activation guide](./ai-pro-license.md))
+- Enterprise AI license active ([see activation guide](./ai-pro-license.md))
 - Repository indexing configured ([see indexing guide](./ai-repository-indexing.md)) — recommended but not required
 
 ## Concepts

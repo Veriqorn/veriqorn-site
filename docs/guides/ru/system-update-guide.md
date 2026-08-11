@@ -95,7 +95,7 @@ docker compose --env-file .env -f docker-compose.yml logs backend --tail 200
 - вход в систему работает
 - исторические прогоны на месте
 - вложения и артефакты открываются
-- статус AI Pro сохранился, если он используется
+- статус лицензии Enterprise AI сохранился, если она используется
 
 ---
 
@@ -134,12 +134,12 @@ docker compose --env-file .env -f docker-compose.yml cp \
 
 ---
 
-## AI Pro лицензия при обновлении
+## Лицензия Enterprise AI при обновлении
 
-Состояние лицензии не “зашито” в Docker-образ.
+Файл лицензии Enterprise AI не «зашит» в Docker-образ.
 
-- ключ проверки читается из `AI_ANALYSIS_LICENSE_PUBLIC_KEY` в `.env`
-- подписанный license envelope хранится в базе данных в настройках приложения
+- публичный ключ Veriqorn для проверки уже встроен в Enterprise-образ
+- подписанный license envelope загружается из read-only монтирования `VERIQORN_LICENSE_FILE` или сохраняется через административный endpoint активации
 
 Пока база данных сохраняется, состояние лицензии тоже сохраняется.
 

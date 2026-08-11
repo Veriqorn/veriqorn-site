@@ -70,7 +70,6 @@ cp .env.example .env
 | `CORS_ORIGINS` | `http://localhost:3000` | Allowed browser origins for the backend |
 | `VERIQORN_PUBLIC_HOST` | *(empty)* | Public DNS name used by the optional TLS profile |
 | `BACKEND_SECURE_COOKIES` | `false` | Set to `true` when terminating TLS |
-| `AI_ANALYSIS_LICENSE_PUBLIC_KEY` | *(empty)* | Public key for AI Pro license verification (optional) |
 
 ---
 
@@ -272,6 +271,6 @@ docker compose -f docker-compose.yml down -v
 
 - **Send results from automated tests**: Configure your CI to upload Allure results after every run. See [Send automated test results to Veriqorn](test-results-ci-integration.md).
 - **Test reruns**: Configure a [Test Rerun pipeline](test-rerun-setup.md) to trigger selected tests from a launch.
-- **AI Pro features**: Install an AI Pro license to enable failure analysis, repository indexing, and coverage intelligence. See [AI Pro License](ai-pro-license.md).
+- **Enterprise AI features**: Deploy the Enterprise overlay and activate its offline license to enable failure analysis, repository indexing, and coverage intelligence. The Enterprise image already includes Veriqorn's public verification key. See [Enterprise AI License](ai-pro-license.md).
 - **LLM connection**: Connect a local or cloud LLM provider for AI analysis. See [LLM Connection](ai-llm-connection.md).
 

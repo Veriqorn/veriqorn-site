@@ -97,7 +97,7 @@ Luego verifique en la interfaz:
 - puede iniciar sesion
 - los lanzamientos historicos siguen presentes
 - los adjuntos y artefactos siguen siendo accesibles
-- el estado de AI Pro sigue siendo correcto (si lo utiliza)
+- el estado de la licencia Enterprise AI sigue siendo correcto (si la utiliza)
 
 ---
 
@@ -136,12 +136,12 @@ docker compose --env-file .env -f docker-compose.yml cp \
 
 ---
 
-## Licencia Pro durante la actualizacion
+## Licencia Enterprise AI durante la actualizacion
 
-La activacion de la licencia Pro no esta incorporada en las imagenes Docker.
+El documento de licencia Enterprise AI no esta incorporado en las imagenes Docker.
 
-- la clave de verificacion se lee desde `AI_ANALYSIS_LICENSE_PUBLIC_KEY` en `.env`
-- el sobre de licencia firmado se almacena en la configuracion de la aplicacion (base de datos)
+- la clave publica de verificacion de Veriqorn esta incorporada en la imagen Enterprise
+- el sobre de licencia firmado se carga desde el montaje de solo lectura `VERIQORN_LICENSE_FILE` o se almacena mediante el endpoint administrativo de activacion
 
 Mientras su base de datos se conserve, el estado de la licencia tambien se conserva.
 
