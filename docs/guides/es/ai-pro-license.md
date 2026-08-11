@@ -1,94 +1,89 @@
 # Activación de una licencia Enterprise de Veriqorn
 
-Veriqorn Community funciona sin licencia de producto. Las capacidades de
-Enterprise AI funcionan offline con una licencia firmada y vinculada a una sola
-instalación. Copiar el JSON a otro servidor no activa Enterprise allí.
+Enterprise utiliza imágenes Enterprise autorizadas y una licencia offline
+vinculada a la instalación. Una licencia no añade módulos privados a una imagen
+Community y copiar su JSON a otro servidor no la activa.
 
-## Antes de comenzar
+## Elija su escenario
 
-Use el overlay Enterprise del repositorio público de instalación. Monta la
-licencia como solo lectura y la imagen Enterprise ya contiene la clave pública
-de Veriqorn para verificar firmas. El cliente nunca recibe la clave privada
-emisora de Veriqorn.
+### Nueva instalación Enterprise
 
-Una licencia Enterprise no agrega módulos privados a una imagen Community ya
-ejecutándose. Para pasar una instalación Community existente a Enterprise,
-aplique `compose.enterprise.yml`: solo reemplaza los contenedores `backend` y
-`frontend` por las imágenes Enterprise autorizadas. PostgreSQL, MinIO, los
-volúmenes, proyectos e historial de ejecuciones se conservan; no es necesario
-reinstalar.
+1. Complete una vez el [Quick Start](quick-start-installation.md) para crear el
+   despliegue, la cuenta administradora y la identidad de la instalación.
+2. Inicie sesión como administrador y abra **Settings → Plan & license**.
+3. Seleccione **Download activation request** y envíe el JSON a Veriqorn.
+4. Tras recibir la licencia, continúe con **Preparar el overlay Enterprise**.
 
-Genere y conserve `VERIQORN_INSTALLATION_KEY_ENCRYPTION_KEY`: un secreto
-base64url de 32 bytes que cifra la identidad privada local de la instalación.
+### Instalación Community existente
 
-## 1. Exporte una solicitud de activación
+1. Inicie sesión como administrador y abra **Settings → Plan & license**.
+2. Seleccione **Download activation request** y envíe el JSON a Veriqorn.
+3. Tras recibir la licencia, continúe con **Preparar el overlay Enterprise**.
 
-Inicie una vez la instalación Enterprise. Un administrador descarga la
-solicitud en **Settings → Plan** o llama a:
+Es una transición en el mismo lugar: el overlay sustituye solo `backend` y
+`frontend`. PostgreSQL, MinIO, volúmenes, proyectos, usuarios e historial de
+ejecuciones se conservan. No ejecute `docker compose down -v` ni reinstale.
+
+## Preparar el overlay Enterprise
+
+Este paso requiere un operador de servidor de confianza con acceso al directorio
+de despliegue y a Docker. No puede realizarse solo desde la UI porque cambia las
+imágenes que ejecuta Docker.
+
+Descargue los archivos junto a `docker-compose.yml` y `.env`:
 
 ```bash
-curl http://localhost:3001/api/v1/edition/license-activation-request \
-  -b "auth_token=<su-sesión>" \
-  -o veriqorn-activation-request.json
+curl -fsSLO https://raw.githubusercontent.com/veriqorn/veriqorn-install/master/compose.enterprise.yml
+curl -fsSLO https://raw.githubusercontent.com/veriqorn/veriqorn-install/master/.env.enterprise.example
+cp .env.enterprise.example .env.enterprise
 ```
 
-Envíe este JSON a Veriqorn por el canal acordado. Contiene el ID, la clave
-pública y el fingerprint de la instalación; no contiene resultados de pruebas,
-proyectos, claves privadas de instalación ni claves de firma de Veriqorn.
-
-Cada instalación de producción, staging o aislada necesita su propia solicitud
-y licencia.
-
-## 2. Reciba y monte la licencia
-
-Veriqorn firma una licencia schema-v3 con su clave privada emisora. Incluye el
-payload, firma Ed25519 con `keyId`, vencimiento, vínculo de instalación y los
-entitlements concedidos, como `ai.analysis` o `ai.rag`.
-
-Guarde el JSON fuera de Git y configure su ruta:
+Guarde el JSON emitido fuera de Git, por ejemplo
+`./licenses/veriqorn-license.json`. En `.env.enterprise` establezca:
 
 ```env
 VERIQORN_LICENSE_FILE=./licenses/veriqorn-license.json
+VERIQORN_INSTALLATION_KEY_ENCRYPTION_KEY=<secreto-base64url-de-32-bytes>
 ```
+
+Conserve los valores immutable autorizados de `ENTERPRISE_BACKEND_IMAGE` y
+`ENTERPRISE_FRONTEND_IMAGE`. Aplique el overlay:
 
 ```bash
 docker compose --env-file .env --env-file .env.enterprise \
   -f docker-compose.yml -f compose.enterprise.yml up -d
 ```
 
-También puede activarlo mediante API administrativa:
+## Activar mediante la UI
+
+Con el overlay en ejecución, vuelva a **Settings → Plan & license**. Seleccione
+**Activate license**, cargue o pegue el JSON emitido y confirme. Para una
+renovación de la misma instalación, use **Replace license**. El archivo debe
+seguir montado en el servidor, como requiere el overlay.
+
+## Alternativa de consola y API
+
+Para automatización o entornos aislados:
 
 ```bash
-curl -X POST http://localhost:3001/api/v1/edition/license-activations \
+curl http://localhost:3001/api/v1/ai/license-activation-request \
+  -b "auth_token=<su-sesion>" \
+  -o veriqorn-activation-request.json
+
+curl -X POST http://localhost:3001/api/v1/ai/license-activations \
   -H "Content-Type: application/json" \
-  -b "auth_token=<su-sesión>" \
+  -b "auth_token=<su-sesion>" \
   --data-binary @veriqorn-license.json
 ```
 
-## 3. Verifique el estado
-
-```bash
-curl http://localhost:3001/api/v1/edition -b "auth_token=<su-sesión>"
-```
-
-La respuesta muestra el estado y solo los entitlements emitidos para esta
-instalación. La licencia no sustituye los permisos normales de usuario.
-
-## Offline, renovación y recuperación
-
-- La verificación es local; no requiere conexión permanente.
-- Para renovar, Veriqorn emite un nuevo JSON para la misma instalación.
-- Para reemplazar un host o recuperar una identidad perdida, exporte una nueva
-  solicitud y pida una licencia de reemplazo.
-- Respalde juntos la base de datos, el JSON de licencia y el secreto de cifrado
-  de identidad. Nunca respalde ni distribuya la clave privada emisora de
-  Veriqorn.
+Cada instalación production, staging o air-gapped necesita su propia solicitud
+y licencia. La verificación es local y no necesita Internet permanente.
 
 ## Solución de problemas
 
 | Síntoma | Resolución |
 |---|---|
-| `not_configured` | Verifique la imagen Enterprise y el montaje de licencia. |
-| `invalid` | Solicite de nuevo el JSON a Veriqorn y confirme que pertenece a esta instalación. |
-| `expired` | Solicite una renovación; Community sigue disponible. |
-| Capacidad no disponible | Confirme el entitlement y que la extensión Enterprise esté instalada. |
+| `not_configured` | Verifique la imagen Enterprise y el montaje de solo lectura del archivo. |
+| `invalid` | Obtenga la licencia de nuevo y confirme que pertenece a esta instalación. |
+| `expired` | Solicite una renovación; Community continúa disponible. |
+| Capacidad no disponible | Verifique el entitlement y que el overlay Enterprise esté en ejecución. |

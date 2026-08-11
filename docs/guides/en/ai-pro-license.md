@@ -1,103 +1,108 @@
 # Activating a Veriqorn Enterprise license
 
-Veriqorn Community works without a product license. Enterprise AI capabilities
-work offline with a signed, installation-bound license. A license file copied
-to another installation does not activate Enterprise there.
+Enterprise uses authorized Enterprise application images and an offline,
+installation-bound license. A license does not put private modules into a
+Community image, and copying its JSON to another server does not activate it.
 
-## Before you begin
+## Choose your path
 
-Use the Enterprise overlay from the public installation repository. It mounts
-the customer license read-only and uses Enterprise images that already contain
-Veriqorn's public verification key. Customers never configure or receive
-Veriqorn's issuer private key.
+### New Enterprise installation
 
-An Enterprise license does not add private modules to a running Community
-image. To move an existing Community deployment to Enterprise, apply
-`compose.enterprise.yml`: it replaces only the `backend` and `frontend`
-containers with the authorized Enterprise images. PostgreSQL, MinIO, named
-volumes, projects, and test history stay in place, so no reinstallation is
-required.
+1. Complete the [Quick Start](quick-start-installation.md) once to create the
+   deployment, administrator account, and installation identity.
+2. Sign in as an administrator and open **Settings → Plan & license**.
+3. Select **Download activation request** and send the downloaded JSON to
+   Veriqorn through the agreed channel.
+4. After receiving the issued license, follow **Prepare the Enterprise overlay**
+   below before putting the installation into use.
 
-Generate and retain `VERIQORN_INSTALLATION_KEY_ENCRYPTION_KEY` for the
-installation. It is a 32-byte base64url secret that encrypts the local
-installation identity; losing it requires a safe re-activation procedure.
+### Existing Community installation
 
-## 1. Export an activation request
+1. Sign in as an administrator and open **Settings → Plan & license**.
+2. Select **Download activation request**, then send that JSON to Veriqorn.
+3. After receiving the license, follow **Prepare the Enterprise overlay**.
 
-Start the Enterprise installation once. An administrator then downloads the
-activation request from **Settings → Plan** or calls:
+This is an in-place transition: the overlay replaces only `backend` and
+`frontend`. PostgreSQL, MinIO, named volumes, projects, users, and test history
+remain intact. Do not run `docker compose down -v` and do not reinstall.
+
+## Prepare the Enterprise overlay
+
+This step requires a trusted server operator with access to the deployment
+directory and Docker. It cannot be performed from the browser UI because it
+changes which application images Docker runs.
+
+Download the overlay files next to your existing `docker-compose.yml` and `.env`:
 
 ```bash
-curl http://localhost:3001/api/v1/edition/license-activation-request \
-  -b "auth_token=<your-session>" \
-  -o veriqorn-activation-request.json
+curl -fsSLO https://raw.githubusercontent.com/veriqorn/veriqorn-install/master/compose.enterprise.yml
+curl -fsSLO https://raw.githubusercontent.com/veriqorn/veriqorn-install/master/.env.enterprise.example
+cp .env.enterprise.example .env.enterprise
 ```
 
-Send this JSON to Veriqorn through the agreed support channel. It contains the
-installation ID, public key, and fingerprint needed to bind a license. It does
-not contain test results, projects, the installation private key, or any
-Veriqorn signing key.
-
-Every production, staging, and air-gapped installation needs its own request
-and its own license.
-
-## 2. Receive and mount the license
-
-Veriqorn signs a schema-v3 license using its issuer private key. Its envelope
-contains a payload, an Ed25519 signature with a `keyId`, expiry dates, the
-installation binding, and the granted entitlements such as `ai.analysis` or
-`ai.rag`.
-
-Store the returned JSON outside Git and mount it through
-`VERIQORN_LICENSE_FILE` in `.env.enterprise`:
+Store the issued license JSON outside Git, for example at
+`./licenses/veriqorn-license.json`. In `.env.enterprise`, set:
 
 ```env
 VERIQORN_LICENSE_FILE=./licenses/veriqorn-license.json
+# Generate once, retain securely, and never reuse between installations.
+VERIQORN_INSTALLATION_KEY_ENCRYPTION_KEY=<32-byte-base64url-secret>
 ```
 
-Start with the Community compose file and the Enterprise overlay:
+Keep the authorized immutable `ENTERPRISE_BACKEND_IMAGE` and
+`ENTERPRISE_FRONTEND_IMAGE` values supplied with the Enterprise release. The
+Enterprise image already contains Veriqorn's public verification key; customers
+never receive the issuer private key.
+
+Apply the overlay:
 
 ```bash
 docker compose --env-file .env --env-file .env.enterprise \
   -f docker-compose.yml -f compose.enterprise.yml up -d
 ```
 
-An administrator can alternatively activate the same JSON through the API:
+## Activate through the UI
+
+After the overlay is running, return to **Settings → Plan & license**. Select
+**Activate license**, upload the issued JSON (or paste its exact contents), and
+confirm. The page shows the active license, customer, expiry, and entitlements.
+
+The UI also supports **Replace license** for a renewal issued for the same
+installation. Mounting the JSON remains required by the Enterprise Compose
+overlay, so keep the original file protected and available on the server.
+
+## Console and API alternative
+
+For automation or air-gapped procedures, an administrator can export the same
+request and activate the same JSON through the API:
 
 ```bash
-curl -X POST http://localhost:3001/api/v1/edition/license-activations \
+curl http://localhost:3001/api/v1/ai/license-activation-request \
+  -b "auth_token=<your-session>" \
+  -o veriqorn-activation-request.json
+
+curl -X POST http://localhost:3001/api/v1/ai/license-activations \
   -H "Content-Type: application/json" \
   -b "auth_token=<your-session>" \
   --data-binary @veriqorn-license.json
 ```
 
-## 3. Verify the entitlement state
+## Verify the entitlement state
 
 ```bash
 curl http://localhost:3001/api/v1/edition \
   -b "auth_token=<your-session>"
 ```
 
-The response reports the license status and only the entitlements granted to
-this installation. Enterprise routes also require normal user authorization;
-a license never bypasses project or administrator permissions.
-
-## Offline, renewal, and recovery
-
-- License verification is local; no permanent Internet connection is needed.
-- For renewal, Veriqorn issues a new signed JSON for the same installation.
-- For a replacement host or lost installation identity, export a new request
-  and ask Veriqorn for a replacement license. Do not copy another host's
-  license or identity data.
-- Keep a protected backup of the database, license JSON, and installation-key
-  encryption secret together. Do not back up or distribute Veriqorn's issuer
-  private key.
+Every production, staging, and air-gapped installation needs its own activation
+request and license. License verification is local; no permanent Internet
+connection is required.
 
 ## Troubleshooting
 
 | Symptom | Resolution |
 |---|---|
-| `not_configured` | Check that the Enterprise image is installed and the license file is mounted at the configured path. |
-| `invalid` | Obtain the license from Veriqorn again; check that it belongs to this installation and was not altered. |
-| `expired` | Request a renewal license from Veriqorn. Community functionality remains available. |
-| Capability unavailable | Confirm that the relevant entitlement is included in the license and that the Enterprise extension is installed. |
+| `not_configured` | Check that the Enterprise image is running and the license file is mounted read-only. |
+| `invalid` | Obtain the license again; confirm it belongs to this installation and was not altered. |
+| `expired` | Request a renewal. Community functionality remains available. |
+| Capability unavailable | Confirm the entitlement and that the Enterprise overlay is running. |
