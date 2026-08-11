@@ -207,42 +207,6 @@ Only `docker compose down -v` removes persisted application data.
 
 ---
 
-## Upgrading
-
-To upgrade to a newer version:
-
-```bash
-# Pull new images
-docker compose -f docker-compose.yml pull
-
-# Restart with zero downtime
-docker compose -f docker-compose.yml up -d
-```
-
-Or pin a specific version in `.env`:
-
-```bash
-PLATFORM_VERSION=v0.1.0
-```
-
-The bundled update agent verifies the keyless Cosign signature of both image
-digests before activating an update. Do not loosen `UPDATE_COSIGN_IDENTITY`
-unless you intentionally publish images from a different signed workflow.
-
----
-
-## Pinning a Version
-
-By default, `PLATFORM_VERSION=latest` pulls the most recent build. For production, pin to a release tag:
-
-```bash
-PLATFORM_VERSION=v1.0.0
-```
-
-Available tags are listed on the [Veriqorn packages page](https://github.com/orgs/veriqorn/packages).
-
----
-
 ## Stopping and Cleanup
 
 ```bash

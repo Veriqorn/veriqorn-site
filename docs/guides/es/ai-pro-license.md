@@ -11,6 +11,13 @@ licencia como solo lectura y la imagen Enterprise ya contiene la clave pública
 de Veriqorn para verificar firmas. El cliente nunca recibe la clave privada
 emisora de Veriqorn.
 
+Una licencia Enterprise no agrega módulos privados a una imagen Community ya
+ejecutándose. Para pasar una instalación Community existente a Enterprise,
+aplique `compose.enterprise.yml`: solo reemplaza los contenedores `backend` y
+`frontend` por las imágenes Enterprise autorizadas. PostgreSQL, MinIO, los
+volúmenes, proyectos e historial de ejecuciones se conservan; no es necesario
+reinstalar.
+
 Genere y conserve `VERIQORN_INSTALLATION_KEY_ENCRYPTION_KEY`: un secreto
 base64url de 32 bytes que cifra la identidad privada local de la instalación.
 

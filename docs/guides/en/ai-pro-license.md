@@ -11,6 +11,13 @@ the customer license read-only and uses Enterprise images that already contain
 Veriqorn's public verification key. Customers never configure or receive
 Veriqorn's issuer private key.
 
+An Enterprise license does not add private modules to a running Community
+image. To move an existing Community deployment to Enterprise, apply
+`compose.enterprise.yml`: it replaces only the `backend` and `frontend`
+containers with the authorized Enterprise images. PostgreSQL, MinIO, named
+volumes, projects, and test history stay in place, so no reinstallation is
+required.
+
 Generate and retain `VERIQORN_INSTALLATION_KEY_ENCRYPTION_KEY` for the
 installation. It is a 32-byte base64url secret that encrypts the local
 installation identity; losing it requires a safe re-activation procedure.

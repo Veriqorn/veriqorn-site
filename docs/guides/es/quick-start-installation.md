@@ -213,42 +213,6 @@ Solo `docker compose down -v` elimina los datos persistidos de la aplicacion.
 
 ---
 
-## Actualizacion
-
-Para actualizar a una version mas reciente:
-
-```bash
-# Pull new images
-docker compose -f docker-compose.yml pull
-
-# Restart with zero downtime
-docker compose -f docker-compose.yml up -d
-```
-
-O fije una version especifica en `.env`:
-
-```bash
-PLATFORM_VERSION=v0.1.0
-```
-
-El agente de actualizacion incluido verifica las firmas keyless de Cosign de
-ambos digests de imagen antes de activar una version nueva. No cambie
-`UPDATE_COSIGN_IDENTITY` salvo que publique imagenes propias desde otro workflow firmado.
-
----
-
-## Fijar una version
-
-Por defecto, `PLATFORM_VERSION=latest` descarga la compilacion mas reciente. Para produccion, fije una etiqueta de release:
-
-```bash
-PLATFORM_VERSION=v1.0.0
-```
-
-Las etiquetas disponibles se listan en la [pagina de paquetes de Veriqorn](https://github.com/orgs/veriqorn/packages).
-
----
-
 ## Detencion y limpieza
 
 ```bash

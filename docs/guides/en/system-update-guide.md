@@ -2,7 +2,9 @@
 
 This guide describes how to update Veriqorn in a self-hosted Docker setup without losing data.
 
-Use this flow when you already run the platform with `docker-compose.yml`.
+For routine updates, use **Settings → Platform Updates** after the one-time
+agent setup below. The manual flow in this guide is for controlled maintenance,
+pinning a specific Community release, or recovery work.
 
 ---
 
@@ -27,7 +29,7 @@ Data is removed only if you explicitly delete volumes (for example `docker compo
 
 For the canonical environment contract, keep `.env` aligned with `veriqorn-install/.env.example`.
 
-### Optional: enable updates from the platform UI
+### Recommended: enable updates from the platform UI
 
 Platform administrators can start routine updates from **Settings → Platform Updates**. This requires a one-time setup by a trusted server operator.
 
@@ -75,7 +77,7 @@ docker compose --env-file .env -f docker-compose.yml cp \
 
 ---
 
-## Step 2 - Choose Target Version
+## Step 2 - Choose a Manual Target Version (advanced)
 
 Set the platform version in `.env`:
 
@@ -87,7 +89,7 @@ If you keep `latest`, each update will pull the newest published image.
 
 ---
 
-## Step 3 - Pull and Apply Update
+## Step 3 - Pull and Apply a Manual Update
 
 ```bash
 docker compose --env-file .env -f docker-compose.yml pull
@@ -101,7 +103,7 @@ What happens:
 - existing PostgreSQL and MinIO volumes are reused
 - backend runs DB migrations on startup (`migrationsRun: true`)
 
-### Or install an update from the UI
+### Preferred: install an update from the UI
 
 When the optional update agent is configured, a platform administrator can:
 

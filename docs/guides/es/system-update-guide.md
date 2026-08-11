@@ -2,7 +2,10 @@
 
 Esta guia describe como actualizar Veriqorn en una configuracion Docker self-hosted sin perder datos.
 
-Utilice este flujo cuando ya tenga la plataforma en ejecucion con `docker-compose.yml`.
+Para actualizaciones rutinarias, use **Configuracion → Actualizaciones de la
+plataforma** despues de configurar una vez el agente indicado abajo. El flujo
+manual de esta guia es para mantenimiento controlado, fijar una version
+Community especifica o recuperacion.
 
 ---
 
@@ -55,7 +58,7 @@ docker compose --env-file .env -f docker-compose.yml cp \
 
 ---
 
-## Paso 2 - Elegir la version destino
+## Paso 2 - Elegir una version para actualizacion manual (avanzado)
 
 Establezca la version de la plataforma en `.env`:
 
@@ -67,7 +70,7 @@ Si mantiene `latest`, cada actualizacion descargara la imagen publicada mas reci
 
 ---
 
-## Paso 3 - Descargar y aplicar la actualizacion
+## Paso 3 - Descargar y aplicar una actualizacion manual
 
 ```bash
 docker compose --env-file .env -f docker-compose.yml pull
@@ -157,7 +160,7 @@ Mientras su base de datos se conserve, el estado de la licencia tambien se conse
 
 ---
 
-## Actualizaciones desde la interfaz
+## Ruta recomendada: actualizar desde la interfaz
 
 Un administrador de la plataforma puede iniciar actualizaciones habituales en **Configuracion → Actualizaciones de la plataforma**. La configuracion inicial debe hacerla un operador de servidor de confianza.
 

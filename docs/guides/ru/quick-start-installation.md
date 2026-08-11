@@ -217,27 +217,6 @@ curl -X POST http://localhost:3001/api/v1/projects/default/imports/allure-jobs \
 
 ---
 
-## Обновление
-
-Чтобы обновиться до более новой версии:
-
-```bash
-docker compose -f docker-compose.yml pull
-docker compose -f docker-compose.yml up -d
-```
-
-Для фиксации конкретной версии укажите её в `.env`:
-
-```env
-PLATFORM_VERSION=v0.1.0
-```
-
-Встроенный агент обновления перед активацией новой версии проверяет keyless
-Cosign-подписи обоих image digest. Не меняйте `UPDATE_COSIGN_IDENTITY`, если не
-публикуете собственные образы из другого подписанного workflow.
-
----
-
 ## Остановка и очистка
 
 ```bash
