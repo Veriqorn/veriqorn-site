@@ -128,7 +128,7 @@ export const messages: Record<Language, AppMessages> = {
     ui: {
       navHome: "Главная",
       navDocs: "Docs",
-      navBuyPro: "Купить Pro",
+      navBuyPro: "Enterprise",
       navPricing: "Тарифы",
       footerTagline: "Верифицированное качество. Понятные выводы.",
       languageLabel: "Язык",
@@ -248,7 +248,7 @@ export const messages: Record<Language, AppMessages> = {
       pricingDescription:
         "Начните бесплатно. Подключите полный движок reasoning, когда команда будет готова.",
       freePlan: {
-        title: "Free",
+        title: "Community",
         description: "Базовый test intelligence для старта.",
         price: "$0",
         cta: "Начать бесплатно",
@@ -260,15 +260,15 @@ export const messages: Record<Language, AppMessages> = {
         ],
       },
       proPlan: {
-        title: "Pro",
+        title: "Enterprise",
         description:
-          "Полный движок reasoning с базой знаний и code-aware анализом.",
+          "Полный движок reasoning с базой знаний, code-aware анализом и офлайн-лицензией.",
         price: "По запросу",
         subtitle: "/ команда",
         badge: "Рекомендовано",
         cta: "Связаться с нами",
         features: [
-          "Все возможности Free",
+          "Все возможности Community",
           "Глубокий анализ причин падений с root cause",
           "RAG-база знаний",
           "Code-aware индексация репозиториев",
@@ -276,12 +276,12 @@ export const messages: Record<Language, AppMessages> = {
         ],
       },
       comparison: {
-        title: "Free vs Pro",
+        title: "Community vs Enterprise",
         description:
-          "Базовая платформа бесплатна. Pro открывает полный движок reasoning.",
+          "Community — открытая базовая платформа. Enterprise открывает коммерческие возможности reasoning.",
         featureColumn: "Возможность",
-        freeColumn: "Free",
-        proColumn: "Pro",
+        freeColumn: "Community",
+        proColumn: "Enterprise",
         rows: [
           { feature: "Приём и визуализация результатов тестов", free: true, pro: true },
           { feature: "История запусков и анализ трендов", free: true, pro: true },
@@ -298,7 +298,7 @@ export const messages: Record<Language, AppMessages> = {
           "Разверните и начните принимать результаты за минуты.",
         scaleTitle: "Масштабируйтесь уверенно",
         scaleDescription:
-          "Переходите на Pro, когда команде нужен глубокий reasoning и база знаний.",
+          "Переходите на Enterprise, когда команде нужен глубокий reasoning и база знаний.",
         docsTitle: "Документация",
         docsDescription:
           "Технические гайды по установке, настройке и интеграции.",
@@ -344,7 +344,7 @@ export const messages: Record<Language, AppMessages> = {
     ui: {
       navHome: "Home",
       navDocs: "Docs",
-      navBuyPro: "Buy Pro",
+      navBuyPro: "Enterprise",
       navPricing: "Pricing",
       footerTagline: "Verified quality. Clear reasoning.",
       languageLabel: "Language",
@@ -466,7 +466,7 @@ export const messages: Record<Language, AppMessages> = {
       pricingDescription:
         "Start free. Add reasoning capabilities when your team is ready.",
       freePlan: {
-        title: "Free",
+        title: "Community",
         description: "Core test intelligence for teams getting started.",
         price: "$0",
         cta: "Get started free",
@@ -478,15 +478,15 @@ export const messages: Record<Language, AppMessages> = {
         ],
       },
       proPlan: {
-        title: "Pro",
+        title: "Enterprise",
         description:
-          "Full reasoning engine with knowledge base and code-aware analysis.",
+          "Full reasoning engine with knowledge base, code-aware analysis, and offline licensing.",
         price: "Custom",
         subtitle: "/ team",
         badge: "Recommended",
         cta: "Contact us",
         features: [
-          "Everything in Free",
+          "Everything in Community",
           "Deep failure reasoning with root-cause analysis",
           "RAG-powered knowledge base",
           "Code-aware repository indexing",
@@ -494,12 +494,12 @@ export const messages: Record<Language, AppMessages> = {
         ],
       },
       comparison: {
-        title: "Free vs Pro",
+        title: "Community vs Enterprise",
         description:
-          "The core platform is free. Pro unlocks the full reasoning engine.",
+          "Community is the open base platform. Enterprise unlocks commercial reasoning capabilities.",
         featureColumn: "Capability",
-        freeColumn: "Free",
-        proColumn: "Pro",
+        freeColumn: "Community",
+        proColumn: "Enterprise",
         rows: [
           { feature: "Test result ingestion and visualization", free: true, pro: true },
           { feature: "Run history and trend analysis", free: true, pro: true },
@@ -516,7 +516,7 @@ export const messages: Record<Language, AppMessages> = {
           "Deploy and start ingesting results in minutes.",
         scaleTitle: "Scale with confidence",
         scaleDescription:
-          "Upgrade to Pro when your team needs deeper reasoning and knowledge.",
+          "Upgrade to Enterprise when your team needs deeper reasoning and knowledge.",
         docsTitle: "Documentation",
         docsDescription:
           "Technical guides for setup, configuration, and integration.",
@@ -562,7 +562,7 @@ export const messages: Record<Language, AppMessages> = {
     ui: {
       navHome: "Inicio",
       navDocs: "Docs",
-      navBuyPro: "Comprar Pro",
+      navBuyPro: "Enterprise",
       navPricing: "Precios",
       footerTagline: "Calidad verificada. Razonamiento claro.",
       languageLabel: "Idioma",
@@ -684,7 +684,7 @@ export const messages: Record<Language, AppMessages> = {
       pricingDescription:
         "Empieza gratis. Agrega capacidades de razonamiento cuando tu equipo esté listo.",
       freePlan: {
-        title: "Free",
+        title: "Community",
         description: "Test intelligence básico para equipos que están empezando.",
         price: "$0",
         cta: "Comenzar gratis",
@@ -696,15 +696,15 @@ export const messages: Record<Language, AppMessages> = {
         ],
       },
       proPlan: {
-        title: "Pro",
+        title: "Enterprise",
         description:
-          "Motor de razonamiento completo con base de conocimiento y análisis code-aware.",
+          "Motor de razonamiento completo con base de conocimiento, analisis code-aware y licencia sin conexion.",
         price: "A consultar",
         subtitle: "/ equipo",
         badge: "Recomendado",
         cta: "Contáctanos",
         features: [
-          "Todo lo incluido en Free",
+          "Todo lo incluido en Community",
           "Razonamiento profundo de fallos con análisis de causa raíz",
           "Base de conocimiento RAG",
           "Indexación code-aware de repositorios",
@@ -712,12 +712,12 @@ export const messages: Record<Language, AppMessages> = {
         ],
       },
       comparison: {
-        title: "Free vs Pro",
+        title: "Community vs Enterprise",
         description:
-          "La plataforma base es gratis. Pro desbloquea el motor de razonamiento completo.",
+          "Community es la plataforma base abierta. Enterprise desbloquea las capacidades comerciales de razonamiento.",
         featureColumn: "Funcionalidad",
-        freeColumn: "Free",
-        proColumn: "Pro",
+        freeColumn: "Community",
+        proColumn: "Enterprise",
         rows: [
           { feature: "Ingesta y visualización de resultados", free: true, pro: true },
           { feature: "Historial de ejecuciones y análisis de tendencias", free: true, pro: true },
@@ -734,7 +734,7 @@ export const messages: Record<Language, AppMessages> = {
           "Despliega y comienza a ingestar resultados en minutos.",
         scaleTitle: "Escala con confianza",
         scaleDescription:
-          "Pasa a Pro cuando tu equipo necesite razonamiento más profundo y base de conocimiento.",
+          "Pasa a Enterprise cuando tu equipo necesite razonamiento más profundo y base de conocimiento.",
         docsTitle: "Documentación",
         docsDescription:
           "Guías técnicas de instalación, configuración e integración.",

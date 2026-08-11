@@ -45,13 +45,13 @@ export function HomePage() {
       offers: [
         {
           "@type": "Offer",
-          name: "Free",
+          name: "Community",
           price: "0",
           priceCurrency: "USD",
         },
         {
           "@type": "Offer",
-          name: "Pro",
+          name: "Enterprise",
           price: "0",
           priceCurrency: "USD",
           description: "Contact sales for pricing",
