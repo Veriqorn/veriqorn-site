@@ -50,7 +50,7 @@ function PlatformReleaseLinks() {
         aria-label={`Open Veriqorn Community ${versionLabel} release notes on GitHub`}
       >
         <Github className="h-3.5 w-3.5" aria-hidden="true" />
-        <span>Community {versionLabel}</span>
+        <span>{versionLabel}</span>
         <ExternalLink className="h-3 w-3" aria-hidden="true" />
       </a>
     </div>
