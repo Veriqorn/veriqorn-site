@@ -64,17 +64,6 @@ function PlatformReleaseLinks() {
         <span>Community</span>
         <ExternalLink className="h-3 w-3" aria-hidden="true" />
       </a>
-      <a
-        href={siteConfig.installRepositoryUrl}
-        target="_blank"
-        rel="noreferrer"
-        className="inline-flex items-center gap-1 rounded-md px-1 py-1 transition-colors hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-        aria-label="Open Veriqorn installation repository on GitHub"
-      >
-        <Github className="h-3.5 w-3.5" aria-hidden="true" />
-        <span>Install</span>
-        <ExternalLink className="h-3 w-3" aria-hidden="true" />
-      </a>
     </div>
   );
 }
