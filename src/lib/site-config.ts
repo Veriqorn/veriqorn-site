@@ -18,7 +18,6 @@ export const siteConfig = {
   siteUrl,
   platformVersion,
   communityRepositoryUrl: "https://github.com/Veriqorn/veriqorn",
-  installRepositoryUrl: "https://github.com/veriqorn/veriqorn-install",
   latestReleaseManifestUrl:
-    "https://raw.githubusercontent.com/veriqorn/veriqorn-install/master/releases/latest.json",
+    "https://raw.githubusercontent.com/Veriqorn/veriqorn/main/docs/releases/latest.json",
 };

@@ -6,7 +6,7 @@ import {
   createRouter,
   useRouterState,
 } from "@tanstack/react-router";
-import { ExternalLink, Github, Tag } from "lucide-react";
+import { ExternalLink, Github } from "lucide-react";
 import { useEffect, useState } from "react";
 import { HomePage } from "@/pages/home-page";
 import { DocsPage } from "@/pages/docs-page";
@@ -43,25 +43,14 @@ function PlatformReleaseLinks() {
   return (
     <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-medium text-slate-500">
       <a
-        href={release?.releaseNotesUrl ?? siteConfig.installRepositoryUrl}
+        href={release?.releaseNotesUrl ?? siteConfig.communityRepositoryUrl}
         target="_blank"
         rel="noreferrer"
         className="inline-flex items-center gap-1 rounded-md px-1 py-1 transition-colors hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-        title="View Veriqorn release notes"
-      >
-        <Tag className="h-3.5 w-3.5" aria-hidden="true" />
-        <span>{versionLabel}</span>
-        <ExternalLink className="h-3 w-3" aria-hidden="true" />
-      </a>
-      <a
-        href={siteConfig.communityRepositoryUrl}
-        target="_blank"
-        rel="noreferrer"
-        className="inline-flex items-center gap-1 rounded-md px-1 py-1 transition-colors hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-        aria-label="Open Veriqorn Community source code on GitHub"
+        aria-label={`Open Veriqorn Community ${versionLabel} release notes on GitHub`}
       >
         <Github className="h-3.5 w-3.5" aria-hidden="true" />
-        <span>Community</span>
+        <span>Community {versionLabel}</span>
         <ExternalLink className="h-3 w-3" aria-hidden="true" />
       </a>
     </div>
