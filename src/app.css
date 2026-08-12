@@ -42,7 +42,7 @@
   h2,
   h3,
   h4 {
-    font-family: "Space Grotesk", sans-serif;
+    font-family: "Aptos", "Segoe UI Variable Text", "Trebuchet MS", sans-serif;
   }
 }
 
@@ -69,6 +69,10 @@
   .demo-platform input,
   .demo-platform select {
     font: inherit;
+  }
+
+  .demo-platform :where(h1, h2, h3, h4, h5, h6) {
+    font-family: inherit;
   }
 
   .demo-platform button {
