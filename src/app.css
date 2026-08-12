@@ -49,7 +49,7 @@
 @layer components {
   .demo-platform {
     min-height: 100vh;
-    font-family: Aptos, "Segoe UI Variable Text", "Trebuchet MS", sans-serif;
+    font-family: "Space Grotesk", sans-serif;
     color: #181f2d;
     background-image:
       radial-gradient(circle at 15% 0%, rgba(197, 221, 246, 0.64), transparent 34%),
@@ -102,6 +102,12 @@
     color: #172337;
     inset: 0;
     position: absolute;
+  }
+
+  /* Coverage now uses the shared page header for its actions, just like the
+     installed Enterprise frontend. */
+  .demo-platform [data-demo-view="coverage"] > .space-y-4 > section:first-child {
+    display: none;
   }
 
   .demo-platform span[style*="width"] {

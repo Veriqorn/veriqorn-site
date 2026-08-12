@@ -36,23 +36,125 @@ import { useEffect, useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 
 type TestStatus = "passed" | "failed" | "broken" | "skipped";
-type Run = { id: string; branch: string; title: string; status: TestStatus; time: string; duration: string; total: number; passed: number; failed: number; broken: number; skipped: number };
+type Run = {
+  id: string;
+  branch: string;
+  title: string;
+  status: TestStatus;
+  time: string;
+  duration: string;
+  total: number;
+  passed: number;
+  failed: number;
+  broken: number;
+  skipped: number;
+};
 
 const runs: Run[] = [
-  { id: "run-4821", branch: "main", title: "Release verification", status: "failed", time: "12 min ago", duration: "8m 42s", total: 128, passed: 119, failed: 3, broken: 1, skipped: 5 },
-  { id: "run-4820", branch: "feature/checkout", title: "Checkout regression", status: "broken", time: "38 min ago", duration: "6m 18s", total: 96, passed: 82, failed: 2, broken: 4, skipped: 8 },
-  { id: "run-4819", branch: "main", title: "Nightly API suite", status: "passed", time: "2 h ago", duration: "11m 06s", total: 214, passed: 207, failed: 0, broken: 0, skipped: 7 },
-  { id: "run-4818", branch: "hotfix/auth-timeout", title: "Authentication smoke", status: "passed", time: "3 h ago", duration: "2m 31s", total: 42, passed: 41, failed: 0, broken: 0, skipped: 1 },
-  { id: "run-4817", branch: "main", title: "Frontend visual checks", status: "failed", time: "Yesterday", duration: "14m 03s", total: 167, passed: 154, failed: 6, broken: 0, skipped: 7 },
+  {
+    id: "run-4821",
+    branch: "main",
+    title: "Release verification",
+    status: "failed",
+    time: "12 min ago",
+    duration: "8m 42s",
+    total: 128,
+    passed: 119,
+    failed: 3,
+    broken: 1,
+    skipped: 5,
+  },
+  {
+    id: "run-4820",
+    branch: "feature/checkout",
+    title: "Checkout regression",
+    status: "broken",
+    time: "38 min ago",
+    duration: "6m 18s",
+    total: 96,
+    passed: 82,
+    failed: 2,
+    broken: 4,
+    skipped: 8,
+  },
+  {
+    id: "run-4819",
+    branch: "main",
+    title: "Nightly API suite",
+    status: "passed",
+    time: "2 h ago",
+    duration: "11m 06s",
+    total: 214,
+    passed: 207,
+    failed: 0,
+    broken: 0,
+    skipped: 7,
+  },
+  {
+    id: "run-4818",
+    branch: "hotfix/auth-timeout",
+    title: "Authentication smoke",
+    status: "passed",
+    time: "3 h ago",
+    duration: "2m 31s",
+    total: 42,
+    passed: 41,
+    failed: 0,
+    broken: 0,
+    skipped: 1,
+  },
+  {
+    id: "run-4817",
+    branch: "main",
+    title: "Frontend visual checks",
+    status: "failed",
+    time: "Yesterday",
+    duration: "14m 03s",
+    total: 167,
+    passed: 154,
+    failed: 6,
+    broken: 0,
+    skipped: 7,
+  },
 ];
 
 const tests = [
-  { name: "Add subscription to cart via banner for unsubscribed user", suite: "Subscriptions / Cart", status: "passed" as const, duration: "11.2s" },
-  { name: "Payment is confirmed after 3-D Secure", suite: "Checkout / Payment", status: "failed" as const, duration: "18.4s" },
-  { name: "Refund is available for a completed order", suite: "Checkout / Refunds", status: "failed" as const, duration: "12.8s" },
-  { name: "Discount is recalculated after cart change", suite: "Checkout / Pricing", status: "failed" as const, duration: "8.1s" },
-  { name: "Customer receives order confirmation", suite: "Notifications", status: "broken" as const, duration: "0.7s" },
-  { name: "Guest checkout preserves selected delivery", suite: "Checkout", status: "skipped" as const, duration: "—" },
+  {
+    name: "Add subscription to cart via banner for unsubscribed user",
+    suite: "Subscriptions / Cart",
+    status: "passed" as const,
+    duration: "11.2s",
+  },
+  {
+    name: "Payment is confirmed after 3-D Secure",
+    suite: "Checkout / Payment",
+    status: "failed" as const,
+    duration: "18.4s",
+  },
+  {
+    name: "Refund is available for a completed order",
+    suite: "Checkout / Refunds",
+    status: "failed" as const,
+    duration: "12.8s",
+  },
+  {
+    name: "Discount is recalculated after cart change",
+    suite: "Checkout / Pricing",
+    status: "failed" as const,
+    duration: "8.1s",
+  },
+  {
+    name: "Customer receives order confirmation",
+    suite: "Notifications",
+    status: "broken" as const,
+    duration: "0.7s",
+  },
+  {
+    name: "Guest checkout preserves selected delivery",
+    suite: "Checkout",
+    status: "skipped" as const,
+    duration: "—",
+  },
 ];
 type DemoTest = (typeof tests)[number];
 
@@ -62,63 +164,537 @@ const statusStyle: Record<TestStatus, string> = {
   broken: "bg-amber-50 text-amber-800 ring-amber-600/20",
   skipped: "bg-slate-100 text-slate-600 ring-slate-500/20",
 };
-const statusText: any = { passed: "Passed", failed: "Failed", broken: "Broken", skipped: "Skipped" };
-const StatusIcon = ({ status, className }: { status: TestStatus; className?: string }) => {
-  const Icon = status === "passed" ? CheckCircle2 : status === "failed" ? XCircle : status === "broken" ? FileWarning : SkipForward;
+const statusText: any = {
+  passed: "Passed",
+  failed: "Failed",
+  broken: "Broken",
+  skipped: "Skipped",
+};
+const StatusIcon = ({
+  status,
+  className,
+}: {
+  status: TestStatus;
+  className?: string;
+}) => {
+  const Icon =
+    status === "passed"
+      ? CheckCircle2
+      : status === "failed"
+        ? XCircle
+        : status === "broken"
+          ? FileWarning
+          : SkipForward;
   return <Icon className={className} />;
 };
 
+function DemoHeaderActions({ view, onNavigate }: { view: string; onNavigate: () => void }) {
+  if (view === "overview") return <div className="flex flex-wrap items-center justify-end gap-2"><button onClick={() => window.dispatchEvent(new Event("demo-dashboard-filters"))} className="inline-flex items-center gap-2 rounded-xl border border-[#d9d0c4] bg-white px-3 py-2 text-xs font-semibold text-slate-600 hover:bg-[#f4ede4]"><Filter className="h-3.5 w-3.5" />Filters</button><button onClick={() => window.dispatchEvent(new Event("demo-dashboard-edit"))} className="inline-flex items-center gap-2 rounded-xl border border-[#d9d0c4] bg-white px-3 py-2 text-xs font-semibold text-slate-600 hover:bg-[#f4ede4]"><Layout className="h-3.5 w-3.5" />Edit layout</button><button onClick={onNavigate} className="inline-flex items-center gap-2 rounded-xl border border-[#d9d0c4] bg-white px-3 py-2 text-xs font-semibold text-slate-600 hover:bg-[#f4ede4]"><Settings className="h-3.5 w-3.5" />Dashboard settings</button><button onClick={onNavigate} className="rounded-xl border border-[#d9d0c4] bg-white px-3 py-2 text-xs font-semibold text-slate-600 hover:bg-[#f4ede4]">Project settings</button><button className="inline-flex items-center gap-2 rounded-xl border border-[#d9d0c4] bg-white px-3 py-2 text-xs font-semibold text-slate-600 hover:bg-[#f4ede4]"><RefreshCcw className="h-3.5 w-3.5" />Refresh</button></div>;
+  if (view === "coverage") return <div className="flex flex-wrap items-center justify-end gap-2"><button className="rounded-xl border border-[#d9d0c4] bg-white px-3 py-2 text-xs font-semibold text-slate-600 hover:bg-[#f4ede4]">Rebuild inventory</button><button className="inline-flex items-center gap-2 rounded-xl bg-[#16788a] px-3 py-2 text-xs font-semibold text-white hover:bg-[#106676]"><Sparkles className="h-3.5 w-3.5" />Generate recommendations</button></div>;
+  return null;
+}
+
 export function DemoPage() {
   const [activeSection, setActiveSection] = useState("Overview");
-  const [view, setView] = useState<"overview" | "launches" | "launch" | "results" | "test" | "coverage" | "knowledge" | "settings">("overview");
+  const [view, setView] = useState<
+    | "overview"
+    | "launches"
+    | "launch"
+    | "results"
+    | "test"
+    | "coverage"
+    | "knowledge"
+    | "settings"
+  >("overview");
   const [statusFilter, setStatusFilter] = useState<"all" | TestStatus>("all");
   const [selectedRun, setSelectedRun] = useState(runs[0]);
   const [selectedTest, setSelectedTest] = useState(tests[0]);
   const [analysisOpen, setAnalysisOpen] = useState(true);
-  const visibleRuns = useMemo(() => statusFilter === "all" ? runs : runs.filter((run) => run.status === statusFilter), [statusFilter]);
-  const navItems = [["Overview", Layout], ["Launches", Rocket], ["Coverage", Shield], ["Knowledge Base", BookOpen], ["Settings", Settings]] as const;
+  const visibleRuns = useMemo(
+    () =>
+      statusFilter === "all"
+        ? runs
+        : runs.filter((run) => run.status === statusFilter),
+    [statusFilter],
+  );
+  const navItems = [
+    ["Overview", Layout],
+    ["Launches", Rocket],
+    ["Coverage", Shield],
+    ["Knowledge Base", BookOpen],
+    ["Settings", Settings],
+  ] as const;
   const selectNav = (name: string) => {
     setActiveSection(name);
-    setView(name === "Overview" ? "overview" : name === "Launches" ? "launches" : name === "Coverage" ? "coverage" : name === "Knowledge Base" ? "knowledge" : "settings");
+    setView(
+      name === "Overview"
+        ? "overview"
+        : name === "Launches"
+          ? "launches"
+          : name === "Coverage"
+            ? "coverage"
+            : name === "Knowledge Base"
+              ? "knowledge"
+              : "settings",
+    );
   };
 
   if (view === "knowledge") {
-    return <PlatformKnowledgeBase onExit={() => { setActiveSection("Overview"); setView("overview"); }} />;
+    return (
+      <PlatformKnowledgeBase
+        onExit={() => {
+          setActiveSection("Overview");
+          setView("overview");
+        }}
+      />
+    );
   }
 
   return (
     <div className="demo-platform m-0 overflow-hidden">
       <div className="flex min-h-screen bg-transparent">
         <aside className="hidden w-[20.5rem] shrink-0 flex-col border-r border-white/10 bg-[#172337] p-3 text-[#f2eee7] shadow-[28px_0_90px_rgba(9,16,30,0.28)] lg:flex">
-          <div className="mb-6 flex items-start gap-3 px-3 py-2"><div className="grid h-12 w-12 place-items-center rounded-[1.1rem] border border-white/10 bg-white/10 text-sm font-bold tracking-[0.2em] text-white">VQ</div><div className="min-w-0 pt-1"><p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-white/40">Project</p><button className="mt-1 flex items-center gap-1 text-sm font-medium text-white/80">Acme Store <ChevronRight className="h-3.5 w-3.5 rotate-90" /></button></div></div>
-          <nav className="flex-1 space-y-1">{navItems.map(([name, Icon]) => <button key={name} onClick={() => selectNav(name)} className={cn("flex w-full items-center gap-3 rounded-[1rem] border px-3 py-3 text-left text-sm font-medium transition-all", activeSection === name ? "border-white/12 bg-white/15 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]" : "border-transparent text-white/60 hover:border-white/10 hover:bg-white/10 hover:text-white")}><Icon className="h-4 w-4" />{name}</button>)}</nav>
-          <div className="rounded-[1rem] border border-white/10 bg-white/[0.035] px-3 py-2.5"><div className="flex items-center justify-between"><span className="text-sm font-semibold text-white/85">Veriqorn</span><span className="rounded-full border border-white/10 bg-white/5 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-white/55">Demo</span></div></div>
-          <div className="mt-3 flex items-center gap-3 rounded-[1.2rem] px-3 py-3 hover:bg-white/10"><div className="grid h-11 w-11 place-items-center rounded-full border border-white/10 bg-white/10 text-sm font-bold">AS</div><div><p className="text-sm font-semibold text-white">Alex Smith</p><p className="text-xs text-white/55">demo@veriqorn.io</p></div></div>
+          <div className="mb-6 flex items-start gap-3 px-3 py-2">
+            <div className="grid h-12 w-12 place-items-center rounded-[1.1rem] border border-white/10 bg-white/10 text-sm font-bold tracking-[0.2em] text-white">
+              VQ
+            </div>
+            <div className="min-w-0 pt-1">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-white/40">
+                Project
+              </p>
+              <button className="mt-1 flex items-center gap-1 text-sm font-medium text-white/80">
+                Acme Store <ChevronRight className="h-3.5 w-3.5 rotate-90" />
+              </button>
+            </div>
+          </div>
+          <nav className="flex-1 space-y-1">
+            {navItems.map(([name, Icon]) => (
+              <button
+                key={name}
+                onClick={() => selectNav(name)}
+                className={cn(
+                  "flex w-full items-center gap-3 rounded-[1rem] border px-3 py-3 text-left text-sm font-medium transition-all",
+                  activeSection === name
+                    ? "border-white/12 bg-white/15 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]"
+                    : "border-transparent text-white/60 hover:border-white/10 hover:bg-white/10 hover:text-white",
+                )}
+              >
+                <Icon className="h-4 w-4" />
+                {name}
+              </button>
+            ))}
+          </nav>
+          <div className="rounded-[1rem] border border-white/10 bg-white/[0.035] px-3 py-2.5">
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-semibold text-white/85">
+                Veriqorn
+              </span>
+              <span className="rounded-full border border-white/10 bg-white/5 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-white/55">
+                Demo
+              </span>
+            </div>
+          </div>
+          <div className="mt-3 flex items-center gap-3 rounded-[1.2rem] px-3 py-3 hover:bg-white/10">
+            <div className="grid h-11 w-11 place-items-center rounded-full border border-white/10 bg-white/10 text-sm font-bold">
+              AS
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-white">Alex Smith</p>
+              <p className="text-xs text-white/55">demo@veriqorn.io</p>
+            </div>
+          </div>
         </aside>
 
         <div className="min-w-0 flex-1">
           <main data-demo-view={view} className="w-full p-4 md:p-6">
-            <header className="relative overflow-hidden rounded-xl border border-[#d9d0c4] bg-white/95 px-6 py-6 shadow-[0_18px_50px_-28px_rgba(15,23,42,0.28)] sm:px-8"><div className="absolute inset-x-0 top-0 h-24 bg-[linear-gradient(90deg,rgba(7,166,184,0.12),rgba(248,128,88,0.12),transparent)]" /><div className="relative flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between"><div>{["launch", "results", "test"].includes(view) && <button onClick={() => setView(view === "test" ? "results" : "launches")} className="mb-2 text-xs font-semibold text-[#16788a] hover:underline">← Back to {view === "test" ? "test results" : "launches"}</button>}<h1 className="text-3xl font-semibold tracking-tight text-[#172337]">{view === "launch" ? selectedRun.title : view === "results" ? "Test results" : view === "test" ? selectedTest.name : activeSection}</h1></div><div className="flex items-center gap-2"><span className="rounded-full border border-[#d9d0c4] bg-white px-3 py-1 text-xs font-medium text-slate-600">Acme Store</span><span className="rounded-full bg-emerald-600 px-3 py-1 text-xs font-semibold text-white">Enterprise AI</span><Link to="/" className="rounded-xl border border-[#d9d0c4] bg-white px-3 py-2 text-xs font-semibold text-slate-600 hover:bg-[#f4ede4]">Exit demo</Link></div></div></header>
-            <div className="mt-6 mb-5 rounded-xl border border-[#d9d0c4] bg-white/95 px-4 py-3 text-sm text-slate-600 shadow-[0_18px_50px_-28px_rgba(15,23,42,0.28)]"><span className="font-bold text-[#172337]">Demo workspace.</span> Explore freely — all launches, tests, and AI insights are simulated.</div>
-            {view === "launches" ? <LaunchesPageDemo onOpen={(run) => { setSelectedRun(run); setView("launch"); }} /> : view === "launch" ? <LaunchDetailDemo run={selectedRun} onOpenTest={(test) => { setSelectedTest(test); setView("test"); }} /> : view === "results" ? <ResultsExplorerDemo onOpenTest={(test) => { setSelectedTest(test); setView("test"); }} /> : view === "test" ? <TestResultDemo test={selectedTest} /> : false ? <div>
-            <section className="mb-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-              <Metric label="Test health" value="93.0%" detail="+2.4% vs. last week" icon={ShieldCheck} tone="emerald" />
-              <Metric label="Last launch" value="3 failed" detail="1 broken · 5 skipped" icon={AlertTriangle} tone="rose" />
-              <Metric label="Mean duration" value="8m 36s" detail="12% faster this week" icon={Clock3} tone="cyan" />
-              <Metric label="AI insights" value="4 new" detail="Root causes detected" icon={Sparkles} tone="violet" />
-            </section>
-
-            <div className="grid gap-6 2xl:grid-cols-[minmax(0,1.45fr)_minmax(340px,0.85fr)]">
-              <section className="overflow-hidden rounded-xl border border-[#d9d0c4] bg-white/95 shadow-[0_18px_50px_-28px_rgba(15,23,42,0.28)]">
-                <div className="flex flex-col gap-3 border-b border-[#e8e0d7] p-5"><div className="flex flex-wrap items-center justify-between gap-3"><div><h2 className="font-semibold text-[#172337]">Launches</h2><p className="mt-0.5 text-xs text-slate-500">Review and explore your test execution history.</p></div><div className="flex flex-wrap gap-2"><button className="inline-flex items-center gap-2 rounded-xl border border-[#d9d0c4] px-3 py-2 text-xs font-semibold text-slate-600 hover:bg-[#f4ede4]"><Filter className="h-3.5 w-3.5" />Filters</button><button className="inline-flex items-center gap-2 rounded-xl bg-[#16788a] px-3 py-2 text-xs font-semibold text-white"><Plus className="h-3.5 w-3.5" />Create launch</button><button className="inline-flex items-center gap-2 rounded-xl bg-[#f4ede4] px-3 py-2 text-xs font-semibold text-[#172337]"><Import className="h-3.5 w-3.5" />Import results</button><button className="rounded-xl border border-[#d9d0c4] p-2 text-slate-500"><RefreshCcw className="h-3.5 w-3.5" /></button></div></div><div className="flex items-center gap-2"><Filter className="h-4 w-4 text-slate-400" />{(["all", "failed", "broken", "passed"] as const).map((filter) => <button key={filter} onClick={() => setStatusFilter(filter)} className={cn("rounded-lg px-2.5 py-1.5 text-xs font-semibold capitalize", statusFilter === filter ? "bg-[#16788a] text-white shadow-sm" : "border border-transparent text-slate-500 hover:border-[#d9d0c4] hover:bg-[#f4ede4]")}>{filter === "all" ? "All" : statusText[filter]}</button>)}</div></div>
-                <div className="overflow-x-auto"><table className="w-full min-w-[680px] text-left text-sm"><thead className="bg-slate-50 text-[11px] uppercase tracking-wide text-slate-500"><tr><th className="px-4 py-3 font-semibold">Launch</th><th className="px-3 py-3 font-semibold">Branch</th><th className="px-3 py-3 font-semibold">Result</th><th className="px-3 py-3 font-semibold">Tests</th><th className="px-3 py-3 font-semibold">Time</th></tr></thead><tbody>{visibleRuns.map((run) => <tr key={run.id} onClick={() => { setSelectedRun(run); setView("launch"); }} className={cn("cursor-pointer border-t border-slate-100 transition hover:bg-cyan-50/50", selectedRun.id === run.id && "bg-cyan-50/60")}><td className="px-4 py-3"><div className="font-semibold text-slate-800">{run.title}</div><div className="mt-0.5 font-mono text-xs text-slate-400">#{run.id.slice(4)}</div></td><td className="px-3 py-3"><span className="inline-flex items-center gap-1.5 text-xs text-slate-600"><GitBranch className="h-3.5 w-3.5" />{run.branch}</span></td><td className="px-3 py-3"><span className={cn("inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-bold ring-1 ring-inset", statusStyle[run.status])}><StatusIcon status={run.status} className="h-3.5 w-3.5" />{statusText[run.status]}</span></td><td className="px-3 py-3"><div className="font-semibold text-slate-700">{run.passed}/{run.total}</div><div className="text-xs text-slate-400">{run.failed ? `${run.failed} failed` : "all checked"}</div></td><td className="px-3 py-3 text-xs text-slate-500">{run.time}<div className="mt-0.5">{run.duration}</div></td></tr>)}</tbody></table></div>
-              </section>
-
-              <section className="rounded-xl border border-[#d9d0c4] bg-white/95 shadow-[0_18px_50px_-28px_rgba(15,23,42,0.28)]"><div className="flex items-center justify-between border-b border-[#e8e0d7] p-5"><div><h2 className="font-semibold text-[#172337]">Launch summary</h2><p className="mt-0.5 font-mono text-xs text-slate-500">#{selectedRun.id.slice(4)} · {selectedRun.branch}</p></div><MoreHorizontal className="h-5 w-5 text-slate-400" /></div><div className="grid grid-cols-4 divide-x divide-[#e8e0d7] border-b border-[#e8e0d7] text-center">{([['Passed', selectedRun.passed, 'text-emerald-600'], ['Failed', selectedRun.failed, 'text-rose-600'], ['Broken', selectedRun.broken, 'text-amber-600'], ['Skipped', selectedRun.skipped, 'text-slate-500']] as const).map(([label, value, tone]) => <div key={label} className="py-3"><div className={cn("text-lg font-bold", tone)}>{value}</div><div className="text-[10px] font-semibold uppercase text-slate-400">{label}</div></div>)}</div><div className="p-4"><div className="mb-3 flex items-center justify-between"><h3 className="text-sm font-semibold text-[#172337]">Needs attention</h3><span className="text-xs text-slate-400">{tests.length} tests</span></div><div className="space-y-1">{tests.map((test) => <button key={test.name} onClick={() => { setSelectedTest(test); setAnalysisOpen(true); }} className={cn("flex w-full items-center gap-3 rounded-xl p-2.5 text-left hover:bg-[#f8f4ef]", selectedTest.name === test.name && "bg-[#f8f4ef] ring-1 ring-[#d9d0c4]")}><StatusIcon status={test.status} className={cn("h-4 w-4 shrink-0", test.status === "failed" ? "text-rose-500" : test.status === "broken" ? "text-amber-500" : "text-slate-400")} /><span className="min-w-0 flex-1"><span className="block truncate text-xs font-semibold text-slate-700">{test.name}</span><span className="block truncate text-[11px] text-slate-400">{test.suite}</span></span><span className="text-[11px] text-slate-400">{test.duration}</span></button>)}</div></div></section>
+            <header className="relative overflow-hidden rounded-xl border border-[#d9d0c4] bg-white/95 px-6 py-6 shadow-[0_18px_50px_-28px_rgba(15,23,42,0.28)] sm:px-8">
+              <div className="absolute inset-x-0 top-0 h-24 bg-[linear-gradient(90deg,rgba(7,166,184,0.12),rgba(248,128,88,0.12),transparent)]" />
+              <div className="relative flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+                <div>
+                  {["launch", "results", "test"].includes(view) && (
+                    <button
+                      onClick={() =>
+                        setView(view === "test" ? "results" : "launches")
+                      }
+                      className="mb-2 text-xs font-semibold text-[#16788a] hover:underline"
+                    >
+                      ← Back to {view === "test" ? "test results" : "launches"}
+                    </button>
+                  )}
+                  <h1 className="text-3xl font-semibold tracking-tight text-[#172337]">
+                    {view === "launch"
+                      ? selectedRun.title
+                      : view === "results"
+                        ? "Test results"
+                        : view === "test"
+                          ? selectedTest.name
+                          : activeSection}
+                  </h1>
+                </div>
+                <div className="flex flex-wrap items-center justify-end gap-2">
+                  <DemoHeaderActions view={view} onNavigate={() => { setActiveSection("Settings"); setView("settings"); }} />
+                  <Link
+                    to="/"
+                    className="rounded-xl border border-[#d9d0c4] bg-white px-3 py-2 text-xs font-semibold text-slate-600 hover:bg-[#f4ede4]"
+                  >
+                    Exit demo
+                  </Link>
+                </div>
+              </div>
+            </header>
+            <div className="mt-6 mb-5 rounded-xl border border-[#d9d0c4] bg-white/95 px-4 py-3 text-sm text-slate-600 shadow-[0_18px_50px_-28px_rgba(15,23,42,0.28)]">
+              <span className="font-bold text-[#172337]">Demo workspace.</span>{" "}
+              Explore freely — all launches, tests, and AI insights are
+              simulated.
             </div>
+            {view === "launches" ? (
+              <LaunchesPageDemo
+                onOpen={(run) => {
+                  setSelectedRun(run);
+                  setView("launch");
+                }}
+              />
+            ) : view === "launch" ? (
+              <LaunchDetailDemo
+                run={selectedRun}
+                onOpenTest={(test) => {
+                  setSelectedTest(test);
+                  setView("test");
+                }}
+              />
+            ) : view === "results" ? (
+              <ResultsExplorerDemo
+                onOpenTest={(test) => {
+                  setSelectedTest(test);
+                  setView("test");
+                }}
+              />
+            ) : view === "test" ? (
+              <TestResultDemo test={selectedTest} />
+            ) : false ? (
+              <div>
+                <section className="mb-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                  <Metric
+                    label="Test health"
+                    value="93.0%"
+                    detail="+2.4% vs. last week"
+                    icon={ShieldCheck}
+                    tone="emerald"
+                  />
+                  <Metric
+                    label="Last launch"
+                    value="3 failed"
+                    detail="1 broken · 5 skipped"
+                    icon={AlertTriangle}
+                    tone="rose"
+                  />
+                  <Metric
+                    label="Mean duration"
+                    value="8m 36s"
+                    detail="12% faster this week"
+                    icon={Clock3}
+                    tone="cyan"
+                  />
+                  <Metric
+                    label="AI insights"
+                    value="4 new"
+                    detail="Root causes detected"
+                    icon={Sparkles}
+                    tone="violet"
+                  />
+                </section>
 
-            {analysisOpen && <section className="mt-6 overflow-hidden rounded-xl border border-violet-200 bg-white shadow-sm"><div className="flex items-center justify-between border-b border-violet-100 bg-violet-50/70 p-4"><div className="flex items-center gap-2"><span className="grid h-8 w-8 place-items-center rounded-lg bg-violet-600 text-white"><Bot className="h-4 w-4" /></span><div><h2 className="text-sm font-bold text-violet-950">Veriqorn AI analysis</h2><p className="text-xs text-violet-700">Based on logs, history, and linked changes</p></div></div><button onClick={() => setAnalysisOpen(false)} className="text-xs font-semibold text-violet-700 hover:text-violet-950">Hide analysis</button></div><div className="grid gap-5 p-4 lg:grid-cols-[1.2fr_0.8fr]"><div><div className="mb-3 flex items-center gap-2"><StatusIcon status={selectedTest.status} className="h-4 w-4 text-rose-500" /><span className="font-semibold text-slate-800">{selectedTest.name}</span></div><p className="text-sm leading-6 text-slate-600">The payment confirmation API returned <code className="rounded bg-slate-100 px-1.5 py-0.5 text-xs text-rose-700">502 Bad Gateway</code> after the 3-D Secure redirect. This pattern first appeared in build #4818 and correlates with a change to the payment-provider client.</p><div className="mt-4 rounded-lg bg-slate-950 p-3 font-mono text-xs leading-5 text-slate-300"><span className="text-rose-300">POST</span> /api/payments/confirm → 502<br /><span className="text-slate-500">provider timeout after 15 000ms</span></div></div><div className="rounded-lg border border-violet-100 bg-violet-50/50 p-4"><div className="flex items-center gap-2 text-sm font-bold text-violet-950"><Sparkles className="h-4 w-4" />Likely root cause <span className="ml-auto rounded-full bg-violet-200 px-2 py-0.5 text-[10px]">87% confidence</span></div><p className="mt-2 text-sm leading-5 text-violet-900/80">The new retry configuration is not applied to the 3-D Secure callback request.</p><button className="mt-3 inline-flex items-center gap-1 text-xs font-bold text-violet-700 hover:text-violet-950">View suggested fix <ChevronRight className="h-3.5 w-3.5" /></button></div></div></section>}
-            </div> : <DemoSubPage view={view} run={selectedRun} test={selectedTest} onNavigate={setView} onTestSelect={(test) => { setSelectedTest(test); setView("test"); }} />}
+                <div className="grid gap-6 2xl:grid-cols-[minmax(0,1.45fr)_minmax(340px,0.85fr)]">
+                  <section className="overflow-hidden rounded-xl border border-[#d9d0c4] bg-white/95 shadow-[0_18px_50px_-28px_rgba(15,23,42,0.28)]">
+                    <div className="flex flex-col gap-3 border-b border-[#e8e0d7] p-5">
+                      <div className="flex flex-wrap items-center justify-between gap-3">
+                        <div>
+                          <h2 className="font-semibold text-[#172337]">
+                            Launches
+                          </h2>
+                          <p className="mt-0.5 text-xs text-slate-500">
+                            Review and explore your test execution history.
+                          </p>
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          <button className="inline-flex items-center gap-2 rounded-xl border border-[#d9d0c4] px-3 py-2 text-xs font-semibold text-slate-600 hover:bg-[#f4ede4]">
+                            <Filter className="h-3.5 w-3.5" />
+                            Filters
+                          </button>
+                          <button className="inline-flex items-center gap-2 rounded-xl bg-[#16788a] px-3 py-2 text-xs font-semibold text-white">
+                            <Plus className="h-3.5 w-3.5" />
+                            Create launch
+                          </button>
+                          <button className="inline-flex items-center gap-2 rounded-xl bg-[#f4ede4] px-3 py-2 text-xs font-semibold text-[#172337]">
+                            <Import className="h-3.5 w-3.5" />
+                            Import results
+                          </button>
+                          <button className="rounded-xl border border-[#d9d0c4] p-2 text-slate-500">
+                            <RefreshCcw className="h-3.5 w-3.5" />
+                          </button>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Filter className="h-4 w-4 text-slate-400" />
+                        {(["all", "failed", "broken", "passed"] as const).map(
+                          (filter) => (
+                            <button
+                              key={filter}
+                              onClick={() => setStatusFilter(filter)}
+                              className={cn(
+                                "rounded-lg px-2.5 py-1.5 text-xs font-semibold capitalize",
+                                statusFilter === filter
+                                  ? "bg-[#16788a] text-white shadow-sm"
+                                  : "border border-transparent text-slate-500 hover:border-[#d9d0c4] hover:bg-[#f4ede4]",
+                              )}
+                            >
+                              {filter === "all" ? "All" : statusText[filter]}
+                            </button>
+                          ),
+                        )}
+                      </div>
+                    </div>
+                    <div className="overflow-x-auto">
+                      <table className="w-full min-w-[680px] text-left text-sm">
+                        <thead className="bg-slate-50 text-[11px] uppercase tracking-wide text-slate-500">
+                          <tr>
+                            <th className="px-4 py-3 font-semibold">Launch</th>
+                            <th className="px-3 py-3 font-semibold">Branch</th>
+                            <th className="px-3 py-3 font-semibold">Result</th>
+                            <th className="px-3 py-3 font-semibold">Tests</th>
+                            <th className="px-3 py-3 font-semibold">Time</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {visibleRuns.map((run) => (
+                            <tr
+                              key={run.id}
+                              onClick={() => {
+                                setSelectedRun(run);
+                                setView("launch");
+                              }}
+                              className={cn(
+                                "cursor-pointer border-t border-slate-100 transition hover:bg-cyan-50/50",
+                                selectedRun.id === run.id && "bg-cyan-50/60",
+                              )}
+                            >
+                              <td className="px-4 py-3">
+                                <div className="font-semibold text-slate-800">
+                                  {run.title}
+                                </div>
+                                <div className="mt-0.5 font-mono text-xs text-slate-400">
+                                  #{run.id.slice(4)}
+                                </div>
+                              </td>
+                              <td className="px-3 py-3">
+                                <span className="inline-flex items-center gap-1.5 text-xs text-slate-600">
+                                  <GitBranch className="h-3.5 w-3.5" />
+                                  {run.branch}
+                                </span>
+                              </td>
+                              <td className="px-3 py-3">
+                                <span
+                                  className={cn(
+                                    "inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-bold ring-1 ring-inset",
+                                    statusStyle[run.status],
+                                  )}
+                                >
+                                  <StatusIcon
+                                    status={run.status}
+                                    className="h-3.5 w-3.5"
+                                  />
+                                  {statusText[run.status]}
+                                </span>
+                              </td>
+                              <td className="px-3 py-3">
+                                <div className="font-semibold text-slate-700">
+                                  {run.passed}/{run.total}
+                                </div>
+                                <div className="text-xs text-slate-400">
+                                  {run.failed
+                                    ? `${run.failed} failed`
+                                    : "all checked"}
+                                </div>
+                              </td>
+                              <td className="px-3 py-3 text-xs text-slate-500">
+                                {run.time}
+                                <div className="mt-0.5">{run.duration}</div>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </section>
+
+                  <section className="rounded-xl border border-[#d9d0c4] bg-white/95 shadow-[0_18px_50px_-28px_rgba(15,23,42,0.28)]">
+                    <div className="flex items-center justify-between border-b border-[#e8e0d7] p-5">
+                      <div>
+                        <h2 className="font-semibold text-[#172337]">
+                          Launch summary
+                        </h2>
+                        <p className="mt-0.5 font-mono text-xs text-slate-500">
+                          #{selectedRun.id.slice(4)} · {selectedRun.branch}
+                        </p>
+                      </div>
+                      <MoreHorizontal className="h-5 w-5 text-slate-400" />
+                    </div>
+                    <div className="grid grid-cols-4 divide-x divide-[#e8e0d7] border-b border-[#e8e0d7] text-center">
+                      {(
+                        [
+                          ["Passed", selectedRun.passed, "text-emerald-600"],
+                          ["Failed", selectedRun.failed, "text-rose-600"],
+                          ["Broken", selectedRun.broken, "text-amber-600"],
+                          ["Skipped", selectedRun.skipped, "text-slate-500"],
+                        ] as const
+                      ).map(([label, value, tone]) => (
+                        <div key={label} className="py-3">
+                          <div className={cn("text-lg font-bold", tone)}>
+                            {value}
+                          </div>
+                          <div className="text-[10px] font-semibold uppercase text-slate-400">
+                            {label}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="p-4">
+                      <div className="mb-3 flex items-center justify-between">
+                        <h3 className="text-sm font-semibold text-[#172337]">
+                          Needs attention
+                        </h3>
+                        <span className="text-xs text-slate-400">
+                          {tests.length} tests
+                        </span>
+                      </div>
+                      <div className="space-y-1">
+                        {tests.map((test) => (
+                          <button
+                            key={test.name}
+                            onClick={() => {
+                              setSelectedTest(test);
+                              setAnalysisOpen(true);
+                            }}
+                            className={cn(
+                              "flex w-full items-center gap-3 rounded-xl p-2.5 text-left hover:bg-[#f8f4ef]",
+                              selectedTest.name === test.name &&
+                                "bg-[#f8f4ef] ring-1 ring-[#d9d0c4]",
+                            )}
+                          >
+                            <StatusIcon
+                              status={test.status}
+                              className={cn(
+                                "h-4 w-4 shrink-0",
+                                test.status === "failed"
+                                  ? "text-rose-500"
+                                  : test.status === "broken"
+                                    ? "text-amber-500"
+                                    : "text-slate-400",
+                              )}
+                            />
+                            <span className="min-w-0 flex-1">
+                              <span className="block truncate text-xs font-semibold text-slate-700">
+                                {test.name}
+                              </span>
+                              <span className="block truncate text-[11px] text-slate-400">
+                                {test.suite}
+                              </span>
+                            </span>
+                            <span className="text-[11px] text-slate-400">
+                              {test.duration}
+                            </span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </section>
+                </div>
+
+                {analysisOpen && (
+                  <section className="mt-6 overflow-hidden rounded-xl border border-violet-200 bg-white shadow-sm">
+                    <div className="flex items-center justify-between border-b border-violet-100 bg-violet-50/70 p-4">
+                      <div className="flex items-center gap-2">
+                        <span className="grid h-8 w-8 place-items-center rounded-lg bg-violet-600 text-white">
+                          <Bot className="h-4 w-4" />
+                        </span>
+                        <div>
+                          <h2 className="text-sm font-bold text-violet-950">
+                            Veriqorn AI analysis
+                          </h2>
+                          <p className="text-xs text-violet-700">
+                            Based on logs, history, and linked changes
+                          </p>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => setAnalysisOpen(false)}
+                        className="text-xs font-semibold text-violet-700 hover:text-violet-950"
+                      >
+                        Hide analysis
+                      </button>
+                    </div>
+                    <div className="grid gap-5 p-4 lg:grid-cols-[1.2fr_0.8fr]">
+                      <div>
+                        <div className="mb-3 flex items-center gap-2">
+                          <StatusIcon
+                            status={selectedTest.status}
+                            className="h-4 w-4 text-rose-500"
+                          />
+                          <span className="font-semibold text-slate-800">
+                            {selectedTest.name}
+                          </span>
+                        </div>
+                        <p className="text-sm leading-6 text-slate-600">
+                          The payment confirmation API returned{" "}
+                          <code className="rounded bg-slate-100 px-1.5 py-0.5 text-xs text-rose-700">
+                            502 Bad Gateway
+                          </code>{" "}
+                          after the 3-D Secure redirect. This pattern first
+                          appeared in build #4818 and correlates with a change
+                          to the payment-provider client.
+                        </p>
+                        <div className="mt-4 rounded-lg bg-slate-950 p-3 font-mono text-xs leading-5 text-slate-300">
+                          <span className="text-rose-300">POST</span>{" "}
+                          /api/payments/confirm → 502
+                          <br />
+                          <span className="text-slate-500">
+                            provider timeout after 15 000ms
+                          </span>
+                        </div>
+                      </div>
+                      <div className="rounded-lg border border-violet-100 bg-violet-50/50 p-4">
+                        <div className="flex items-center gap-2 text-sm font-bold text-violet-950">
+                          <Sparkles className="h-4 w-4" />
+                          Likely root cause{" "}
+                          <span className="ml-auto rounded-full bg-violet-200 px-2 py-0.5 text-[10px]">
+                            87% confidence
+                          </span>
+                        </div>
+                        <p className="mt-2 text-sm leading-5 text-violet-900/80">
+                          The new retry configuration is not applied to the 3-D
+                          Secure callback request.
+                        </p>
+                        <button className="mt-3 inline-flex items-center gap-1 text-xs font-bold text-violet-700 hover:text-violet-950">
+                          View suggested fix{" "}
+                          <ChevronRight className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
+                    </div>
+                  </section>
+                )}
+              </div>
+            ) : (
+              <DemoSubPage
+                view={view}
+                run={selectedRun}
+                test={selectedTest}
+                onNavigate={setView}
+                onTestSelect={(test) => {
+                  setSelectedTest(test);
+                  setView("test");
+                }}
+              />
+            )}
           </main>
         </div>
       </div>
@@ -126,237 +702,3628 @@ export function DemoPage() {
   );
 }
 
-function LaunchDetailDemo({ run, onOpenTest }: { run: Run; onOpenTest: (test: DemoTest) => void }) {
-  const [tab, setTab] = useState<"overview" | "tests" | "defects" | "timeline">("overview");
+function LaunchDetailDemo({
+  run,
+  onOpenTest,
+}: {
+  run: Run;
+  onOpenTest: (test: DemoTest) => void;
+}) {
+  const [tab, setTab] = useState<"overview" | "tests" | "defects" | "timeline">(
+    "overview",
+  );
   useEffect(() => {
     const handleStatusFilter = (event: Event) => {
       const status = (event as CustomEvent<TestStatus>).detail;
       setTab(status === "failed" || status === "broken" ? "defects" : "tests");
     };
     window.addEventListener("demo-status-filter", handleStatusFilter);
-    return () => window.removeEventListener("demo-status-filter", handleStatusFilter);
+    return () =>
+      window.removeEventListener("demo-status-filter", handleStatusFilter);
   }, []);
-  const panel = "rounded-[24px] border border-[#d9d0c4] bg-white/90 shadow-[0_14px_36px_rgba(22,29,42,0.06)]";
-  return <div className="space-y-6"><section className="relative overflow-hidden rounded-xl border border-[#d9d0c4] bg-white/95 px-6 py-6 shadow-[0_18px_50px_-28px_rgba(15,23,42,0.28)]"><div className="absolute inset-x-0 top-0 h-24 bg-[linear-gradient(90deg,rgba(7,166,184,0.12),rgba(248,128,88,0.12),transparent)]" /><div className="relative flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"><h2 className="text-3xl font-semibold tracking-tight text-[#172337]">Launch detail</h2><div className="flex rounded-full border border-[#d9d0c4] bg-[#f4ede4] p-1">{(["overview", "tests", "defects", "timeline"] as const).map((item) => <button key={item} onClick={() => setTab(item)} className={cn("rounded-full px-4 py-2 text-sm capitalize transition", tab === item ? "bg-[#1674e7] text-white shadow-sm" : "text-slate-500 hover:text-[#172337]")}>{item}</button>)}</div></div></section>{tab === "overview" ? <div className="space-y-5"><div className="grid gap-5 xl:grid-cols-2"><section className={cn(panel, "p-6")}><p className="eyebrow">Results summary</p><div className="mt-5 flex items-center justify-between"><span className="rounded-full border border-[#d9d0c4] px-3 py-1.5 font-mono text-sm text-slate-600">⌁ RUN #{run.id.slice(4)}</span><span className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-semibold uppercase tracking-[.16em] text-emerald-700">Completed</span></div><h3 className="mt-5 text-xl font-semibold text-[#172337]">{run.title} [{run.branch}]</h3><p className="mt-2 text-sm text-slate-500">Aug 3, 2026, 1:37 AM &nbsp; Duration: {run.duration}</p><div className="mt-5 flex items-center gap-7"><DonutChart /><div className="grid grid-cols-2 gap-x-6 gap-y-3 text-sm"><span className="text-emerald-700">● Passed <b className="ml-3 text-[#172337]">{run.passed}</b></span><span className="text-rose-600">● Failed <b className="ml-3 text-[#172337]">{run.failed}</b></span><span className="text-amber-700">● Broken <b className="ml-3 text-[#172337]">{run.broken}</b></span><span className="text-slate-500">● Skipped <b className="ml-3 text-[#172337]">{run.skipped}</b></span><span className="col-span-2 text-xs text-slate-500">{run.total} total results</span></div></div></section><section className={cn(panel, "p-6")}><p className="eyebrow">Execution context</p><dl className="mt-6 space-y-5 text-sm"><div className="flex justify-between"><dt className="text-slate-500">Status</dt><dd className="font-medium text-[#172337]">completed</dd></div><div className="flex justify-between"><dt className="text-slate-500">Branch</dt><dd className="font-medium text-[#172337]">{run.branch}</dd></div><div className="flex justify-between"><dt className="text-slate-500">Environment</dt><dd className="font-medium text-[#172337]">local-smoke</dd></div><div className="flex justify-between"><dt className="text-slate-500">Tags</dt><dd className="font-medium text-[#172337]">target-stack, smoke, import</dd></div><div className="flex justify-between"><dt className="text-slate-500">Started</dt><dd className="font-medium text-[#172337]">Aug 3, 2026, 1:37 AM</dd></div><div className="flex justify-between"><dt className="text-slate-500">Finished</dt><dd className="font-medium text-[#172337]">Aug 3, 2026, 1:37 AM</dd></div><div className="flex justify-between"><dt className="text-slate-500">Duration</dt><dd className="font-medium text-[#172337]">{run.duration}</dd></div></dl></section></div><section className={cn(panel, "p-6")}><p className="eyebrow">Failing tests</p><div className="mt-5 grid gap-3 sm:grid-cols-2">{tests.filter((item) => item.status === "failed" || item.status === "broken").slice(0, 2).map((item) => <button key={item.name} onClick={() => onOpenTest(item)} className="rounded-xl border border-[#d9d0c4] bg-[#f4ede4]/60 p-4 text-left transition hover:border-rose-200 hover:bg-rose-50/40"><span className="rounded-full border border-rose-200 bg-rose-50 px-2 py-1 text-[10px] font-semibold uppercase text-rose-700">Failed</span><p className="mt-3 text-sm font-semibold text-[#172337]">{item.name}</p><p className="mt-2 text-xs text-slate-500">HTTP 500 Internal Server Error</p></button>)}</div></section></div> : tab === "tests" ? <ResultsExplorerDemo onOpenTest={onOpenTest} /> : tab === "defects" ? <div className="grid gap-3 xl:grid-cols-[2fr_3fr]"><section className={panel}><div className="border-b border-[#d9d0c4] p-4 text-xs text-slate-500"><b className="text-[#172337]">1</b> defects from <b className="text-[#172337]">{run.failed + run.broken}</b> unstable results</div><DefectList onSelect={() => undefined} /></section><TestResultDetail test={tests[0]} onOpen={() => onOpenTest(tests[0])} /></div> : <section className={panel}><div className="border-b border-[#d9d0c4] p-4 text-xs text-slate-500"><b className="text-[#172337]">1</b> lanes from <b className="text-[#172337]">{run.total}</b> results</div><ResultTimeline tests={tests} onSelect={() => undefined} /></section>}</div>;
+  const panel =
+    "rounded-[24px] border border-[#d9d0c4] bg-white/90 shadow-[0_14px_36px_rgba(22,29,42,0.06)]";
+  return (
+    <div className="space-y-6">
+      <section className="relative overflow-hidden rounded-xl border border-[#d9d0c4] bg-white/95 px-6 py-6 shadow-[0_18px_50px_-28px_rgba(15,23,42,0.28)]">
+        <div className="absolute inset-x-0 top-0 h-24 bg-[linear-gradient(90deg,rgba(7,166,184,0.12),rgba(248,128,88,0.12),transparent)]" />
+        <div className="relative flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <h2 className="text-3xl font-semibold tracking-tight text-[#172337]">
+            Launch detail
+          </h2>
+          <div className="flex rounded-full border border-[#d9d0c4] bg-[#f4ede4] p-1">
+            {(["overview", "tests", "defects", "timeline"] as const).map(
+              (item) => (
+                <button
+                  key={item}
+                  onClick={() => setTab(item)}
+                  className={cn(
+                    "rounded-full px-4 py-2 text-sm capitalize transition",
+                    tab === item
+                      ? "bg-[#1674e7] text-white shadow-sm"
+                      : "text-slate-500 hover:text-[#172337]",
+                  )}
+                >
+                  {item}
+                </button>
+              ),
+            )}
+          </div>
+        </div>
+      </section>
+      {tab === "overview" ? (
+        <div className="space-y-5">
+          <div className="grid gap-5 xl:grid-cols-2">
+            <section className={cn(panel, "p-6")}>
+              <p className="eyebrow">Results summary</p>
+              <div className="mt-5 flex items-center justify-between">
+                <span className="rounded-full border border-[#d9d0c4] px-3 py-1.5 font-mono text-sm text-slate-600">
+                  ⌁ RUN #{run.id.slice(4)}
+                </span>
+                <span className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-semibold uppercase tracking-[.16em] text-emerald-700">
+                  Completed
+                </span>
+              </div>
+              <h3 className="mt-5 text-xl font-semibold text-[#172337]">
+                {run.title} [{run.branch}]
+              </h3>
+              <p className="mt-2 text-sm text-slate-500">
+                Aug 3, 2026, 1:37 AM &nbsp; Duration: {run.duration}
+              </p>
+              <div className="mt-5 flex items-center gap-7">
+                <DonutChart />
+                <div className="grid grid-cols-2 gap-x-6 gap-y-3 text-sm">
+                  <span className="text-emerald-700">
+                    ● Passed <b className="ml-3 text-[#172337]">{run.passed}</b>
+                  </span>
+                  <span className="text-rose-600">
+                    ● Failed <b className="ml-3 text-[#172337]">{run.failed}</b>
+                  </span>
+                  <span className="text-amber-700">
+                    ● Broken <b className="ml-3 text-[#172337]">{run.broken}</b>
+                  </span>
+                  <span className="text-slate-500">
+                    ● Skipped{" "}
+                    <b className="ml-3 text-[#172337]">{run.skipped}</b>
+                  </span>
+                  <span className="col-span-2 text-xs text-slate-500">
+                    {run.total} total results
+                  </span>
+                </div>
+              </div>
+            </section>
+            <section className={cn(panel, "p-6")}>
+              <p className="eyebrow">Execution context</p>
+              <dl className="mt-6 space-y-5 text-sm">
+                <div className="flex justify-between">
+                  <dt className="text-slate-500">Status</dt>
+                  <dd className="font-medium text-[#172337]">completed</dd>
+                </div>
+                <div className="flex justify-between">
+                  <dt className="text-slate-500">Branch</dt>
+                  <dd className="font-medium text-[#172337]">{run.branch}</dd>
+                </div>
+                <div className="flex justify-between">
+                  <dt className="text-slate-500">Environment</dt>
+                  <dd className="font-medium text-[#172337]">local-smoke</dd>
+                </div>
+                <div className="flex justify-between">
+                  <dt className="text-slate-500">Tags</dt>
+                  <dd className="font-medium text-[#172337]">
+                    target-stack, smoke, import
+                  </dd>
+                </div>
+                <div className="flex justify-between">
+                  <dt className="text-slate-500">Started</dt>
+                  <dd className="font-medium text-[#172337]">
+                    Aug 3, 2026, 1:37 AM
+                  </dd>
+                </div>
+                <div className="flex justify-between">
+                  <dt className="text-slate-500">Finished</dt>
+                  <dd className="font-medium text-[#172337]">
+                    Aug 3, 2026, 1:37 AM
+                  </dd>
+                </div>
+                <div className="flex justify-between">
+                  <dt className="text-slate-500">Duration</dt>
+                  <dd className="font-medium text-[#172337]">{run.duration}</dd>
+                </div>
+              </dl>
+            </section>
+          </div>
+          <section className={cn(panel, "p-6")}>
+            <p className="eyebrow">Failing tests</p>
+            <div className="mt-5 grid gap-3 sm:grid-cols-2">
+              {tests
+                .filter(
+                  (item) =>
+                    item.status === "failed" || item.status === "broken",
+                )
+                .slice(0, 2)
+                .map((item) => (
+                  <button
+                    key={item.name}
+                    onClick={() => onOpenTest(item)}
+                    className="rounded-xl border border-[#d9d0c4] bg-[#f4ede4]/60 p-4 text-left transition hover:border-rose-200 hover:bg-rose-50/40"
+                  >
+                    <span className="rounded-full border border-rose-200 bg-rose-50 px-2 py-1 text-[10px] font-semibold uppercase text-rose-700">
+                      Failed
+                    </span>
+                    <p className="mt-3 text-sm font-semibold text-[#172337]">
+                      {item.name}
+                    </p>
+                    <p className="mt-2 text-xs text-slate-500">
+                      HTTP 500 Internal Server Error
+                    </p>
+                  </button>
+                ))}
+            </div>
+          </section>
+        </div>
+      ) : tab === "tests" ? (
+        <ResultsExplorerDemo onOpenTest={onOpenTest} />
+      ) : tab === "defects" ? (
+        <div className="grid gap-3 xl:grid-cols-[2fr_3fr]">
+          <section className={panel}>
+            <div className="border-b border-[#d9d0c4] p-4 text-xs text-slate-500">
+              <b className="text-[#172337]">1</b> defects from{" "}
+              <b className="text-[#172337]">{run.failed + run.broken}</b>{" "}
+              unstable results
+            </div>
+            <DefectList onSelect={() => undefined} />
+          </section>
+          <TestResultDetail
+            test={tests[0]}
+            onOpen={() => onOpenTest(tests[0])}
+          />
+        </div>
+      ) : (
+        <section className={panel}>
+          <div className="border-b border-[#d9d0c4] p-4 text-xs text-slate-500">
+            <b className="text-[#172337]">1</b> lanes from{" "}
+            <b className="text-[#172337]">{run.total}</b> results
+          </div>
+          <ResultTimeline tests={tests} onSelect={() => undefined} />
+        </section>
+      )}
+    </div>
+  );
 }
 
 function LaunchesPageDemo({ onOpen }: { onOpen: (run: Run) => void }) {
   const [filterOpen, setFilterOpen] = useState(false);
-  return <div className="space-y-6"><section className="rounded-[28px] border border-[#d9d0c4] bg-white/90 p-6 shadow-[0_20px_55px_rgba(22,29,42,0.07)]"><div className="flex flex-wrap items-center justify-between gap-4"><div className="flex flex-wrap items-center gap-2"><button onClick={() => setFilterOpen((current) => !current)} className="inline-flex items-center gap-2 rounded-lg border border-[#d9d0c4] bg-white px-3 py-2 text-sm font-medium text-[#172337]"><Filter className="h-4 w-4" />Filters</button><button className="inline-flex items-center gap-2 rounded-lg bg-[#1674e7] px-3 py-2 text-sm font-medium text-white shadow-sm"><Plus className="h-4 w-4" />Create launch</button><button className="inline-flex items-center gap-2 rounded-lg bg-[#eef2f7] px-3 py-2 text-sm font-medium text-slate-600"><Import className="h-4 w-4" />Import results</button><button className="inline-flex items-center gap-2 rounded-lg border border-[#d9d0c4] bg-white px-3 py-2 text-sm font-medium text-[#172337]"><RefreshCcw className="h-4 w-4" />Refresh</button></div><span className="text-sm text-slate-500">Page 1 of 20</span></div>{filterOpen && <div className="mt-4 flex flex-wrap gap-2 rounded-xl border border-[#d9d0c4] bg-[#f4ede4]/60 p-3 text-xs"><button className="rounded-full bg-white px-3 py-1.5 shadow-sm">Branch: all</button><button className="rounded-full bg-white px-3 py-1.5 shadow-sm">Status: all</button><button className="rounded-full bg-white px-3 py-1.5 shadow-sm">Date range</button></div>}<div className="mt-6 overflow-hidden rounded-[28px] border border-[#d9d0c4]"><table className="min-w-full divide-y divide-[#d9d0c4] bg-white/90 text-sm"><thead className="bg-[#eee9e1] text-left text-xs font-semibold uppercase tracking-[0.2em] text-slate-500"><tr><th className="px-5 py-4">Launch</th><th className="px-5 py-4">Scope</th><th className="px-5 py-4">Tests</th><th className="px-5 py-4">Status</th></tr></thead><tbody className="divide-y divide-[#d9d0c4]">{runs.concat(runs).slice(0, 8).map((run, index) => <tr key={`${run.id}-${index}`} onClick={() => onOpen(run)} className="cursor-pointer align-top transition hover:bg-[#f4ede4]/55"><td className="px-5 py-5"><p className="font-semibold text-[#172337]">{index % 3 === 0 ? `realtime-smoke-${1785731878286 - index * 251966}` : `${run.title} [${run.branch}]`}</p><div className="mt-2 flex flex-wrap items-center gap-3 text-slate-500"><span className="text-base font-semibold">Run #{269 - index}</span><span className="text-xs">Started Aug {3 - Math.floor(index / 3)}, 2026, {index < 2 ? "1:37 AM" : "5:48 PM"}</span></div></td><td className="px-5 py-5 text-xs leading-8 text-slate-500"><p><b className="tracking-[.16em] text-[#172337]">BRANCH:</b> {index % 3 === 0 ? "No branch" : run.branch}</p><p><b className="tracking-[.16em] text-[#172337]">TAGS:</b> {index % 3 === 0 ? "No tags" : "target-stack, smoke, import"}</p><p><b className="tracking-[.16em] text-[#172337]">ENVIRONMENT:</b> {index % 3 === 0 ? "No environment" : "local-smoke"}</p></td><td className="px-5 py-5"><LaunchTestBar run={run} empty={index % 3 === 0} /></td><td className="px-5 py-5"><span className="inline-flex rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-semibold uppercase tracking-[.16em] text-emerald-700">Completed</span></td></tr>)}</tbody></table></div></section></div>;
+  return (
+    <div className="space-y-6">
+      <section className="rounded-[28px] border border-[#d9d0c4] bg-white/90 p-6 shadow-[0_20px_55px_rgba(22,29,42,0.07)]">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              onClick={() => setFilterOpen((current) => !current)}
+              className="inline-flex items-center gap-2 rounded-lg border border-[#d9d0c4] bg-white px-3 py-2 text-sm font-medium text-[#172337]"
+            >
+              <Filter className="h-4 w-4" />
+              Filters
+            </button>
+            <button className="inline-flex items-center gap-2 rounded-lg bg-[#1674e7] px-3 py-2 text-sm font-medium text-white shadow-sm">
+              <Plus className="h-4 w-4" />
+              Create launch
+            </button>
+            <button className="inline-flex items-center gap-2 rounded-lg bg-[#eef2f7] px-3 py-2 text-sm font-medium text-slate-600">
+              <Import className="h-4 w-4" />
+              Import results
+            </button>
+            <button className="inline-flex items-center gap-2 rounded-lg border border-[#d9d0c4] bg-white px-3 py-2 text-sm font-medium text-[#172337]">
+              <RefreshCcw className="h-4 w-4" />
+              Refresh
+            </button>
+          </div>
+          <span className="text-sm text-slate-500">Page 1 of 20</span>
+        </div>
+        {filterOpen && (
+          <div className="mt-4 flex flex-wrap gap-2 rounded-xl border border-[#d9d0c4] bg-[#f4ede4]/60 p-3 text-xs">
+            <button className="rounded-full bg-white px-3 py-1.5 shadow-sm">
+              Branch: all
+            </button>
+            <button className="rounded-full bg-white px-3 py-1.5 shadow-sm">
+              Status: all
+            </button>
+            <button className="rounded-full bg-white px-3 py-1.5 shadow-sm">
+              Date range
+            </button>
+          </div>
+        )}
+        <div className="mt-6 overflow-hidden rounded-[28px] border border-[#d9d0c4]">
+          <table className="min-w-full divide-y divide-[#d9d0c4] bg-white/90 text-sm">
+            <thead className="bg-[#eee9e1] text-left text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+              <tr>
+                <th className="px-5 py-4">Launch</th>
+                <th className="px-5 py-4">Scope</th>
+                <th className="px-5 py-4">Tests</th>
+                <th className="px-5 py-4">Status</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-[#d9d0c4]">
+              {runs
+                .concat(runs)
+                .slice(0, 8)
+                .map((run, index) => (
+                  <tr
+                    key={`${run.id}-${index}`}
+                    onClick={() => onOpen(run)}
+                    className="cursor-pointer align-top transition hover:bg-[#f4ede4]/55"
+                  >
+                    <td className="px-5 py-5">
+                      <p className="font-semibold text-[#172337]">
+                        {index % 3 === 0
+                          ? `realtime-smoke-${1785731878286 - index * 251966}`
+                          : `${run.title} [${run.branch}]`}
+                      </p>
+                      <div className="mt-2 flex flex-wrap items-center gap-3 text-slate-500">
+                        <span className="text-base font-semibold">
+                          Run #{269 - index}
+                        </span>
+                        <span className="text-xs">
+                          Started Aug {3 - Math.floor(index / 3)}, 2026,{" "}
+                          {index < 2 ? "1:37 AM" : "5:48 PM"}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="px-5 py-5 text-xs leading-8 text-slate-500">
+                      <p>
+                        <b className="tracking-[.16em] text-[#172337]">
+                          BRANCH:
+                        </b>{" "}
+                        {index % 3 === 0 ? "No branch" : run.branch}
+                      </p>
+                      <p>
+                        <b className="tracking-[.16em] text-[#172337]">TAGS:</b>{" "}
+                        {index % 3 === 0
+                          ? "No tags"
+                          : "target-stack, smoke, import"}
+                      </p>
+                      <p>
+                        <b className="tracking-[.16em] text-[#172337]">
+                          ENVIRONMENT:
+                        </b>{" "}
+                        {index % 3 === 0 ? "No environment" : "local-smoke"}
+                      </p>
+                    </td>
+                    <td className="px-5 py-5">
+                      <LaunchTestBar run={run} empty={index % 3 === 0} />
+                    </td>
+                    <td className="px-5 py-5">
+                      <span className="inline-flex rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-semibold uppercase tracking-[.16em] text-emerald-700">
+                        Completed
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  );
 }
 
 function LaunchTestBar({ run, empty }: { run: Run; empty: boolean }) {
   return <InteractiveTestBar run={run} />;
   const total = Math.max(run.total, 1);
   const passed = Math.round((run.passed / total) * 100);
-  const unstable = Math.max(0, Math.round(((run.failed + run.broken) / total) * 100));
-  return <div className="min-w-[16rem]"><div className="flex justify-between text-xs text-slate-500"><span>{total} tests</span><span>{run.passed} passed</span></div><div className="mt-2 flex h-3 overflow-hidden rounded-full border border-[#d9dfe8] bg-[#f7f9fb] p-[2px]">{passed > 0 && <span className="rounded-l-full bg-emerald-500" style={{ width: `${passed}%` }} />}{unstable > 0 && <span className="bg-rose-500" style={{ width: `${unstable}%` }} />}</div><div className="mt-2 flex gap-3 text-xs text-slate-500"><span>{run.passed} passed</span><span>{run.failed + run.broken} unstable</span><span>{run.skipped} skipped</span></div></div>;
+  const unstable = Math.max(
+    0,
+    Math.round(((run.failed + run.broken) / total) * 100),
+  );
+  return (
+    <div className="min-w-[16rem]">
+      <div className="flex justify-between text-xs text-slate-500">
+        <span>{total} tests</span>
+        <span>{run.passed} passed</span>
+      </div>
+      <div className="mt-2 flex h-3 overflow-hidden rounded-full border border-[#d9dfe8] bg-[#f7f9fb] p-[2px]">
+        {passed > 0 && (
+          <span
+            className="rounded-l-full bg-emerald-500"
+            style={{ width: `${passed}%` }}
+          />
+        )}
+        {unstable > 0 && (
+          <span className="bg-rose-500" style={{ width: `${unstable}%` }} />
+        )}
+      </div>
+      <div className="mt-2 flex gap-3 text-xs text-slate-500">
+        <span>{run.passed} passed</span>
+        <span>{run.failed + run.broken} unstable</span>
+        <span>{run.skipped} skipped</span>
+      </div>
+    </div>
+  );
 }
 
-function ResultsExplorerInteractive({ onOpenTest, panel }: { onOpenTest: (test: DemoTest) => void; panel: string }) {
+function ResultsExplorerInteractive({
+  onOpenTest,
+  panel,
+}: {
+  onOpenTest: (test: DemoTest) => void;
+  panel: string;
+}) {
   const [tab, setTab] = useState<"tests" | "defects" | "timeline">("tests");
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [query, setQuery] = useState("");
   const [errorsOnly, setErrorsOnly] = useState(false);
-  const [statuses, setStatuses] = useState<Record<TestStatus, boolean>>({ failed: true, broken: true, passed: true, skipped: true });
+  const [statuses, setStatuses] = useState<Record<TestStatus, boolean>>({
+    failed: true,
+    broken: true,
+    passed: true,
+    skipped: true,
+  });
   const selected = tests[selectedIndex] ?? tests[0];
-  const visible = tests.filter((item) => statuses[item.status] && (!errorsOnly || item.status === "failed" || item.status === "broken") && item.name.toLowerCase().includes(query.toLowerCase()));
-  const toggleStatus = (status: TestStatus) => setStatuses((current) => ({ ...current, [status]: !current[status] }));
-  return <div className="flex flex-col gap-3"><div className="flex flex-wrap items-center gap-2 rounded-[20px] border border-[#d9d0c4] bg-white/90 px-4 py-2.5 shadow-[0_8px_24px_rgba(22,29,42,0.05)]"><div className="flex gap-1 rounded-full border border-[#d9d0c4] bg-[#f4ede4]/80 p-1">{(["tests", "defects", "timeline"] as const).map((item) => <button key={item} onClick={() => setTab(item)} className={cn("rounded-full px-3 py-1 text-xs font-medium capitalize transition", tab === item ? "bg-[#f08059] text-white" : "text-slate-500 hover:text-[#172337]")}>{item}</button>)}</div><span className="h-4 w-px bg-[#d9d0c4]" />{(["failed", "broken", "passed", "skipped"] as TestStatus[]).map((status) => <button key={status} onClick={() => toggleStatus(status)} className={cn("flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold transition", statusStyle[status], !statuses[status] && "opacity-35 grayscale")}><StatusIcon status={status} className="h-3 w-3" />{statusText[status]}: {tests.filter((item) => item.status === status).length}</button>)}<span className="h-4 w-px bg-[#d9d0c4]" /><button onClick={() => setErrorsOnly((current) => !current)} className={cn("rounded-full border px-2.5 py-1 text-xs font-medium", errorsOnly ? "border-rose-300 bg-rose-50 text-rose-700" : "border-[#d9d0c4] text-slate-500")}>Errors only</button><button className="rounded-full border border-[#d9d0c4] px-2.5 py-1 text-xs text-slate-500">Longest first</button><div className="relative ml-auto"><Search className="absolute left-2.5 top-1/2 h-3 w-3 -translate-y-1/2 text-slate-400" /><input value={query} onChange={(event) => setQuery(event.target.value)} className="h-7 rounded-full border border-[#d9d0c4] bg-[#f4ede4] pl-7 pr-3 text-xs outline-none" placeholder="Search tests..." /></div></div><div className="grid gap-3 xl:grid-cols-[2fr_3fr]"><section className={panel}><div className="border-b border-[#d9d0c4] px-4 py-3"><div className="flex items-center gap-3"><p className="text-xs text-slate-500"><b className="text-[#172337]">{tab === "defects" ? 2 : visible.length}</b> {tab === "defects" ? "defects from unstable results" : `of ${tests.length} results`}</p><div className="ml-auto flex gap-2"><button className="rounded-lg border border-[#d9d0c4] px-2 py-1.5 text-[11px] font-semibold text-slate-600">Rerun selected (0)</button><button className="rounded-lg border border-[#d9d0c4] px-2 py-1.5 text-[11px] font-semibold text-slate-600">Rerun failed/broken (4)</button></div></div></div>{tab === "timeline" ? <ResultTimeline tests={tests} onSelect={setSelectedIndex} /> : tab === "defects" ? <DefectList onSelect={setSelectedIndex} /> : <div className="max-h-[70vh] overflow-y-auto divide-y divide-[#e8e0d7]"><div className="flex items-center gap-2 px-4 py-2 text-xs text-slate-500"><input type="checkbox" className="h-3.5 w-3.5" />Select visible results</div>{visible.map((item) => { const index = tests.indexOf(item); return <button key={item.name} onClick={() => setSelectedIndex(index)} className={cn("flex w-full items-center gap-2 px-4 py-3 text-left transition hover:bg-[#f4ede4]/50", selectedIndex === index && "border-l-2 border-[#f08059] bg-[#f08059]/5")}><input type="checkbox" onClick={(event) => event.stopPropagation()} className="h-3.5 w-3.5" /><StatusIcon status={item.status} className={cn("h-4 w-4", item.status === "passed" ? "text-emerald-500" : item.status === "failed" ? "text-rose-500" : item.status === "broken" ? "text-amber-500" : "text-slate-400")} /><span className="min-w-0 flex-1"><b className="block truncate text-xs text-[#172337]">{item.name}</b><span className="block truncate text-[11px] text-slate-500">{item.suite}</span></span><span className="text-[11px] text-slate-400">{item.duration}</span></button>})}</div>}</section><TestResultDetail test={selected} onOpen={() => onOpenTest(selected)} /></div></div>;
+  const visible = tests.filter(
+    (item) =>
+      statuses[item.status] &&
+      (!errorsOnly || item.status === "failed" || item.status === "broken") &&
+      item.name.toLowerCase().includes(query.toLowerCase()),
+  );
+  const toggleStatus = (status: TestStatus) =>
+    setStatuses((current) => ({ ...current, [status]: !current[status] }));
+  return (
+    <div className="flex flex-col gap-3">
+      <div className="flex flex-wrap items-center gap-2 rounded-[20px] border border-[#d9d0c4] bg-white/90 px-4 py-2.5 shadow-[0_8px_24px_rgba(22,29,42,0.05)]">
+        <div className="flex gap-1 rounded-full border border-[#d9d0c4] bg-[#f4ede4]/80 p-1">
+          {(["tests", "defects", "timeline"] as const).map((item) => (
+            <button
+              key={item}
+              onClick={() => setTab(item)}
+              className={cn(
+                "rounded-full px-3 py-1 text-xs font-medium capitalize transition",
+                tab === item
+                  ? "bg-[#f08059] text-white"
+                  : "text-slate-500 hover:text-[#172337]",
+              )}
+            >
+              {item}
+            </button>
+          ))}
+        </div>
+        <span className="h-4 w-px bg-[#d9d0c4]" />
+        {(["failed", "broken", "passed", "skipped"] as TestStatus[]).map(
+          (status) => (
+            <button
+              key={status}
+              onClick={() => toggleStatus(status)}
+              className={cn(
+                "flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold transition",
+                statusStyle[status],
+                !statuses[status] && "opacity-35 grayscale",
+              )}
+            >
+              <StatusIcon status={status} className="h-3 w-3" />
+              {statusText[status]}:{" "}
+              {tests.filter((item) => item.status === status).length}
+            </button>
+          ),
+        )}
+        <span className="h-4 w-px bg-[#d9d0c4]" />
+        <button
+          onClick={() => setErrorsOnly((current) => !current)}
+          className={cn(
+            "rounded-full border px-2.5 py-1 text-xs font-medium",
+            errorsOnly
+              ? "border-rose-300 bg-rose-50 text-rose-700"
+              : "border-[#d9d0c4] text-slate-500",
+          )}
+        >
+          Errors only
+        </button>
+        <button className="rounded-full border border-[#d9d0c4] px-2.5 py-1 text-xs text-slate-500">
+          Longest first
+        </button>
+        <div className="relative ml-auto">
+          <Search className="absolute left-2.5 top-1/2 h-3 w-3 -translate-y-1/2 text-slate-400" />
+          <input
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            className="h-7 rounded-full border border-[#d9d0c4] bg-[#f4ede4] pl-7 pr-3 text-xs outline-none"
+            placeholder="Search tests..."
+          />
+        </div>
+      </div>
+      <div className="grid gap-3 xl:grid-cols-[2fr_3fr]">
+        <section className={panel}>
+          <div className="border-b border-[#d9d0c4] px-4 py-3">
+            <div className="flex items-center gap-3">
+              <p className="text-xs text-slate-500">
+                <b className="text-[#172337]">
+                  {tab === "defects" ? 2 : visible.length}
+                </b>{" "}
+                {tab === "defects"
+                  ? "defects from unstable results"
+                  : `of ${tests.length} results`}
+              </p>
+              <div className="ml-auto flex gap-2">
+                <button className="rounded-lg border border-[#d9d0c4] px-2 py-1.5 text-[11px] font-semibold text-slate-600">
+                  Rerun selected (0)
+                </button>
+                <button className="rounded-lg border border-[#d9d0c4] px-2 py-1.5 text-[11px] font-semibold text-slate-600">
+                  Rerun failed/broken (4)
+                </button>
+              </div>
+            </div>
+          </div>
+          {tab === "timeline" ? (
+            <ResultTimeline tests={tests} onSelect={setSelectedIndex} />
+          ) : tab === "defects" ? (
+            <DefectList onSelect={setSelectedIndex} />
+          ) : (
+            <div className="max-h-[70vh] overflow-y-auto divide-y divide-[#e8e0d7]">
+              <div className="flex items-center gap-2 px-4 py-2 text-xs text-slate-500">
+                <input type="checkbox" className="h-3.5 w-3.5" />
+                Select visible results
+              </div>
+              {visible.map((item) => {
+                const index = tests.indexOf(item);
+                return (
+                  <button
+                    key={item.name}
+                    onClick={() => setSelectedIndex(index)}
+                    className={cn(
+                      "flex w-full items-center gap-2 px-4 py-3 text-left transition hover:bg-[#f4ede4]/50",
+                      selectedIndex === index &&
+                        "border-l-2 border-[#f08059] bg-[#f08059]/5",
+                    )}
+                  >
+                    <input
+                      type="checkbox"
+                      onClick={(event) => event.stopPropagation()}
+                      className="h-3.5 w-3.5"
+                    />
+                    <StatusIcon
+                      status={item.status}
+                      className={cn(
+                        "h-4 w-4",
+                        item.status === "passed"
+                          ? "text-emerald-500"
+                          : item.status === "failed"
+                            ? "text-rose-500"
+                            : item.status === "broken"
+                              ? "text-amber-500"
+                              : "text-slate-400",
+                      )}
+                    />
+                    <span className="min-w-0 flex-1">
+                      <b className="block truncate text-xs text-[#172337]">
+                        {item.name}
+                      </b>
+                      <span className="block truncate text-[11px] text-slate-500">
+                        {item.suite}
+                      </span>
+                    </span>
+                    <span className="text-[11px] text-slate-400">
+                      {item.duration}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
+        </section>
+        <TestResultDetail test={selected} onOpen={() => onOpenTest(selected)} />
+      </div>
+    </div>
+  );
 }
 
-function ResultsExplorerDemo({ onOpenTest }: { onOpenTest: (test: DemoTest) => void }) {
+function ResultsExplorerDemo({
+  onOpenTest,
+}: {
+  onOpenTest: (test: DemoTest) => void;
+}) {
   const [tab, setTab] = useState<"tests" | "defects" | "timeline">("tests");
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [query, setQuery] = useState("");
   const [errorsOnly, setErrorsOnly] = useState(false);
   const selected = tests[selectedIndex] ?? tests[0];
-  const visible = tests.filter((item) => (!errorsOnly || item.status === "failed" || item.status === "broken") && item.name.toLowerCase().includes(query.toLowerCase()));
-  const panel = "rounded-[24px] border border-[#d9d0c4] bg-white/90 shadow-[0_14px_36px_rgba(22,29,42,0.06)]";
+  const visible = tests.filter(
+    (item) =>
+      (!errorsOnly || item.status === "failed" || item.status === "broken") &&
+      item.name.toLowerCase().includes(query.toLowerCase()),
+  );
+  const panel =
+    "rounded-[24px] border border-[#d9d0c4] bg-white/90 shadow-[0_14px_36px_rgba(22,29,42,0.06)]";
   return <ResultsExplorerInteractive onOpenTest={onOpenTest} panel={panel} />;
 
-  return <div className="flex flex-col gap-3"><div className="flex flex-wrap items-center gap-2 rounded-[20px] border border-[#d9d0c4] bg-white/90 px-4 py-2.5 shadow-[0_8px_24px_rgba(22,29,42,0.05)]"><div className="flex gap-1 rounded-full border border-[#d9d0c4] bg-[#f4ede4]/80 p-1">{(["tests", "defects", "timeline"] as const).map((item) => <button key={item} onClick={() => setTab(item)} className={cn("rounded-full px-3 py-1 text-xs font-medium capitalize transition", tab === item ? "bg-[#f08059] text-white" : "text-slate-500 hover:text-[#172337]")}>{item}</button>)}</div><span className="h-4 w-px bg-[#d9d0c4]" />{(["failed", "broken", "passed", "skipped"] as TestStatus[]).map((status) => <button key={status} className={cn("flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold", statusStyle[status])}><StatusIcon status={status} className="h-3 w-3" />{statusText[status]}: {status === "failed" ? 3 : status === "broken" ? 1 : status === "passed" ? 119 : 5}</button>)}<span className="h-4 w-px bg-[#d9d0c4]" /><button onClick={() => setErrorsOnly((current) => !current)} className={cn("rounded-full border px-2.5 py-1 text-xs font-medium", errorsOnly ? "border-rose-300 bg-rose-50 text-rose-700" : "border-[#d9d0c4] text-slate-500")}>Errors only</button><button className="rounded-full border border-[#d9d0c4] px-2.5 py-1 text-xs text-slate-500">Longest first</button><div className="relative ml-auto"><Search className="absolute left-2.5 top-1/2 h-3 w-3 -translate-y-1/2 text-slate-400" /><input value={query} onChange={(event) => setQuery(event.target.value)} className="h-7 rounded-full border border-[#d9d0c4] bg-[#f4ede4] pl-7 pr-3 text-xs outline-none" placeholder="Search tests..." /></div></div><div className="grid gap-3 xl:grid-cols-[2fr_3fr]"><section className={panel}><div className="border-b border-[#d9d0c4] px-4 py-3"><div className="flex flex-wrap items-center gap-3"><p className="text-xs text-slate-500"><b className="text-[#172337]">{tab === "defects" ? 2 : visible.length}</b> {tab === "defects" ? "defects from 4 unstable results" : `of ${tests.length} results`}</p><div className="ml-auto flex gap-2"><button className="rounded-lg border border-[#d9d0c4] px-2 py-1.5 text-[11px] font-semibold text-slate-600">Rerun selected (0)</button><button className="rounded-lg border border-[#d9d0c4] px-2 py-1.5 text-[11px] font-semibold text-slate-600">Rerun failed/broken (4)</button></div></div></div>{tab === "timeline" ? <ResultTimeline tests={tests} onSelect={setSelectedIndex} /> : tab === "defects" ? <DefectList onSelect={setSelectedIndex} /> : <div className="max-h-[70vh] overflow-y-auto divide-y divide-[#e8e0d7]"><div className="flex items-center gap-2 px-4 py-2 text-xs text-slate-500"><input type="checkbox" className="h-3.5 w-3.5" />Select visible results</div>{visible.map((item) => { const index = tests.indexOf(item); return <button key={item.name} onClick={() => setSelectedIndex(index)} className={cn("flex w-full items-center gap-2 px-4 py-3 text-left transition hover:bg-[#f4ede4]/50", selectedIndex === index && "border-l-2 border-[#f08059] bg-[#f08059]/5")}><input type="checkbox" onClick={(event) => event.stopPropagation()} className="h-3.5 w-3.5" /><StatusIcon status={item.status} className={cn("h-4 w-4", item.status === "failed" ? "text-rose-500" : item.status === "broken" ? "text-amber-500" : "text-slate-400")} /><span className="min-w-0 flex-1"><b className="block truncate text-xs text-[#172337]">{item.name}</b><span className="block truncate text-[11px] text-slate-500">{item.suite}</span></span><span className="text-[11px] text-slate-400">{item.duration}</span></button>})}</div>}</section><TestResultDetail test={selected} onOpen={() => onOpenTest(selected)} /></div></div>;
+  return (
+    <div className="flex flex-col gap-3">
+      <div className="flex flex-wrap items-center gap-2 rounded-[20px] border border-[#d9d0c4] bg-white/90 px-4 py-2.5 shadow-[0_8px_24px_rgba(22,29,42,0.05)]">
+        <div className="flex gap-1 rounded-full border border-[#d9d0c4] bg-[#f4ede4]/80 p-1">
+          {(["tests", "defects", "timeline"] as const).map((item) => (
+            <button
+              key={item}
+              onClick={() => setTab(item)}
+              className={cn(
+                "rounded-full px-3 py-1 text-xs font-medium capitalize transition",
+                tab === item
+                  ? "bg-[#f08059] text-white"
+                  : "text-slate-500 hover:text-[#172337]",
+              )}
+            >
+              {item}
+            </button>
+          ))}
+        </div>
+        <span className="h-4 w-px bg-[#d9d0c4]" />
+        {(["failed", "broken", "passed", "skipped"] as TestStatus[]).map(
+          (status) => (
+            <button
+              key={status}
+              className={cn(
+                "flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold",
+                statusStyle[status],
+              )}
+            >
+              <StatusIcon status={status} className="h-3 w-3" />
+              {statusText[status]}:{" "}
+              {status === "failed"
+                ? 3
+                : status === "broken"
+                  ? 1
+                  : status === "passed"
+                    ? 119
+                    : 5}
+            </button>
+          ),
+        )}
+        <span className="h-4 w-px bg-[#d9d0c4]" />
+        <button
+          onClick={() => setErrorsOnly((current) => !current)}
+          className={cn(
+            "rounded-full border px-2.5 py-1 text-xs font-medium",
+            errorsOnly
+              ? "border-rose-300 bg-rose-50 text-rose-700"
+              : "border-[#d9d0c4] text-slate-500",
+          )}
+        >
+          Errors only
+        </button>
+        <button className="rounded-full border border-[#d9d0c4] px-2.5 py-1 text-xs text-slate-500">
+          Longest first
+        </button>
+        <div className="relative ml-auto">
+          <Search className="absolute left-2.5 top-1/2 h-3 w-3 -translate-y-1/2 text-slate-400" />
+          <input
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            className="h-7 rounded-full border border-[#d9d0c4] bg-[#f4ede4] pl-7 pr-3 text-xs outline-none"
+            placeholder="Search tests..."
+          />
+        </div>
+      </div>
+      <div className="grid gap-3 xl:grid-cols-[2fr_3fr]">
+        <section className={panel}>
+          <div className="border-b border-[#d9d0c4] px-4 py-3">
+            <div className="flex flex-wrap items-center gap-3">
+              <p className="text-xs text-slate-500">
+                <b className="text-[#172337]">
+                  {tab === "defects" ? 2 : visible.length}
+                </b>{" "}
+                {tab === "defects"
+                  ? "defects from 4 unstable results"
+                  : `of ${tests.length} results`}
+              </p>
+              <div className="ml-auto flex gap-2">
+                <button className="rounded-lg border border-[#d9d0c4] px-2 py-1.5 text-[11px] font-semibold text-slate-600">
+                  Rerun selected (0)
+                </button>
+                <button className="rounded-lg border border-[#d9d0c4] px-2 py-1.5 text-[11px] font-semibold text-slate-600">
+                  Rerun failed/broken (4)
+                </button>
+              </div>
+            </div>
+          </div>
+          {tab === "timeline" ? (
+            <ResultTimeline tests={tests} onSelect={setSelectedIndex} />
+          ) : tab === "defects" ? (
+            <DefectList onSelect={setSelectedIndex} />
+          ) : (
+            <div className="max-h-[70vh] overflow-y-auto divide-y divide-[#e8e0d7]">
+              <div className="flex items-center gap-2 px-4 py-2 text-xs text-slate-500">
+                <input type="checkbox" className="h-3.5 w-3.5" />
+                Select visible results
+              </div>
+              {visible.map((item) => {
+                const index = tests.indexOf(item);
+                return (
+                  <button
+                    key={item.name}
+                    onClick={() => setSelectedIndex(index)}
+                    className={cn(
+                      "flex w-full items-center gap-2 px-4 py-3 text-left transition hover:bg-[#f4ede4]/50",
+                      selectedIndex === index &&
+                        "border-l-2 border-[#f08059] bg-[#f08059]/5",
+                    )}
+                  >
+                    <input
+                      type="checkbox"
+                      onClick={(event) => event.stopPropagation()}
+                      className="h-3.5 w-3.5"
+                    />
+                    <StatusIcon
+                      status={item.status}
+                      className={cn(
+                        "h-4 w-4",
+                        item.status === "failed"
+                          ? "text-rose-500"
+                          : item.status === "broken"
+                            ? "text-amber-500"
+                            : "text-slate-400",
+                      )}
+                    />
+                    <span className="min-w-0 flex-1">
+                      <b className="block truncate text-xs text-[#172337]">
+                        {item.name}
+                      </b>
+                      <span className="block truncate text-[11px] text-slate-500">
+                        {item.suite}
+                      </span>
+                    </span>
+                    <span className="text-[11px] text-slate-400">
+                      {item.duration}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
+        </section>
+        <TestResultDetail test={selected} onOpen={() => onOpenTest(selected)} />
+      </div>
+    </div>
+  );
 }
 
 function DefectList({ onSelect }: { onSelect: (index: number) => void }) {
-  return <div className="divide-y divide-[#e8e0d7]">{[["Payment confirmation returns 502 after 3-D Secure", [0, 2]], ["Order confirmation service is unreachable", [3]]].map(([title, indexes], group) => <div className="px-4 py-3" key={String(title)}><button onClick={() => onSelect((indexes as number[])[0])} className="flex w-full items-start gap-2 text-left"><span className="rounded-full border border-[#d9d0c4] bg-[#f4ede4] px-2 py-0.5 text-[10px] font-semibold text-slate-500">#{group + 1}</span><FileWarning className="mt-0.5 h-3.5 w-3.5 text-amber-500" /><span className="min-w-0 flex-1"><b className="block text-xs text-[#172337]">{String(title)}</b><span className="mt-1 block text-[11px] leading-5 text-slate-500">Detected across {(indexes as number[]).length} results with matching failure details.</span></span><span className="text-[10px] text-slate-400">Expand</span></button><div className="mt-3 space-y-1.5 border-l border-dashed border-[#d9d0c4] pl-4">{(indexes as number[]).map((index) => <button key={tests[index].name} onClick={() => onSelect(index)} className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left hover:bg-[#f4ede4]"><StatusIcon status={tests[index].status} className="h-3.5 w-3.5 text-rose-500" /><span className="flex-1 truncate text-xs text-[#172337]">{tests[index].name}</span><span className="text-[10px] text-slate-400">{tests[index].duration}</span></button>)}</div></div>)}</div>;
+  return (
+    <div className="divide-y divide-[#e8e0d7]">
+      {[
+        ["Payment confirmation returns 502 after 3-D Secure", [0, 2]],
+        ["Order confirmation service is unreachable", [3]],
+      ].map(([title, indexes], group) => (
+        <div className="px-4 py-3" key={String(title)}>
+          <button
+            onClick={() => onSelect((indexes as number[])[0])}
+            className="flex w-full items-start gap-2 text-left"
+          >
+            <span className="rounded-full border border-[#d9d0c4] bg-[#f4ede4] px-2 py-0.5 text-[10px] font-semibold text-slate-500">
+              #{group + 1}
+            </span>
+            <FileWarning className="mt-0.5 h-3.5 w-3.5 text-amber-500" />
+            <span className="min-w-0 flex-1">
+              <b className="block text-xs text-[#172337]">{String(title)}</b>
+              <span className="mt-1 block text-[11px] leading-5 text-slate-500">
+                Detected across {(indexes as number[]).length} results with
+                matching failure details.
+              </span>
+            </span>
+            <span className="text-[10px] text-slate-400">Expand</span>
+          </button>
+          <div className="mt-3 space-y-1.5 border-l border-dashed border-[#d9d0c4] pl-4">
+            {(indexes as number[]).map((index) => (
+              <button
+                key={tests[index].name}
+                onClick={() => onSelect(index)}
+                className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left hover:bg-[#f4ede4]"
+              >
+                <StatusIcon
+                  status={tests[index].status}
+                  className="h-3.5 w-3.5 text-rose-500"
+                />
+                <span className="flex-1 truncate text-xs text-[#172337]">
+                  {tests[index].name}
+                </span>
+                <span className="text-[10px] text-slate-400">
+                  {tests[index].duration}
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
 }
 
-function ResultDetailTabs({ test, onOpen }: { test: DemoTest; onOpen: () => void }) {
-  const [tab, setTab] = useState<"overview" | "steps" | "history" | "retries" | "attachments" | "ai-analysis">("overview");
-  const detailTabs = [["overview", "Overview"], ["steps", "Steps", "3"], ["history", "History", "10"], ["retries", "Retries", "2"], ["attachments", "Attachments", "3"], ["ai-analysis", "AI Analysis"]] as const;
-  return <section className="min-h-[34rem] overflow-hidden rounded-[24px] border border-[#d9d0c4] bg-white/90 shadow-[0_14px_36px_rgba(22,29,42,0.06)]"><div className="flex items-start gap-3 border-b border-[#d9d0c4] p-5"><StatusIcon status={test.status} className={cn("mt-1 h-5 w-5", test.status === "failed" ? "text-rose-500" : "text-amber-500")} /><div className="min-w-0 flex-1"><span className="rounded-full border border-rose-200 bg-rose-50 px-2 py-1 text-[10px] font-semibold uppercase text-rose-700">{test.status}</span><h2 className="mt-3 text-base font-semibold text-[#172337]">{test.name}</h2><p className="mt-1 text-xs text-slate-500">Aug 2, 2026, 5:46 PM</p></div><button onClick={onOpen} className="rounded-lg border border-[#d9d0c4] px-3 py-2 text-xs font-semibold text-slate-600">↻ Rerun</button></div><div className="flex flex-wrap gap-1 border-b border-[#d9d0c4] px-4 pt-2">{detailTabs.map(([id, label, count]) => <button key={id} onClick={() => setTab(id)} className={cn("border-b-2 px-3 py-3 text-sm transition", tab === id ? "border-[#1674e7] text-[#1674e7]" : "border-transparent text-slate-500 hover:text-[#172337]")}>{label}{count && <span className="ml-1.5 rounded-full bg-[#f4ede4] px-1.5 py-0.5 text-[10px] text-slate-500">{count}</span>}</button>)}</div><div className="p-5">{tab === "overview" && <div className="space-y-5"><div className="rounded-xl border border-rose-200 bg-rose-50/75 p-4"><p className="text-xs font-bold uppercase text-rose-700">Failed at: submit checkout request</p><p className="mt-3 text-sm text-rose-800">HTTP 500 Internal Server Error</p></div><p className="eyebrow">Labels</p><span className="rounded-full border border-[#d9d0c4] px-3 py-1.5 text-xs text-slate-500">suite: Target stack smoke</span><p className="eyebrow mt-5">IDs</p><dl className="space-y-2 text-xs"><div className="flex justify-between"><dt className="text-slate-500">Result ID</dt><dd className="font-mono text-[#172337]">f791c420-52e6-432a-8b3c</dd></div><div className="flex justify-between"><dt className="text-slate-500">UUID</dt><dd className="font-mono text-[#172337]">00000000-4000-8000-0000000263</dd></div><div className="flex justify-between"><dt className="text-slate-500">Result anchor</dt><dd className="max-w-[65%] truncate font-mono text-[#172337]">/api/v1/projects/default/runs/results</dd></div></dl></div>}{tab === "steps" && <div><div className="mb-4 flex gap-2"><button className="rounded-full border border-[#d9d0c4] px-3 py-1.5 text-xs text-slate-500">⌄ Expand all</button><button className="rounded-full border border-[#d9d0c4] px-3 py-1.5 text-xs text-slate-500">⌃ Collapse all</button></div><StepRow number="1" name="Complete checkout" status="passed" duration="10.3s" /><div className="ml-5 border-l border-dashed border-[#d9d0c4] pl-3"><StepRow number="1.1" name="Create a checkout session" status="passed" duration="2.4s" /><StepRow number="1.2" name="Complete 3-D Secure authentication" status="passed" duration="4.8s" /><StepRow number="1.3" name="Confirm payment" status="failed" duration="3.1s" /><div className="rounded-md border border-rose-200 bg-rose-50/75 px-3 py-2 text-xs text-rose-800">HTTP 500 Internal Server Error<pre className="mt-2 text-[10px] opacity-80">at checkout/payment.spec.ts:184:21</pre></div></div></div>}{tab === "history" && <RunHistory />}{tab === "retries" && <RunHistory retries />}{tab === "attachments" && <div><p className="mb-4 text-sm text-slate-600">3 files extracted from execution steps.</p><AttachmentRow icon={FileText} name="payment-response.json" kind="application/json · 4.2 KB" /><AttachmentRow icon={FileWarning} name="failure-screenshot.png" kind="image/png · 186 KB" preview /><AttachmentRow icon={Code2} name="trace.zip" kind="application/zip · 1.8 MB" /></div>}{tab === "ai-analysis" && <div className="space-y-4"><div className="flex items-center gap-2"><Bot className="h-5 w-5 text-[#16788a]" /><h3 className="font-semibold text-[#172337]">Veriqorn AI Analysis</h3><span className="ml-auto rounded-full bg-[#f4ede4] px-2 py-1 text-xs text-slate-500">87% confidence</span></div><p className="text-sm leading-6 text-slate-600">The payment confirmation API returned a 502 after the 3-D Secure redirect. The failure correlates with a retry configuration change in the provider client.</p><div className="rounded-xl bg-[#172337] p-4 font-mono text-xs leading-6 text-slate-200"><span className="text-cyan-300">Suggested root cause</span><br />Retry policy is not applied to the 3-D Secure callback request.</div><button className="rounded-lg bg-[#16788a] px-3 py-2 text-xs font-semibold text-white">View suggested fix</button></div>}</div></section>;
+function ResultDetailTabs({
+  test,
+  onOpen,
+}: {
+  test: DemoTest;
+  onOpen: () => void;
+}) {
+  const [tab, setTab] = useState<
+    "overview" | "steps" | "history" | "retries" | "attachments" | "ai-analysis"
+  >("overview");
+  const detailTabs = [
+    ["overview", "Overview"],
+    ["steps", "Steps", "3"],
+    ["history", "History", "10"],
+    ["retries", "Retries", "2"],
+    ["attachments", "Attachments", "3"],
+    ["ai-analysis", "AI Analysis"],
+  ] as const;
+  return (
+    <section className="min-h-[34rem] overflow-hidden rounded-[24px] border border-[#d9d0c4] bg-white/90 shadow-[0_14px_36px_rgba(22,29,42,0.06)]">
+      <div className="flex items-start gap-3 border-b border-[#d9d0c4] p-5">
+        <StatusIcon
+          status={test.status}
+          className={cn(
+            "mt-1 h-5 w-5",
+            test.status === "failed" ? "text-rose-500" : "text-amber-500",
+          )}
+        />
+        <div className="min-w-0 flex-1">
+          <span className="rounded-full border border-rose-200 bg-rose-50 px-2 py-1 text-[10px] font-semibold uppercase text-rose-700">
+            {test.status}
+          </span>
+          <h2 className="mt-3 text-base font-semibold text-[#172337]">
+            {test.name}
+          </h2>
+          <p className="mt-1 text-xs text-slate-500">Aug 2, 2026, 5:46 PM</p>
+        </div>
+        <button
+          onClick={onOpen}
+          className="rounded-lg border border-[#d9d0c4] px-3 py-2 text-xs font-semibold text-slate-600"
+        >
+          ↻ Rerun
+        </button>
+      </div>
+      <div className="flex flex-wrap gap-1 border-b border-[#d9d0c4] px-4 pt-2">
+        {detailTabs.map(([id, label, count]) => (
+          <button
+            key={id}
+            onClick={() => setTab(id)}
+            className={cn(
+              "border-b-2 px-3 py-3 text-sm transition",
+              tab === id
+                ? "border-[#1674e7] text-[#1674e7]"
+                : "border-transparent text-slate-500 hover:text-[#172337]",
+            )}
+          >
+            {label}
+            {count && (
+              <span className="ml-1.5 rounded-full bg-[#f4ede4] px-1.5 py-0.5 text-[10px] text-slate-500">
+                {count}
+              </span>
+            )}
+          </button>
+        ))}
+      </div>
+      <div className="p-5">
+        {tab === "overview" && (
+          <div className="space-y-5">
+            <div className="rounded-xl border border-rose-200 bg-rose-50/75 p-4">
+              <p className="text-xs font-bold uppercase text-rose-700">
+                Failed at: submit checkout request
+              </p>
+              <p className="mt-3 text-sm text-rose-800">
+                HTTP 500 Internal Server Error
+              </p>
+            </div>
+            <p className="eyebrow">Labels</p>
+            <span className="rounded-full border border-[#d9d0c4] px-3 py-1.5 text-xs text-slate-500">
+              suite: Target stack smoke
+            </span>
+            <p className="eyebrow mt-5">IDs</p>
+            <dl className="space-y-2 text-xs">
+              <div className="flex justify-between">
+                <dt className="text-slate-500">Result ID</dt>
+                <dd className="font-mono text-[#172337]">
+                  f791c420-52e6-432a-8b3c
+                </dd>
+              </div>
+              <div className="flex justify-between">
+                <dt className="text-slate-500">UUID</dt>
+                <dd className="font-mono text-[#172337]">
+                  00000000-4000-8000-0000000263
+                </dd>
+              </div>
+              <div className="flex justify-between">
+                <dt className="text-slate-500">Result anchor</dt>
+                <dd className="max-w-[65%] truncate font-mono text-[#172337]">
+                  /api/v1/projects/default/runs/results
+                </dd>
+              </div>
+            </dl>
+          </div>
+        )}
+        {tab === "steps" && (
+          <div>
+            <div className="mb-4 flex gap-2">
+              <button className="rounded-full border border-[#d9d0c4] px-3 py-1.5 text-xs text-slate-500">
+                ⌄ Expand all
+              </button>
+              <button className="rounded-full border border-[#d9d0c4] px-3 py-1.5 text-xs text-slate-500">
+                ⌃ Collapse all
+              </button>
+            </div>
+            <StepRow
+              number="1"
+              name="Complete checkout"
+              status="passed"
+              duration="10.3s"
+            />
+            <div className="ml-5 border-l border-dashed border-[#d9d0c4] pl-3">
+              <StepRow
+                number="1.1"
+                name="Create a checkout session"
+                status="passed"
+                duration="2.4s"
+              />
+              <StepRow
+                number="1.2"
+                name="Complete 3-D Secure authentication"
+                status="passed"
+                duration="4.8s"
+              />
+              <StepRow
+                number="1.3"
+                name="Confirm payment"
+                status="failed"
+                duration="3.1s"
+              />
+              <div className="rounded-md border border-rose-200 bg-rose-50/75 px-3 py-2 text-xs text-rose-800">
+                HTTP 500 Internal Server Error
+                <pre className="mt-2 text-[10px] opacity-80">
+                  at checkout/payment.spec.ts:184:21
+                </pre>
+              </div>
+            </div>
+          </div>
+        )}
+        {tab === "history" && <RunHistory />}
+        {tab === "retries" && <RunHistory retries />}
+        {tab === "attachments" && (
+          <div>
+            <p className="mb-4 text-sm text-slate-600">
+              3 files extracted from execution steps.
+            </p>
+            <AttachmentRow
+              icon={FileText}
+              name="payment-response.json"
+              kind="application/json · 4.2 KB"
+            />
+            <AttachmentRow
+              icon={FileWarning}
+              name="failure-screenshot.png"
+              kind="image/png · 186 KB"
+              preview
+            />
+            <AttachmentRow
+              icon={Code2}
+              name="trace.zip"
+              kind="application/zip · 1.8 MB"
+            />
+          </div>
+        )}
+        {tab === "ai-analysis" && (
+          <div className="space-y-4">
+            <div className="flex items-center gap-2">
+              <Bot className="h-5 w-5 text-[#16788a]" />
+              <h3 className="font-semibold text-[#172337]">
+                Veriqorn AI Analysis
+              </h3>
+              <span className="ml-auto rounded-full bg-[#f4ede4] px-2 py-1 text-xs text-slate-500">
+                87% confidence
+              </span>
+            </div>
+            <p className="text-sm leading-6 text-slate-600">
+              The payment confirmation API returned a 502 after the 3-D Secure
+              redirect. The failure correlates with a retry configuration change
+              in the provider client.
+            </p>
+            <div className="rounded-xl bg-[#172337] p-4 font-mono text-xs leading-6 text-slate-200">
+              <span className="text-cyan-300">Suggested root cause</span>
+              <br />
+              Retry policy is not applied to the 3-D Secure callback request.
+            </div>
+            <button className="rounded-lg bg-[#16788a] px-3 py-2 text-xs font-semibold text-white">
+              View suggested fix
+            </button>
+          </div>
+        )}
+      </div>
+    </section>
+  );
 }
 
 function RunHistory({ retries = false }: { retries?: boolean }) {
-  const items = retries ? ["Retry #2 · failed · 18.4s", "Retry #1 · failed · 19.2s"] : ["Aug 2 · failed", "Aug 1 · passed", "Jul 31 · passed", "Jul 30 · failed"];
-  return <div className="space-y-2">{items.map((item) => <div key={item} className="flex items-center gap-3 rounded-lg border border-[#d9d0c4] bg-[#f4ede4]/45 px-3 py-2 text-sm"><CircleDot className="h-3.5 w-3.5 text-slate-400" /><span className="flex-1 text-[#172337]">{item}</span><ChevronRight className="h-3.5 w-3.5 text-slate-400" /></div>)}</div>;
+  const items = retries
+    ? ["Retry #2 · failed · 18.4s", "Retry #1 · failed · 19.2s"]
+    : [
+        "Aug 2 · failed",
+        "Aug 1 · passed",
+        "Jul 31 · passed",
+        "Jul 30 · failed",
+      ];
+  return (
+    <div className="space-y-2">
+      {items.map((item) => (
+        <div
+          key={item}
+          className="flex items-center gap-3 rounded-lg border border-[#d9d0c4] bg-[#f4ede4]/45 px-3 py-2 text-sm"
+        >
+          <CircleDot className="h-3.5 w-3.5 text-slate-400" />
+          <span className="flex-1 text-[#172337]">{item}</span>
+          <ChevronRight className="h-3.5 w-3.5 text-slate-400" />
+        </div>
+      ))}
+    </div>
+  );
 }
 
-function TestResultDetail({ test, onOpen }: { test: DemoTest; onOpen: () => void }) {
+function TestResultDetail({
+  test,
+  onOpen,
+}: {
+  test: DemoTest;
+  onOpen: () => void;
+}) {
   const [openSteps, setOpenSteps] = useState(false);
   return <ResultDetailTabs test={test} onOpen={onOpen} />;
-  return <section className="min-h-[34rem] rounded-[24px] border border-[#d9d0c4] bg-white/90 p-5 shadow-[0_14px_36px_rgba(22,29,42,0.06)]"><div className="flex items-start gap-3"><StatusIcon status={test.status} className={cn("mt-1 h-5 w-5", test.status === "failed" ? "text-rose-500" : "text-amber-500")} /><div className="min-w-0 flex-1"><p className="eyebrow">{test.suite}</p><h2 className="mt-1 text-lg font-semibold text-[#172337]">{test.name}</h2><p className="mt-1 text-xs text-slate-500">Finished in {test.duration}</p></div><button onClick={onOpen} className="rounded-lg border border-[#d9d0c4] px-2.5 py-1.5 text-xs font-semibold text-[#16788a]">Open</button></div><div className="mt-6 space-y-5"><div><p className="mb-2 text-[10px] font-semibold uppercase tracking-[.2em] text-slate-500">Status details</p><div className="rounded-md border border-rose-200 bg-rose-50/80 px-3 py-2 text-xs leading-5 text-rose-800">Expected payment status to equal <b>confirmed</b>, received <b>pending</b>.</div></div><div><p className="mb-2 text-[10px] font-semibold uppercase tracking-[.2em] text-slate-500">Execution steps</p><button onClick={() => setOpenSteps((current) => !current)} className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left hover:bg-[#f4ede4]"><ChevronDown className={cn("h-3.5 w-3.5 transition-transform", !openSteps && "-rotate-90")} /><span className="rounded-full border border-[#d9d0c4] bg-[#f4ede4] px-2 py-0.5 text-[10px] text-slate-500">#1</span><CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" /><span className="flex-1 text-sm text-[#172337]">Complete checkout</span><span className="text-[11px] text-slate-400">10.3s</span></button>{openSteps && <div className="ml-6 border-l border-dashed border-[#d9d0c4] pl-3"><StepRow number="1.1" name="Create a checkout session" status="passed" duration="2.4s" /><StepRow number="1.2" name="Complete 3-D Secure authentication" status="passed" duration="4.8s" /><StepRow number="1.3" name="Confirm payment" status="failed" duration="3.1s" /></div>}</div><div><p className="mb-2 text-[10px] font-semibold uppercase tracking-[.2em] text-slate-500">Attachments</p><AttachmentRow icon={FileText} name="payment-response.json" kind="application/json · 4.2 KB" /><AttachmentRow icon={FileWarning} name="failure-screenshot.png" kind="image/png · 186 KB" preview /><AttachmentRow icon={Code2} name="trace.zip" kind="application/zip · 1.8 MB" /></div></div></section>;
+  return (
+    <section className="min-h-[34rem] rounded-[24px] border border-[#d9d0c4] bg-white/90 p-5 shadow-[0_14px_36px_rgba(22,29,42,0.06)]">
+      <div className="flex items-start gap-3">
+        <StatusIcon
+          status={test.status}
+          className={cn(
+            "mt-1 h-5 w-5",
+            test.status === "failed" ? "text-rose-500" : "text-amber-500",
+          )}
+        />
+        <div className="min-w-0 flex-1">
+          <p className="eyebrow">{test.suite}</p>
+          <h2 className="mt-1 text-lg font-semibold text-[#172337]">
+            {test.name}
+          </h2>
+          <p className="mt-1 text-xs text-slate-500">
+            Finished in {test.duration}
+          </p>
+        </div>
+        <button
+          onClick={onOpen}
+          className="rounded-lg border border-[#d9d0c4] px-2.5 py-1.5 text-xs font-semibold text-[#16788a]"
+        >
+          Open
+        </button>
+      </div>
+      <div className="mt-6 space-y-5">
+        <div>
+          <p className="mb-2 text-[10px] font-semibold uppercase tracking-[.2em] text-slate-500">
+            Status details
+          </p>
+          <div className="rounded-md border border-rose-200 bg-rose-50/80 px-3 py-2 text-xs leading-5 text-rose-800">
+            Expected payment status to equal <b>confirmed</b>, received{" "}
+            <b>pending</b>.
+          </div>
+        </div>
+        <div>
+          <p className="mb-2 text-[10px] font-semibold uppercase tracking-[.2em] text-slate-500">
+            Execution steps
+          </p>
+          <button
+            onClick={() => setOpenSteps((current) => !current)}
+            className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left hover:bg-[#f4ede4]"
+          >
+            <ChevronDown
+              className={cn(
+                "h-3.5 w-3.5 transition-transform",
+                !openSteps && "-rotate-90",
+              )}
+            />
+            <span className="rounded-full border border-[#d9d0c4] bg-[#f4ede4] px-2 py-0.5 text-[10px] text-slate-500">
+              #1
+            </span>
+            <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
+            <span className="flex-1 text-sm text-[#172337]">
+              Complete checkout
+            </span>
+            <span className="text-[11px] text-slate-400">10.3s</span>
+          </button>
+          {openSteps && (
+            <div className="ml-6 border-l border-dashed border-[#d9d0c4] pl-3">
+              <StepRow
+                number="1.1"
+                name="Create a checkout session"
+                status="passed"
+                duration="2.4s"
+              />
+              <StepRow
+                number="1.2"
+                name="Complete 3-D Secure authentication"
+                status="passed"
+                duration="4.8s"
+              />
+              <StepRow
+                number="1.3"
+                name="Confirm payment"
+                status="failed"
+                duration="3.1s"
+              />
+            </div>
+          )}
+        </div>
+        <div>
+          <p className="mb-2 text-[10px] font-semibold uppercase tracking-[.2em] text-slate-500">
+            Attachments
+          </p>
+          <AttachmentRow
+            icon={FileText}
+            name="payment-response.json"
+            kind="application/json · 4.2 KB"
+          />
+          <AttachmentRow
+            icon={FileWarning}
+            name="failure-screenshot.png"
+            kind="image/png · 186 KB"
+            preview
+          />
+          <AttachmentRow
+            icon={Code2}
+            name="trace.zip"
+            kind="application/zip · 1.8 MB"
+          />
+        </div>
+      </div>
+    </section>
+  );
 }
 
-function StepRow({ number, name, status, duration }: { number: string; name: string; status: TestStatus; duration: string }) {
-  return <div className="flex items-center gap-2 rounded-lg px-2 py-2"><span className="rounded-full border border-[#d9d0c4] bg-[#f4ede4] px-2 py-0.5 text-[10px] text-slate-500">#{number}</span><StatusIcon status={status} className={cn("h-3.5 w-3.5", status === "failed" ? "text-rose-500" : "text-emerald-500")} /><span className="flex-1 text-sm text-[#172337]">{name}</span><span className="text-[11px] text-slate-400">{duration}</span></div>;
+function StepRow({
+  number,
+  name,
+  status,
+  duration,
+}: {
+  number: string;
+  name: string;
+  status: TestStatus;
+  duration: string;
+}) {
+  return (
+    <div className="flex items-center gap-2 rounded-lg px-2 py-2">
+      <span className="rounded-full border border-[#d9d0c4] bg-[#f4ede4] px-2 py-0.5 text-[10px] text-slate-500">
+        #{number}
+      </span>
+      <StatusIcon
+        status={status}
+        className={cn(
+          "h-3.5 w-3.5",
+          status === "failed" ? "text-rose-500" : "text-emerald-500",
+        )}
+      />
+      <span className="flex-1 text-sm text-[#172337]">{name}</span>
+      <span className="text-[11px] text-slate-400">{duration}</span>
+    </div>
+  );
 }
 
-function AttachmentRow({ icon: Icon, name, kind, preview = false }: { icon: typeof FileText; name: string; kind: string; preview?: boolean }) {
+function AttachmentRow({
+  icon: Icon,
+  name,
+  kind,
+  preview = false,
+}: {
+  icon: typeof FileText;
+  name: string;
+  kind: string;
+  preview?: boolean;
+}) {
   const [isPreviewOpen, setPreviewOpen] = useState(false);
-  return <div className="mb-2 rounded-lg border border-[#d9d0c4] bg-white/80 px-3 py-2"><div className="flex items-center gap-2"><Icon className="h-4 w-4 text-slate-500" /><span className="min-w-0 flex-1"><b className="block truncate text-xs text-[#172337]">{name}</b><span className="text-[10px] text-slate-500">{kind}</span></span>{preview && <button onClick={() => setPreviewOpen((current) => !current)} className="rounded-md border border-[#d9d0c4] px-2 py-1 text-[10px] font-semibold text-slate-600">{isPreviewOpen ? "Hide" : "Preview"}</button>}<button className="rounded-md border border-[#d9d0c4] p-1.5 text-slate-500" aria-label={`Download ${name}`}><Download className="h-3 w-3" /></button></div>{isPreviewOpen && <div className="mt-2 grid h-24 place-items-center rounded-md border border-dashed border-[#d9d0c4] bg-[#f4ede4] text-xs text-slate-500">Screenshot preview</div>}</div>;
+  return (
+    <div className="mb-2 rounded-lg border border-[#d9d0c4] bg-white/80 px-3 py-2">
+      <div className="flex items-center gap-2">
+        <Icon className="h-4 w-4 text-slate-500" />
+        <span className="min-w-0 flex-1">
+          <b className="block truncate text-xs text-[#172337]">{name}</b>
+          <span className="text-[10px] text-slate-500">{kind}</span>
+        </span>
+        {preview && (
+          <button
+            onClick={() => setPreviewOpen((current) => !current)}
+            className="rounded-md border border-[#d9d0c4] px-2 py-1 text-[10px] font-semibold text-slate-600"
+          >
+            {isPreviewOpen ? "Hide" : "Preview"}
+          </button>
+        )}
+        <button
+          className="rounded-md border border-[#d9d0c4] p-1.5 text-slate-500"
+          aria-label={`Download ${name}`}
+        >
+          <Download className="h-3 w-3" />
+        </button>
+      </div>
+      {isPreviewOpen && (
+        <div className="mt-2 grid h-24 place-items-center rounded-md border border-dashed border-[#d9d0c4] bg-[#f4ede4] text-xs text-slate-500">
+          Screenshot preview
+        </div>
+      )}
+    </div>
+  );
 }
 
 function TestResultDemo({ test }: { test: DemoTest }) {
-  return <div className="grid gap-3 xl:grid-cols-[2fr_3fr]"><section className="rounded-[24px] border border-[#d9d0c4] bg-white/90 p-4 shadow-[0_14px_36px_rgba(22,29,42,0.06)]"><p className="eyebrow">Test result</p><h2 className="mt-2 text-lg font-semibold text-[#172337]">{test.name}</h2><p className="mt-2 text-sm text-slate-500">Use the result explorer to select another test result.</p></section><TestResultDetail test={test} onOpen={() => undefined} /></div>;
+  return (
+    <div className="grid gap-3 xl:grid-cols-[2fr_3fr]">
+      <section className="rounded-[24px] border border-[#d9d0c4] bg-white/90 p-4 shadow-[0_14px_36px_rgba(22,29,42,0.06)]">
+        <p className="eyebrow">Test result</p>
+        <h2 className="mt-2 text-lg font-semibold text-[#172337]">
+          {test.name}
+        </h2>
+        <p className="mt-2 text-sm text-slate-500">
+          Use the result explorer to select another test result.
+        </p>
+      </section>
+      <TestResultDetail test={test} onOpen={() => undefined} />
+    </div>
+  );
 }
 
 function KnowledgeBaseDemo({ panel }: { panel: string }) {
   const [category, setCategory] = useState("All");
-  const articles = [["Checkout flow overview", "Product overview"], ["Authentication and sessions", "Architecture"], ["Test strategy and quality gates", "Testing"], ["Payment failure troubleshooting", "Runbooks"]];
-  return <div className="space-y-4"><section className={panel}><div className="flex flex-wrap items-start justify-between gap-4"><div><h2 className="flex items-center gap-2 text-2xl font-semibold text-[#172337]"><BookOpen className="h-5 w-5" />Knowledge Base</h2><p className="mt-2 text-sm text-slate-500">AI-generated documentation derived from the project's code and test history. Articles are written for non-technical stakeholders.</p><p className="mt-1 text-xs text-slate-500">24 articles · Last generated 12 minutes ago</p></div><div className="flex gap-2"><button className="inline-flex items-center gap-2 rounded-xl bg-[#16788a] px-3 py-2 text-xs font-semibold text-white"><Sparkles className="h-3.5 w-3.5" />Regenerate</button><button className="inline-flex items-center gap-2 rounded-xl border border-[#d9d0c4] px-3 py-2 text-xs font-semibold text-slate-600"><RefreshCcw className="h-3.5 w-3.5" />Refresh</button></div></div></section><div className="grid gap-4 lg:grid-cols-[280px_1fr]"><section className={panel}><h3 className="text-sm font-semibold text-[#172337]">Categories</h3><p className="mt-1 text-xs text-slate-500">Filter articles by category.</p><div className="mt-4 space-y-1">{["All", "Product overview", "Architecture", "Testing", "Runbooks"].map((item) => <button key={item} onClick={() => setCategory(item)} className={cn("flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm hover:bg-[#f4ede4]", category === item && "bg-[#f4ede4] font-medium text-[#172337]")}><span>{item}</span><span className="rounded-full border border-[#d9d0c4] px-2 py-0.5 text-[10px] text-slate-500">{item === "All" ? 24 : 6}</span></button>)}</div></section><section className={cn(panel, "p-0 overflow-hidden")}><div className="border-b border-[#d9d0c4] p-5"><h3 className="text-sm font-semibold text-[#172337]">Articles</h3></div><div className="grid gap-4 p-4 lg:grid-cols-[.4fr_.6fr]"><div className="space-y-1">{articles.filter((article) => category === "All" || article[1] === category).map((article) => <button key={article[0]} className="block w-full rounded-lg px-3 py-2 text-left hover:bg-[#f4ede4]"><span className="block truncate text-sm font-medium text-[#172337]">{article[0]}</span><span className="mt-0.5 block text-xs text-slate-500">{article[1]}</span></button>)}</div><article className="rounded-xl border border-[#d9d0c4] bg-[#f4ede4]/45 p-5"><p className="eyebrow">Product overview</p><h3 className="mt-2 text-xl font-semibold text-[#172337]">Checkout flow overview</h3><p className="mt-4 text-sm leading-6 text-slate-600">Customers can browse the catalog, add products to a cart, and complete payment through the checkout service. The platform tracks every critical path with automated tests and launch history.</p><div className="mt-5 rounded-lg border border-[#d9d0c4] bg-white p-3 text-xs text-slate-500">Generated from 18 repository sources and 42 recent test launches.</div></article></div></section></div></div>;
+  const articles = [
+    ["Checkout flow overview", "Product overview"],
+    ["Authentication and sessions", "Architecture"],
+    ["Test strategy and quality gates", "Testing"],
+    ["Payment failure troubleshooting", "Runbooks"],
+  ];
+  return (
+    <div className="space-y-4">
+      <section className={panel}>
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <h2 className="flex items-center gap-2 text-2xl font-semibold text-[#172337]">
+              <BookOpen className="h-5 w-5" />
+              Knowledge Base
+            </h2>
+            <p className="mt-2 text-sm text-slate-500">
+              AI-generated documentation derived from the project's code and
+              test history. Articles are written for non-technical stakeholders.
+            </p>
+            <p className="mt-1 text-xs text-slate-500">
+              24 articles · Last generated 12 minutes ago
+            </p>
+          </div>
+          <div className="flex gap-2">
+            <button className="inline-flex items-center gap-2 rounded-xl bg-[#16788a] px-3 py-2 text-xs font-semibold text-white">
+              <Sparkles className="h-3.5 w-3.5" />
+              Regenerate
+            </button>
+            <button className="inline-flex items-center gap-2 rounded-xl border border-[#d9d0c4] px-3 py-2 text-xs font-semibold text-slate-600">
+              <RefreshCcw className="h-3.5 w-3.5" />
+              Refresh
+            </button>
+          </div>
+        </div>
+      </section>
+      <div className="grid gap-4 lg:grid-cols-[280px_1fr]">
+        <section className={panel}>
+          <h3 className="text-sm font-semibold text-[#172337]">Categories</h3>
+          <p className="mt-1 text-xs text-slate-500">
+            Filter articles by category.
+          </p>
+          <div className="mt-4 space-y-1">
+            {[
+              "All",
+              "Product overview",
+              "Architecture",
+              "Testing",
+              "Runbooks",
+            ].map((item) => (
+              <button
+                key={item}
+                onClick={() => setCategory(item)}
+                className={cn(
+                  "flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm hover:bg-[#f4ede4]",
+                  category === item &&
+                    "bg-[#f4ede4] font-medium text-[#172337]",
+                )}
+              >
+                <span>{item}</span>
+                <span className="rounded-full border border-[#d9d0c4] px-2 py-0.5 text-[10px] text-slate-500">
+                  {item === "All" ? 24 : 6}
+                </span>
+              </button>
+            ))}
+          </div>
+        </section>
+        <section className={cn(panel, "p-0 overflow-hidden")}>
+          <div className="border-b border-[#d9d0c4] p-5">
+            <h3 className="text-sm font-semibold text-[#172337]">Articles</h3>
+          </div>
+          <div className="grid gap-4 p-4 lg:grid-cols-[.4fr_.6fr]">
+            <div className="space-y-1">
+              {articles
+                .filter(
+                  (article) => category === "All" || article[1] === category,
+                )
+                .map((article) => (
+                  <button
+                    key={article[0]}
+                    className="block w-full rounded-lg px-3 py-2 text-left hover:bg-[#f4ede4]"
+                  >
+                    <span className="block truncate text-sm font-medium text-[#172337]">
+                      {article[0]}
+                    </span>
+                    <span className="mt-0.5 block text-xs text-slate-500">
+                      {article[1]}
+                    </span>
+                  </button>
+                ))}
+            </div>
+            <article className="rounded-xl border border-[#d9d0c4] bg-[#f4ede4]/45 p-5">
+              <p className="eyebrow">Product overview</p>
+              <h3 className="mt-2 text-xl font-semibold text-[#172337]">
+                Checkout flow overview
+              </h3>
+              <p className="mt-4 text-sm leading-6 text-slate-600">
+                Customers can browse the catalog, add products to a cart, and
+                complete payment through the checkout service. The platform
+                tracks every critical path with automated tests and launch
+                history.
+              </p>
+              <div className="mt-5 rounded-lg border border-[#d9d0c4] bg-white p-3 text-xs text-slate-500">
+                Generated from 18 repository sources and 42 recent test
+                launches.
+              </div>
+            </article>
+          </div>
+        </section>
+      </div>
+    </div>
+  );
 }
 
 function SettingsDemo({ panel }: { panel: string }) {
-  const sections = [["general", "General", Settings], ["users", "User Management", CircleDot], ["projects", "Projects", Database], ["notifications", "Notifications", Sparkles], ["rerun", "Test Rerun", RefreshCcw], ["ai", "AI Analysis", Bot], ["index", "Auto-Indexing", Search], ["api", "API Keys", Code2], ["updates", "Platform Updates", Download]] as const;
+  const sections = [
+    ["general", "General", Settings],
+    ["users", "User Management", CircleDot],
+    ["projects", "Projects", Database],
+    ["notifications", "Notifications", Sparkles],
+    ["rerun", "Test Rerun", RefreshCcw],
+    ["ai", "AI Analysis", Bot],
+    ["index", "Auto-Indexing", Search],
+    ["api", "API Keys", Code2],
+    ["updates", "Platform Updates", Download],
+  ] as const;
   const [active, setActive] = useState("general");
-  return <div className="space-y-4"><section className={panel}><p className="eyebrow">Settings</p><h2 className="mt-2 text-2xl font-semibold text-[#172337]">{sections.find((section) => section[0] === active)?.[1]}</h2><p className="mt-2 text-sm text-slate-500">Configure your workspace, integrations, AI analysis, reruns, and project access.</p></section><div className="grid gap-4 lg:grid-cols-[280px_1fr]"><section className={panel}><p className="mb-3 text-xs font-semibold uppercase tracking-[.2em] text-slate-500">Settings sections</p><div className="space-y-1">{sections.map(([id, label, Icon]) => <button key={id} onClick={() => setActive(id)} className={cn("flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm", active === id ? "bg-[#f4ede4] font-semibold text-[#172337]" : "text-slate-500 hover:bg-[#f4ede4]")}><Icon className="h-4 w-4" />{label}</button>)}</div></section><section className={panel}>{active === "general" ? <div className="space-y-5"><div><h3 className="font-semibold text-[#172337]">General</h3><p className="mt-1 text-xs text-slate-500">Your account overview and current workspace settings.</p></div><label className="block text-sm text-slate-600">Active project<input value="Acme Store" readOnly className="mt-2 block w-full rounded-lg border border-[#d9d0c4] bg-white px-3 py-2 text-sm" /></label><label className="block text-sm text-slate-600">Default environment<input value="local-smoke" readOnly className="mt-2 block w-full rounded-lg border border-[#d9d0c4] bg-white px-3 py-2 text-sm" /></label><button className="rounded-xl bg-[#16788a] px-3 py-2 text-xs font-semibold text-white">Save changes</button></div> : active === "ai" ? <div><h3 className="font-semibold text-[#172337]">AI Analysis</h3><p className="mt-1 text-xs text-slate-500">Configure AI model providers, evidence connectors, and failure analysis settings.</p><div className="mt-5 rounded-xl border border-[#d9d0c4] bg-[#f4ede4]/45 p-4"><p className="text-sm font-semibold text-[#172337]">AI capabilities</p><p className="mt-2 text-sm text-slate-600">Enterprise AI active</p><select className="mt-3 w-full rounded-lg border border-[#d9d0c4] bg-white px-3 py-2 text-sm"><option>OpenAI</option><option>Azure OpenAI</option></select></div></div> : <div><h3 className="font-semibold text-[#172337]">{sections.find((section) => section[0] === active)?.[1]}</h3><p className="mt-2 text-sm leading-6 text-slate-600">This settings section is available in the full Veriqorn platform. Configure it here in the interactive demo preview.</p><button className="mt-5 rounded-xl border border-[#d9d0c4] px-3 py-2 text-xs font-semibold text-slate-600">Explore section</button></div>}</section></div></div>;
+  return (
+    <div className="space-y-4">
+      <section className={panel}>
+        <p className="eyebrow">Settings</p>
+        <h2 className="mt-2 text-2xl font-semibold text-[#172337]">
+          {sections.find((section) => section[0] === active)?.[1]}
+        </h2>
+        <p className="mt-2 text-sm text-slate-500">
+          Configure your workspace, integrations, AI analysis, reruns, and
+          project access.
+        </p>
+      </section>
+      <div className="grid gap-4 lg:grid-cols-[280px_1fr]">
+        <section className={panel}>
+          <p className="mb-3 text-xs font-semibold uppercase tracking-[.2em] text-slate-500">
+            Settings sections
+          </p>
+          <div className="space-y-1">
+            {sections.map(([id, label, Icon]) => (
+              <button
+                key={id}
+                onClick={() => setActive(id)}
+                className={cn(
+                  "flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm",
+                  active === id
+                    ? "bg-[#f4ede4] font-semibold text-[#172337]"
+                    : "text-slate-500 hover:bg-[#f4ede4]",
+                )}
+              >
+                <Icon className="h-4 w-4" />
+                {label}
+              </button>
+            ))}
+          </div>
+        </section>
+        <section className={panel}>
+          {active === "general" ? (
+            <div className="space-y-5">
+              <div>
+                <h3 className="font-semibold text-[#172337]">General</h3>
+                <p className="mt-1 text-xs text-slate-500">
+                  Your account overview and current workspace settings.
+                </p>
+              </div>
+              <label className="block text-sm text-slate-600">
+                Active project
+                <input
+                  value="Acme Store"
+                  readOnly
+                  className="mt-2 block w-full rounded-lg border border-[#d9d0c4] bg-white px-3 py-2 text-sm"
+                />
+              </label>
+              <label className="block text-sm text-slate-600">
+                Default environment
+                <input
+                  value="local-smoke"
+                  readOnly
+                  className="mt-2 block w-full rounded-lg border border-[#d9d0c4] bg-white px-3 py-2 text-sm"
+                />
+              </label>
+              <button className="rounded-xl bg-[#16788a] px-3 py-2 text-xs font-semibold text-white">
+                Save changes
+              </button>
+            </div>
+          ) : active === "ai" ? (
+            <div>
+              <h3 className="font-semibold text-[#172337]">AI Analysis</h3>
+              <p className="mt-1 text-xs text-slate-500">
+                Configure AI model providers, evidence connectors, and failure
+                analysis settings.
+              </p>
+              <div className="mt-5 rounded-xl border border-[#d9d0c4] bg-[#f4ede4]/45 p-4">
+                <p className="text-sm font-semibold text-[#172337]">
+                  AI capabilities
+                </p>
+                <p className="mt-2 text-sm text-slate-600">
+                  Enterprise AI active
+                </p>
+                <select className="mt-3 w-full rounded-lg border border-[#d9d0c4] bg-white px-3 py-2 text-sm">
+                  <option>OpenAI</option>
+                  <option>Azure OpenAI</option>
+                </select>
+              </div>
+            </div>
+          ) : (
+            <div>
+              <h3 className="font-semibold text-[#172337]">
+                {sections.find((section) => section[0] === active)?.[1]}
+              </h3>
+              <p className="mt-2 text-sm leading-6 text-slate-600">
+                This settings section is available in the full Veriqorn
+                platform. Configure it here in the interactive demo preview.
+              </p>
+              <button className="mt-5 rounded-xl border border-[#d9d0c4] px-3 py-2 text-xs font-semibold text-slate-600">
+                Explore section
+              </button>
+            </div>
+          )}
+        </section>
+      </div>
+    </div>
+  );
 }
 
-function PlatformKnowledgeBase({ onExit = () => undefined }: { onExit?: () => void }) {
-  const [page, setPage] = useState<"home" | "articles" | "article" | "chat">("home");
+function PlatformKnowledgeBase({
+  onExit = () => undefined,
+}: {
+  onExit?: () => void;
+}) {
+  const [page, setPage] = useState<"home" | "articles" | "article" | "chat">(
+    "home",
+  );
   const [category, setCategory] = useState("Overview");
-  const categories = [["Overview", 1], ["Quality Intelligence", 2], ["AI", 3], ["Administration", 1], ["Operations", 2], ["User Experience", 1]] as const;
-  const articles = ["Platform Documentation Overview", "Test Results and Allure Import", "Coverage and Dashboard Analytics", "AI Analysis and Chat", "Repository Indexing and Retrieval", "Knowledge Base Generation"];
-  const topCard = "rounded-[32px] border border-white/80 bg-white/90 shadow-[0_18px_50px_rgba(25,42,68,0.08)]";
+  const categories = [
+    ["Overview", 1],
+    ["Quality Intelligence", 2],
+    ["AI", 3],
+    ["Administration", 1],
+    ["Operations", 2],
+    ["User Experience", 1],
+  ] as const;
+  const articles = [
+    "Platform Documentation Overview",
+    "Test Results and Allure Import",
+    "Coverage and Dashboard Analytics",
+    "AI Analysis and Chat",
+    "Repository Indexing and Retrieval",
+    "Knowledge Base Generation",
+  ];
+  const topCard =
+    "rounded-[32px] border border-white/80 bg-white/90 shadow-[0_18px_50px_rgba(25,42,68,0.08)]";
 
-  const navButton = (id: typeof page, label: string, Icon: typeof BookOpen) => <button onClick={() => setPage(id)} className={cn("flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left text-sm", page === id ? "bg-[#111b31] text-white shadow-sm" : "text-slate-600 hover:bg-[#f5f1eb]")}><Icon className="h-4 w-4" />{label}</button>;
-  const pageContent = page === "home" ? <div className="space-y-6"><section className={topCard}><div className="grid gap-6 p-7 lg:grid-cols-[minmax(0,1fr)_21rem]"><div><p className="inline-flex rounded-full bg-[#fcf7e9] px-3 py-1 text-[10px] font-semibold tracking-[.18em] text-[#a77b38]">STAKEHOLDER-FACING WORKSPACE</p><h1 className="mt-5 max-w-3xl text-4xl font-semibold leading-tight tracking-tight text-[#101828]">Start with the product story, not the raw test output.</h1><p className="mt-4 max-w-3xl text-base leading-7 text-slate-500">The knowledge base turns repository evidence into readable explanations for operations, product, support, and customer-facing teams.</p></div><div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1"><div className="rounded-[22px] border border-[#edf0f4] bg-white p-5"><p className="text-3xl font-semibold text-[#101828]">10</p><p className="mt-1 text-sm text-slate-500">articles available</p></div><div className="rounded-[22px] border border-[#edf0f4] bg-white p-5"><p className="text-3xl font-semibold text-[#101828]">demo</p><p className="mt-1 text-sm text-slate-500">active project scope</p></div></div></div></section><div className="grid gap-4 md:grid-cols-2"><button onClick={() => setPage("articles")} className="flex items-start gap-3 rounded-[22px] border border-white/80 bg-white/90 p-5 text-left shadow-[0_12px_36px_rgba(25,42,68,0.06)]"><BookOpen className="mt-0.5 h-6 w-6 text-[#1976e9]" /><span><span className="block text-lg font-semibold text-[#101828]">Browse Articles</span><span className="mt-1 block text-sm text-slate-500">10 articles generated from your codebase</span></span></button><button onClick={() => setPage("chat")} className="flex items-start gap-3 rounded-[22px] border border-white/80 bg-white/90 p-5 text-left shadow-[0_12px_36px_rgba(25,42,68,0.06)]"><Bot className="mt-0.5 h-6 w-6 text-[#1976e9]" /><span><span className="block text-lg font-semibold text-[#101828]">Ask AI</span><span className="mt-1 block text-sm text-slate-500">Ask questions about your product and get instant answers</span></span></button></div><section className={topCard}><div className="p-6"><h2 className="text-2xl font-semibold text-[#101828]">Recent Articles</h2><p className="mt-1 text-sm text-slate-500">Fast access to the latest generated business documentation.</p><div className="mt-5 grid gap-3 md:grid-cols-2">{articles.map((article) => <button key={article} onClick={() => setPage("article")} className="flex items-center gap-2 rounded-xl border border-[#edf0f4] bg-white px-4 py-3 text-left text-sm text-slate-700 hover:border-[#b7d5fa]"><BookOpen className="h-4 w-4 text-slate-500" />{article}</button>)}</div></div></section></div> : page === "articles" ? <div className={topCard}><div className="border-b border-[#edf0f4] p-6"><h1 className="text-2xl font-semibold text-[#101828]">Articles</h1><p className="mt-1 text-sm text-slate-500">Readable product and operations knowledge derived from repository evidence.</p></div><div className="grid gap-5 p-6 lg:grid-cols-[16rem_minmax(0,1fr)]"><div className="space-y-1">{categories.map(([label, count]) => <button key={label} onClick={() => setCategory(label)} className={cn("flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left text-sm", category === label ? "bg-[#eaf3ff] font-medium text-[#1976e9]" : "text-slate-600 hover:bg-[#f5f1eb]")}><span>{label}</span><span className="text-xs text-slate-400">{count}</span></button>)}</div><div className="space-y-3">{articles.map((article) => <button key={article} onClick={() => setPage("article")} className="block w-full rounded-2xl border border-[#edf0f4] bg-white p-5 text-left hover:border-[#b7d5fa]"><p className="text-lg font-semibold text-[#101828]">{article}</p><p className="mt-2 text-sm leading-6 text-slate-500">A concise explanation of the relevant platform workflow, its evidence sources, and operating boundaries.</p></button>)}</div></div></div> : page === "article" ? <article className={cn(topCard, "mx-auto max-w-5xl p-7 md:p-10")}><button onClick={() => setPage("articles")} className="text-sm font-medium text-slate-500 hover:text-[#1976e9]">← All articles</button><h1 className="mt-7 text-4xl font-semibold tracking-tight text-[#101828]">Platform Documentation Overview</h1><div className="mt-4 flex flex-wrap gap-2 text-xs text-slate-500"><span className="rounded-full bg-[#f5f1eb] px-3 py-1">Overview</span><span className="rounded-full bg-[#f5f1eb] px-3 py-1">Generated from repository evidence</span></div><div className="prose prose-slate mt-8 max-w-none"><h2>What the Platform Does</h2><p>The platform automates quality-assurance operations through intelligent test data processing and analytics. It ingests execution results, calculates coverage metrics, and produces dashboards designed for operational teams.</p><h2>Who Uses It</h2><ul><li>Product managers monitoring quality posture.</li><li>QA leads configuring test ingestion and rerun strategies.</li><li>Support teams investigating release risk.</li></ul><h2>Core Workflows</h2><p>Test ingestion normalises incoming results, while AI analysis connects failure patterns to repository evidence and known operating context.</p></div></article> : <div className="grid min-h-[44rem] overflow-hidden rounded-[32px] border border-white/80 bg-white/90 shadow-[0_18px_50px_rgba(25,42,68,0.08)] lg:grid-cols-[18rem_minmax(0,1fr)]"><aside className="border-b border-[#edf0f4] bg-[#fcfaf6] p-4 lg:border-b-0 lg:border-r"><button onClick={() => setPage("chat")} className="w-full rounded-xl bg-[#111b31] px-4 py-3 text-sm font-medium text-white">+ New Chat</button><div className="mt-4 space-y-1">{["Release quality summary", "Coverage gaps", "Investigate failed checkout", "New Chat"].map((title, index) => <button key={title} className={cn("w-full rounded-lg px-3 py-3 text-left", index === 0 ? "bg-white shadow-sm" : "text-slate-600 hover:bg-white")}><span className="block text-sm font-medium text-[#101828]">{title}</span><span className="mt-1 block text-xs text-slate-500">0 messages</span></button>)}</div></aside><section className="grid place-items-center p-7"><div className="max-w-sm rounded-[28px] border border-dashed border-slate-200 bg-white p-8 text-center"><Bot className="mx-auto h-10 w-10 text-slate-300" /><h1 className="mt-5 text-xl font-semibold text-[#101828]">Ask questions about your product</h1><p className="mt-2 text-sm leading-6 text-slate-500">Answers are grounded in the indexed repository and knowledge-base articles.</p><button className="mt-6 rounded-xl bg-[#111b31] px-4 py-2.5 text-sm font-medium text-white">Start a Chat</button></div></section></div>;
+  const navButton = (id: typeof page, label: string, Icon: typeof BookOpen) => (
+    <button
+      onClick={() => setPage(id)}
+      className={cn(
+        "flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left text-sm",
+        page === id
+          ? "bg-[#111b31] text-white shadow-sm"
+          : "text-slate-600 hover:bg-[#f5f1eb]",
+      )}
+    >
+      <Icon className="h-4 w-4" />
+      {label}
+    </button>
+  );
+  const pageContent =
+    page === "home" ? (
+      <div className="space-y-6">
+        <section className={topCard}>
+          <div className="grid gap-6 p-7 lg:grid-cols-[minmax(0,1fr)_21rem]">
+            <div>
+              <p className="inline-flex rounded-full bg-[#fcf7e9] px-3 py-1 text-[10px] font-semibold tracking-[.18em] text-[#a77b38]">
+                STAKEHOLDER-FACING WORKSPACE
+              </p>
+              <h1 className="mt-5 max-w-3xl text-4xl font-semibold leading-tight tracking-tight text-[#101828]">
+                Start with the product story, not the raw test output.
+              </h1>
+              <p className="mt-4 max-w-3xl text-base leading-7 text-slate-500">
+                The knowledge base turns repository evidence into readable
+                explanations for operations, product, support, and
+                customer-facing teams.
+              </p>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
+              <div className="rounded-[22px] border border-[#edf0f4] bg-white p-5">
+                <p className="text-3xl font-semibold text-[#101828]">10</p>
+                <p className="mt-1 text-sm text-slate-500">
+                  articles available
+                </p>
+              </div>
+              <div className="rounded-[22px] border border-[#edf0f4] bg-white p-5">
+                <p className="text-3xl font-semibold text-[#101828]">demo</p>
+                <p className="mt-1 text-sm text-slate-500">
+                  active project scope
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+        <div className="grid gap-4 md:grid-cols-2">
+          <button
+            onClick={() => setPage("articles")}
+            className="flex items-start gap-3 rounded-[22px] border border-white/80 bg-white/90 p-5 text-left shadow-[0_12px_36px_rgba(25,42,68,0.06)]"
+          >
+            <BookOpen className="mt-0.5 h-6 w-6 text-[#1976e9]" />
+            <span>
+              <span className="block text-lg font-semibold text-[#101828]">
+                Browse Articles
+              </span>
+              <span className="mt-1 block text-sm text-slate-500">
+                10 articles generated from your codebase
+              </span>
+            </span>
+          </button>
+          <button
+            onClick={() => setPage("chat")}
+            className="flex items-start gap-3 rounded-[22px] border border-white/80 bg-white/90 p-5 text-left shadow-[0_12px_36px_rgba(25,42,68,0.06)]"
+          >
+            <Bot className="mt-0.5 h-6 w-6 text-[#1976e9]" />
+            <span>
+              <span className="block text-lg font-semibold text-[#101828]">
+                Ask AI
+              </span>
+              <span className="mt-1 block text-sm text-slate-500">
+                Ask questions about your product and get instant answers
+              </span>
+            </span>
+          </button>
+        </div>
+        <section className={topCard}>
+          <div className="p-6">
+            <h2 className="text-2xl font-semibold text-[#101828]">
+              Recent Articles
+            </h2>
+            <p className="mt-1 text-sm text-slate-500">
+              Fast access to the latest generated business documentation.
+            </p>
+            <div className="mt-5 grid gap-3 md:grid-cols-2">
+              {articles.map((article) => (
+                <button
+                  key={article}
+                  onClick={() => setPage("article")}
+                  className="flex items-center gap-2 rounded-xl border border-[#edf0f4] bg-white px-4 py-3 text-left text-sm text-slate-700 hover:border-[#b7d5fa]"
+                >
+                  <BookOpen className="h-4 w-4 text-slate-500" />
+                  {article}
+                </button>
+              ))}
+            </div>
+          </div>
+        </section>
+      </div>
+    ) : page === "articles" ? (
+      <div className={topCard}>
+        <div className="border-b border-[#edf0f4] p-6">
+          <h1 className="text-2xl font-semibold text-[#101828]">Articles</h1>
+          <p className="mt-1 text-sm text-slate-500">
+            Readable product and operations knowledge derived from repository
+            evidence.
+          </p>
+        </div>
+        <div className="grid gap-5 p-6 lg:grid-cols-[16rem_minmax(0,1fr)]">
+          <div className="space-y-1">
+            {categories.map(([label, count]) => (
+              <button
+                key={label}
+                onClick={() => setCategory(label)}
+                className={cn(
+                  "flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left text-sm",
+                  category === label
+                    ? "bg-[#eaf3ff] font-medium text-[#1976e9]"
+                    : "text-slate-600 hover:bg-[#f5f1eb]",
+                )}
+              >
+                <span>{label}</span>
+                <span className="text-xs text-slate-400">{count}</span>
+              </button>
+            ))}
+          </div>
+          <div className="space-y-3">
+            {articles.map((article) => (
+              <button
+                key={article}
+                onClick={() => setPage("article")}
+                className="block w-full rounded-2xl border border-[#edf0f4] bg-white p-5 text-left hover:border-[#b7d5fa]"
+              >
+                <p className="text-lg font-semibold text-[#101828]">
+                  {article}
+                </p>
+                <p className="mt-2 text-sm leading-6 text-slate-500">
+                  A concise explanation of the relevant platform workflow, its
+                  evidence sources, and operating boundaries.
+                </p>
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+    ) : page === "article" ? (
+      <article className={cn(topCard, "mx-auto max-w-5xl p-7 md:p-10")}>
+        <button
+          onClick={() => setPage("articles")}
+          className="text-sm font-medium text-slate-500 hover:text-[#1976e9]"
+        >
+          ← All articles
+        </button>
+        <h1 className="mt-7 text-4xl font-semibold tracking-tight text-[#101828]">
+          Platform Documentation Overview
+        </h1>
+        <div className="mt-4 flex flex-wrap gap-2 text-xs text-slate-500">
+          <span className="rounded-full bg-[#f5f1eb] px-3 py-1">Overview</span>
+          <span className="rounded-full bg-[#f5f1eb] px-3 py-1">
+            Generated from repository evidence
+          </span>
+        </div>
+        <div className="prose prose-slate mt-8 max-w-none">
+          <h2>What the Platform Does</h2>
+          <p>
+            The platform automates quality-assurance operations through
+            intelligent test data processing and analytics. It ingests execution
+            results, calculates coverage metrics, and produces dashboards
+            designed for operational teams.
+          </p>
+          <h2>Who Uses It</h2>
+          <ul>
+            <li>Product managers monitoring quality posture.</li>
+            <li>QA leads configuring test ingestion and rerun strategies.</li>
+            <li>Support teams investigating release risk.</li>
+          </ul>
+          <h2>Core Workflows</h2>
+          <p>
+            Test ingestion normalises incoming results, while AI analysis
+            connects failure patterns to repository evidence and known operating
+            context.
+          </p>
+        </div>
+      </article>
+    ) : (
+      <div className="grid min-h-[44rem] overflow-hidden rounded-[32px] border border-white/80 bg-white/90 shadow-[0_18px_50px_rgba(25,42,68,0.08)] lg:grid-cols-[18rem_minmax(0,1fr)]">
+        <aside className="border-b border-[#edf0f4] bg-[#fcfaf6] p-4 lg:border-b-0 lg:border-r">
+          <button
+            onClick={() => setPage("chat")}
+            className="w-full rounded-xl bg-[#111b31] px-4 py-3 text-sm font-medium text-white"
+          >
+            + New Chat
+          </button>
+          <div className="mt-4 space-y-1">
+            {[
+              "Release quality summary",
+              "Coverage gaps",
+              "Investigate failed checkout",
+              "New Chat",
+            ].map((title, index) => (
+              <button
+                key={title}
+                className={cn(
+                  "w-full rounded-lg px-3 py-3 text-left",
+                  index === 0
+                    ? "bg-white shadow-sm"
+                    : "text-slate-600 hover:bg-white",
+                )}
+              >
+                <span className="block text-sm font-medium text-[#101828]">
+                  {title}
+                </span>
+                <span className="mt-1 block text-xs text-slate-500">
+                  0 messages
+                </span>
+              </button>
+            ))}
+          </div>
+        </aside>
+        <section className="grid place-items-center p-7">
+          <div className="max-w-sm rounded-[28px] border border-dashed border-slate-200 bg-white p-8 text-center">
+            <Bot className="mx-auto h-10 w-10 text-slate-300" />
+            <h1 className="mt-5 text-xl font-semibold text-[#101828]">
+              Ask questions about your product
+            </h1>
+            <p className="mt-2 text-sm leading-6 text-slate-500">
+              Answers are grounded in the indexed repository and knowledge-base
+              articles.
+            </p>
+            <button className="mt-6 rounded-xl bg-[#111b31] px-4 py-2.5 text-sm font-medium text-white">
+              Start a Chat
+            </button>
+          </div>
+        </section>
+      </div>
+    );
 
-  return <div className="demo-platform min-h-screen bg-[linear-gradient(180deg,#fbf7ef_0%,#f1f4f6_100%)] p-4 text-[#101828] md:p-6"><header className="mx-auto flex max-w-[1500px] flex-wrap items-center justify-between gap-4 rounded-[24px] border border-white/80 bg-white/70 px-5 py-4 shadow-[0_12px_34px_rgba(25,42,68,0.06)]"><button onClick={onExit} className="flex items-center gap-3 text-left"><span className="grid h-11 w-11 place-items-center rounded-xl bg-[#1596d3] text-white"><BookOpen className="h-5 w-5" /></span><span><span className="block text-[10px] font-semibold tracking-[.2em] text-slate-500">VERIQORN ENTERPRISE AI</span><span className="block text-xl font-semibold">Knowledge Base</span></span></button><div className="flex items-center gap-3"><span className="rounded-full border border-[#cfe5f6] bg-[#eef8ff] px-3 py-1.5 text-xs font-medium text-[#1678b7]">Business view</span><select aria-label="Knowledge Base project" className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm"><option>Demo project</option></select><button onClick={onExit} className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-600">Back to platform</button></div></header><div className="mx-auto mt-5 grid max-w-[1500px] gap-5 lg:grid-cols-[18rem_minmax(0,1fr)]"><aside className="rounded-[28px] border border-white/80 bg-white/85 p-3 shadow-[0_18px_50px_rgba(25,42,68,0.08)]"><button onClick={() => setPage("home")} className={cn("flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left text-sm", page === "home" ? "bg-[#111b31] text-white" : "text-slate-600 hover:bg-[#f5f1eb]")}><Layout className="h-4 w-4" />Home</button>{navButton("articles", "Articles", BookOpen)}<div className="mt-2 border-t border-slate-200 pt-2">{categories.map(([label, count]) => <button key={label} onClick={() => { setCategory(label); setPage("articles"); }} className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm text-slate-500 hover:bg-[#f5f1eb]"><span>{label}</span><span className="text-xs">{count}</span></button>)}</div>{navButton("chat", "AI Chat", Bot)}</aside><main className="min-w-0">{pageContent}</main></div></div>;
+  return (
+    <div className="demo-platform min-h-screen bg-[linear-gradient(180deg,#fbf7ef_0%,#f1f4f6_100%)] p-4 text-[#101828] md:p-6">
+      <header className="mx-auto flex max-w-[1500px] flex-wrap items-center justify-between gap-4 rounded-[24px] border border-white/80 bg-white/70 px-5 py-4 shadow-[0_12px_34px_rgba(25,42,68,0.06)]">
+        <button onClick={onExit} className="flex items-center gap-3 text-left">
+          <span className="grid h-11 w-11 place-items-center rounded-xl bg-[#1596d3] text-white">
+            <BookOpen className="h-5 w-5" />
+          </span>
+          <span>
+            <span className="block text-[10px] font-semibold tracking-[.2em] text-slate-500">
+              VERIQORN ENTERPRISE AI
+            </span>
+            <span className="block text-xl font-semibold">Knowledge Base</span>
+          </span>
+        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={onExit}
+            className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-600"
+          >
+            Back to platform
+          </button>
+        </div>
+      </header>
+      <div className="mx-auto mt-5 grid max-w-[1500px] gap-5 lg:grid-cols-[18rem_minmax(0,1fr)]">
+        <aside className="flex min-h-[46rem] flex-col rounded-[28px] border border-white/80 bg-white/85 p-3 shadow-[0_18px_50px_rgba(25,42,68,0.08)]">
+          <button
+            onClick={() => setPage("home")}
+            className={cn(
+              "flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left text-sm",
+              page === "home"
+                ? "bg-[#111b31] text-white"
+                : "text-slate-600 hover:bg-[#f5f1eb]",
+            )}
+          >
+            <Layout className="h-4 w-4" />
+            Home
+          </button>
+          {navButton("articles", "Articles", BookOpen)}
+          <div className="mt-2 border-t border-slate-200 pt-2">
+            {categories.map(([label, count]) => (
+              <button
+                key={label}
+                onClick={() => {
+                  setCategory(label);
+                  setPage("articles");
+                }}
+                className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm text-slate-500 hover:bg-[#f5f1eb]"
+              >
+                <span>{label}</span>
+                <span className="text-xs">{count}</span>
+              </button>
+            ))}
+          </div>
+          {navButton("chat", "AI Chat", Bot)}
+          <div className="mt-auto border-t border-slate-200 px-2 pt-3">
+            <button className="flex w-full items-center gap-3 rounded-xl px-2 py-2 text-left hover:bg-[#f5f1eb]"><span className="grid h-9 w-9 place-items-center rounded-full bg-[#172337] text-xs font-semibold text-white">AS</span><span className="min-w-0 flex-1"><span className="block truncate text-sm font-semibold text-[#172337]">Alex Smith</span><span className="block truncate text-xs text-slate-500">demo@veriqorn.io</span></span></button>
+            <button className="mt-1 w-full rounded-lg px-2 py-2 text-left text-xs font-medium text-slate-500 hover:bg-[#f5f1eb]">Log out</button>
+          </div>
+        </aside>
+        <main className="min-w-0">{pageContent}</main>
+      </div>
+    </div>
+  );
 }
 
 function PlatformSettingsDemo() {
   const [section, setSection] = useState("general");
   const [notice, setNotice] = useState("");
   const sections = [
-    ["general", "General", Settings], ["users", "User Management", CircleDot], ["projects", "Projects", Database],
-    ["notifications", "Notifications", Sparkles], ["rerun", "Test Rerun", RefreshCcw], ["ai", "AI Analysis", Bot],
-    ["index", "Auto-Indexing", Search], ["api", "API Keys", Code2], ["updates", "Platform Updates", Download],
+    ["general", "General", Settings],
+    ["users", "User Management", CircleDot],
+    ["projects", "Projects", Database],
+    ["notifications", "Notifications", Sparkles],
+    ["rerun", "Test Rerun", RefreshCcw],
+    ["ai", "AI Analysis", Bot],
+    ["index", "Auto-Indexing", Search],
+    ["api", "API Keys", Code2],
+    ["updates", "Platform Updates", Download],
   ] as const;
-  const activeLabel = sections.find(([id]) => id === section)?.[1] ?? "Settings";
+  const activeLabel =
+    sections.find(([id]) => id === section)?.[1] ?? "Settings";
   const save = (label: string) => setNotice(`${label} saved in the demo`);
-  const card = "rounded-[28px] border border-white/80 bg-white/90 p-5 shadow-[0_18px_50px_rgba(25,42,68,0.08)]";
-  const field = "mt-1.5 h-11 w-full rounded-xl border border-[#d5deea] bg-[#f5f1eb] px-3 text-sm outline-none focus:border-[#1976e9]";
+  const card =
+    "rounded-[28px] border border-white/80 bg-white/90 p-5 shadow-[0_18px_50px_rgba(25,42,68,0.08)]";
+  const field =
+    "mt-1.5 h-11 w-full rounded-xl border border-[#d5deea] bg-[#f5f1eb] px-3 text-sm outline-none focus:border-[#1976e9]";
 
-  const content = section === "general" ? <div className="space-y-5"><section className={card}><div className="flex items-center justify-between gap-4"><div><h3 className="text-lg font-semibold text-[#181f2d]">Plan & license</h3><p className="mt-1 text-sm text-slate-500">Your current Veriqorn plan and AI license status.</p></div><span className="rounded-full bg-emerald-50 px-3 py-1 text-sm font-medium text-emerald-700">Enterprise AI active</span></div><div className="mt-5 grid gap-3 sm:grid-cols-3">{[["LICENSE ID", "demo-license"], ["CUSTOMER", "Demo organisation"], ["EXPIRES", "Dec 31, 2029"]].map(([label, value]) => <div key={label} className="rounded-2xl border border-[#d5deea] p-3"><p className="text-[10px] font-semibold tracking-[.18em] text-slate-500">{label}</p><p className="mt-2 font-medium text-[#181f2d]">{value}</p></div>)}</div></section><section className={card}><h3 className="text-lg font-semibold text-[#181f2d]">Brand logo</h3><p className="mt-1 text-sm text-slate-500">Shown in the sidebar and the top bar. PNG or SVG under 512 KB.</p><div className="mt-4 flex flex-wrap items-center gap-3"><div className="grid h-16 w-16 place-items-center rounded-2xl bg-[#dbc39f] font-semibold text-[#172337]">VQ</div><button className="rounded-md border border-[#d5deea] bg-[#f5f1eb] px-3 py-2 text-sm">Choose File</button><button onClick={() => save("Brand logo")} className="rounded-md bg-[#1976e9] px-3 py-2 text-sm font-medium text-white">Save logo</button></div></section></div> : section === "users" ? <section className={card}><div className="flex items-center justify-between"><div><h3 className="text-lg font-semibold text-[#181f2d]">Platform users</h3><p className="mt-1 text-sm text-slate-500">All accounts able to sign in. Edit a user to change their role or reset a password.</p></div><button onClick={() => setNotice("Create user is available in the platform") } className="rounded-md bg-[#1976e9] px-3 py-2 text-sm font-medium text-white">+ Create user</button></div><div className="mt-5 overflow-x-auto"><table className="w-full min-w-[620px] text-left text-sm"><thead className="border-b border-slate-300 text-[10px] font-semibold tracking-[.18em] text-slate-500"><tr><th className="pb-3">NAME</th><th className="pb-3">EMAIL</th><th className="pb-3">ROLE</th><th className="pb-3 text-right">ACTIONS</th></tr></thead><tbody className="divide-y divide-slate-200">{[["Admin User", "admin@example.com", "admin"], ["Demo User", "demo@example.com", "user"]].map(([name, email, role]) => <tr key={email}><td className="py-4 font-medium text-[#181f2d]">{name}</td><td className="py-4 text-slate-500">{email}</td><td className="py-4"><span className="rounded-full bg-[#eef5ff] px-2.5 py-1 text-xs text-[#1976e9]">{role}</span></td><td className="py-4 text-right"><button onClick={() => setNotice(`Editing ${name} in the demo`)} className="rounded-md border border-[#d5deea] bg-[#f5f1eb] px-3 py-1.5">Edit</button></td></tr>)}</tbody></table></div></section> : section === "projects" ? <div className="space-y-5"><section className={card}><h3 className="text-lg font-semibold text-[#181f2d]">Project scope</h3><p className="mt-1 text-sm text-slate-500">Choose which project the shell and project-scoped settings panels act on.</p><select className={field}><option>Demo project (default)</option></select></section><section className={card}><h3 className="text-lg font-semibold text-[#181f2d]">Create project</h3><div className="mt-4 grid gap-3 sm:grid-cols-2"><input placeholder="QA Platform" className={field} /><input placeholder="Optional description" className={field} /></div><div className="mt-4 flex justify-end"><button onClick={() => setNotice("Project creation is simulated") } className="rounded-md bg-[#1976e9] px-3 py-2 text-sm font-medium text-white">Create project</button></div></section></div> : section === "notifications" ? <section className={card}><h3 className="text-lg font-semibold text-[#181f2d]">Notification rules</h3><p className="mt-1 text-sm text-slate-500">Configure when and where to send notifications for this project.</p><label className="mt-5 flex items-center gap-2 text-sm font-medium text-[#181f2d]"><input type="checkbox" defaultChecked className="h-4 w-4 accent-[#1976e9]" />Enable notifications for this project</label><div className="mt-5"><p className="text-sm font-medium text-[#181f2d]">Trigger events</p><div className="mt-2 flex flex-wrap gap-2">{["Run has broken tests", "Run completed", "Run failed"].map((label, index) => <button key={label} className={cn("rounded-full border px-3 py-1.5 text-sm", index === 1 ? "border-[#8fc0fa] bg-[#eef5ff] text-[#1976e9]" : "border-[#d5deea] text-slate-600")}>{label}</button>)}</div></div><div className="mt-5 grid gap-3 sm:grid-cols-2"><label className="text-sm text-slate-600">Delivery mode<select className={field}><option>Single summary message</option></select></label><label className="text-sm text-slate-600">Delay between messages<input value="0" readOnly className={field} /></label></div><div className="mt-5 flex justify-end gap-2"><button onClick={() => setNotice("Test notification is simulated") } className="rounded-md border border-[#d5deea] bg-[#f5f1eb] px-3 py-2 text-sm">Send test notification</button><button onClick={() => save("Notification rules")} className="rounded-md bg-[#1976e9] px-3 py-2 text-sm font-medium text-white">Save notification rules</button></div></section> : section === "rerun" ? <section className={card}><h3 className="text-lg font-semibold text-[#181f2d]">Test rerun profiles</h3><p className="mt-1 text-sm text-slate-500">Configure how failed tests are re-executed for this project.</p><div className="mt-5 rounded-2xl border border-[#d5deea] bg-[#f2f6fb] p-4"><label className="text-sm text-slate-600">Profile name<input value="Demo profile" readOnly className={field} /></label><div className="mt-3 grid gap-3 sm:grid-cols-2"><label className="text-sm text-slate-600">Framework<select className={field}><option>Playwright</option></select></label><label className="text-sm text-slate-600">CI trigger URL<input placeholder="https://ci.example.com/trigger" className={field} /></label></div><label className="mt-3 block text-sm text-slate-600">Command template<input value="npx playwright test --grep-invert {test_names}" readOnly className={field} /></label></div><div className="mt-4 flex justify-end"><button onClick={() => save("Rerun settings")} className="rounded-md bg-[#1976e9] px-3 py-2 text-sm font-medium text-white">Save rerun settings</button></div></section> : section === "ai" ? <div className="space-y-5"><section className={card}><h3 className="text-lg font-semibold text-[#181f2d]">AI capabilities</h3><div className="mt-4 flex flex-wrap gap-2">{["Enterprise AI active", "analysis", "indexing", "retrieval", "evidence connectors"].map((label) => <span key={label} className="rounded-full border border-[#d5deea] bg-[#f5f8fc] px-3 py-1.5 text-sm text-slate-600">{label}</span>)}</div></section><section className={card}><h3 className="text-lg font-semibold text-[#181f2d]">LLM connection</h3><p className="mt-1 text-sm text-slate-500">Configure the model provider for failure analysis and code chat.</p><div className="mt-4 grid gap-3 sm:grid-cols-2"><label className="text-sm text-slate-600">Provider<select className={field}><option>Local LLM</option></select></label><label className="text-sm text-slate-600">Model<input value="demo-model" readOnly className={field} /></label><label className="text-sm text-slate-600">API key<input type="password" value="not-a-secret" readOnly className={field} /></label><label className="text-sm text-slate-600">Endpoint URL<input value="http://localhost:1234/v1" readOnly className={field} /></label></div><div className="mt-4 flex justify-end gap-2"><button onClick={() => setNotice("Connection test is simulated") } className="rounded-md border border-[#d5deea] bg-[#f5f1eb] px-3 py-2 text-sm">Test current settings</button><button onClick={() => save("AI settings")} className="rounded-md bg-[#1976e9] px-3 py-2 text-sm font-medium text-white">Save AI settings</button></div></section></div> : section === "index" ? <div className="space-y-5"><section className={card}><h3 className="text-lg font-semibold text-[#181f2d]">Index health and retrieval diagnostics</h3><p className="mt-1 text-sm text-slate-500">Catalog coverage, retrieval cache health, KB activity, and runtime queue status.</p><div className="mt-5 grid gap-3 md:grid-cols-3">{[["INDEX CATALOG", "0 repos", "No catalog generated yet."], ["RETRIEVAL CACHE", "0 chunks", "No searches or cache hits."], ["KNOWLEDGE BASE", "0 articles", "No KB generation recorded yet."]].map(([label, value, detail]) => <div key={label} className="rounded-2xl border border-[#d5deea] bg-[#f2f6fb] p-4"><p className="text-[10px] font-semibold tracking-[.17em] text-slate-500">{label}</p><p className="mt-3 text-xl font-semibold text-[#181f2d]">{value}</p><p className="mt-2 text-xs text-slate-500">{detail}</p></div>)}</div><div className="mt-4 flex gap-2"><button onClick={() => setNotice("Indexing is not started in the demo") } className="rounded-md bg-[#1976e9] px-3 py-2 text-sm font-medium text-white">Start indexing</button><button onClick={() => setNotice("Retrieval benchmark is simulated") } className="rounded-md border border-[#d5deea] bg-[#f5f1eb] px-3 py-2 text-sm">Benchmark retrieval</button></div></section></div> : section === "api" ? <section className={card}><div className="flex items-center justify-between"><div><h3 className="text-lg font-semibold text-[#181f2d]">API keys</h3><p className="mt-1 text-sm text-slate-500">API keys for programmatic access to your account.</p></div><button onClick={() => setNotice("API key creation is simulated") } className="rounded-md bg-[#1976e9] px-3 py-2 text-sm font-medium text-white">+ Create API key</button></div><div className="mt-5 overflow-x-auto"><table className="w-full min-w-[580px] text-left text-sm"><thead className="border-b border-slate-300 text-[10px] font-semibold tracking-[.18em] text-slate-500"><tr><th className="pb-3">NAME</th><th className="pb-3">PREFIX</th><th className="pb-3">CREATED</th><th className="pb-3 text-right">ACTIONS</th></tr></thead><tbody><tr><td className="py-4 font-medium text-[#181f2d]">Demo key</td><td className="py-4 text-slate-500">veriqorn_demo…</td><td className="py-4 text-slate-500">Never</td><td className="py-4 text-right"><button onClick={() => setNotice("No API key was revoked") } className="rounded-md border border-rose-200 bg-rose-50 px-3 py-1.5 text-rose-700">Revoke</button></td></tr></tbody></table></div></section> : <section className={card}><h3 className="text-lg font-semibold text-[#181f2d]">Platform updates</h3><p className="mt-1 text-sm text-slate-500">Updates are executed by an isolated server-side agent. The platform itself never receives Docker access.</p><div className="mt-5 grid gap-3 sm:grid-cols-2"><div className="rounded-2xl border border-[#d5deea] p-4"><p className="text-xs text-slate-500">Installed</p><p className="mt-2 font-semibold text-[#181f2d]">demo</p></div><div className="rounded-2xl border border-[#d5deea] p-4"><p className="text-xs text-slate-500">Available</p><p className="mt-2 font-semibold text-[#181f2d]">No published release detected</p></div></div><button disabled className="mt-5 rounded-md bg-[#9ec8fb] px-3 py-2 text-sm font-medium text-white">Install update</button></section>;
+  const content =
+    section === "general" ? (
+      <div className="space-y-5">
+        <section className={card}>
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <h3 className="text-lg font-semibold text-[#181f2d]">
+                Plan & license
+              </h3>
+              <p className="mt-1 text-sm text-slate-500">
+                Your current Veriqorn plan and AI license status.
+              </p>
+            </div>
+            <span className="rounded-full bg-emerald-50 px-3 py-1 text-sm font-medium text-emerald-700">
+              Enterprise AI active
+            </span>
+          </div>
+          <div className="mt-5 grid gap-3 sm:grid-cols-3">
+            {[
+              ["LICENSE ID", "demo-license"],
+              ["CUSTOMER", "Demo organisation"],
+              ["EXPIRES", "Dec 31, 2029"],
+            ].map(([label, value]) => (
+              <div
+                key={label}
+                className="rounded-2xl border border-[#d5deea] p-3"
+              >
+                <p className="text-[10px] font-semibold tracking-[.18em] text-slate-500">
+                  {label}
+                </p>
+                <p className="mt-2 font-medium text-[#181f2d]">{value}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+        <section className={card}>
+          <h3 className="text-lg font-semibold text-[#181f2d]">Brand logo</h3>
+          <p className="mt-1 text-sm text-slate-500">
+            Shown in the sidebar and the top bar. PNG or SVG under 512 KB.
+          </p>
+          <div className="mt-4 flex flex-wrap items-center gap-3">
+            <div className="grid h-16 w-16 place-items-center rounded-2xl bg-[#dbc39f] font-semibold text-[#172337]">
+              VQ
+            </div>
+            <button className="rounded-md border border-[#d5deea] bg-[#f5f1eb] px-3 py-2 text-sm">
+              Choose File
+            </button>
+            <button
+              onClick={() => save("Brand logo")}
+              className="rounded-md bg-[#1976e9] px-3 py-2 text-sm font-medium text-white"
+            >
+              Save logo
+            </button>
+          </div>
+        </section>
+      </div>
+    ) : section === "users" ? (
+      <section className={card}>
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-lg font-semibold text-[#181f2d]">
+              Platform users
+            </h3>
+            <p className="mt-1 text-sm text-slate-500">
+              All accounts able to sign in. Edit a user to change their role or
+              reset a password.
+            </p>
+          </div>
+          <button
+            onClick={() =>
+              setNotice("Create user is available in the platform")
+            }
+            className="rounded-md bg-[#1976e9] px-3 py-2 text-sm font-medium text-white"
+          >
+            + Create user
+          </button>
+        </div>
+        <div className="mt-5 overflow-x-auto">
+          <table className="w-full min-w-[620px] text-left text-sm">
+            <thead className="border-b border-slate-300 text-[10px] font-semibold tracking-[.18em] text-slate-500">
+              <tr>
+                <th className="pb-3">NAME</th>
+                <th className="pb-3">EMAIL</th>
+                <th className="pb-3">ROLE</th>
+                <th className="pb-3 text-right">ACTIONS</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-200">
+              {[
+                ["Admin User", "admin@example.com", "admin"],
+                ["Demo User", "demo@example.com", "user"],
+              ].map(([name, email, role]) => (
+                <tr key={email}>
+                  <td className="py-4 font-medium text-[#181f2d]">{name}</td>
+                  <td className="py-4 text-slate-500">{email}</td>
+                  <td className="py-4">
+                    <span className="rounded-full bg-[#eef5ff] px-2.5 py-1 text-xs text-[#1976e9]">
+                      {role}
+                    </span>
+                  </td>
+                  <td className="py-4 text-right">
+                    <button
+                      onClick={() => setNotice(`Editing ${name} in the demo`)}
+                      className="rounded-md border border-[#d5deea] bg-[#f5f1eb] px-3 py-1.5"
+                    >
+                      Edit
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    ) : section === "projects" ? (
+      <div className="space-y-5">
+        <section className={card}>
+          <h3 className="text-lg font-semibold text-[#181f2d]">
+            Project scope
+          </h3>
+          <p className="mt-1 text-sm text-slate-500">
+            Choose which project the shell and project-scoped settings panels
+            act on.
+          </p>
+          <select className={field}>
+            <option>Demo project (default)</option>
+          </select>
+        </section>
+        <section className={card}>
+          <h3 className="text-lg font-semibold text-[#181f2d]">
+            Create project
+          </h3>
+          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            <input placeholder="QA Platform" className={field} />
+            <input placeholder="Optional description" className={field} />
+          </div>
+          <div className="mt-4 flex justify-end">
+            <button
+              onClick={() => setNotice("Project creation is simulated")}
+              className="rounded-md bg-[#1976e9] px-3 py-2 text-sm font-medium text-white"
+            >
+              Create project
+            </button>
+          </div>
+        </section>
+      </div>
+    ) : section === "notifications" ? (
+      <section className={card}>
+        <h3 className="text-lg font-semibold text-[#181f2d]">
+          Notification rules
+        </h3>
+        <p className="mt-1 text-sm text-slate-500">
+          Configure when and where to send notifications for this project.
+        </p>
+        <label className="mt-5 flex items-center gap-2 text-sm font-medium text-[#181f2d]">
+          <input
+            type="checkbox"
+            defaultChecked
+            className="h-4 w-4 accent-[#1976e9]"
+          />
+          Enable notifications for this project
+        </label>
+        <div className="mt-5">
+          <p className="text-sm font-medium text-[#181f2d]">Trigger events</p>
+          <div className="mt-2 flex flex-wrap gap-2">
+            {["Run has broken tests", "Run completed", "Run failed"].map(
+              (label, index) => (
+                <button
+                  key={label}
+                  className={cn(
+                    "rounded-full border px-3 py-1.5 text-sm",
+                    index === 1
+                      ? "border-[#8fc0fa] bg-[#eef5ff] text-[#1976e9]"
+                      : "border-[#d5deea] text-slate-600",
+                  )}
+                >
+                  {label}
+                </button>
+              ),
+            )}
+          </div>
+        </div>
+        <div className="mt-5 grid gap-3 sm:grid-cols-2">
+          <label className="text-sm text-slate-600">
+            Delivery mode
+            <select className={field}>
+              <option>Single summary message</option>
+            </select>
+          </label>
+          <label className="text-sm text-slate-600">
+            Delay between messages
+            <input value="0" readOnly className={field} />
+          </label>
+        </div>
+        <div className="mt-5 flex justify-end gap-2">
+          <button
+            onClick={() => setNotice("Test notification is simulated")}
+            className="rounded-md border border-[#d5deea] bg-[#f5f1eb] px-3 py-2 text-sm"
+          >
+            Send test notification
+          </button>
+          <button
+            onClick={() => save("Notification rules")}
+            className="rounded-md bg-[#1976e9] px-3 py-2 text-sm font-medium text-white"
+          >
+            Save notification rules
+          </button>
+        </div>
+      </section>
+    ) : section === "rerun" ? (
+      <section className={card}>
+        <h3 className="text-lg font-semibold text-[#181f2d]">
+          Test rerun profiles
+        </h3>
+        <p className="mt-1 text-sm text-slate-500">
+          Configure how failed tests are re-executed for this project.
+        </p>
+        <div className="mt-5 rounded-2xl border border-[#d5deea] bg-[#f2f6fb] p-4">
+          <label className="text-sm text-slate-600">
+            Profile name
+            <input value="Demo profile" readOnly className={field} />
+          </label>
+          <div className="mt-3 grid gap-3 sm:grid-cols-2">
+            <label className="text-sm text-slate-600">
+              Framework
+              <select className={field}>
+                <option>Playwright</option>
+              </select>
+            </label>
+            <label className="text-sm text-slate-600">
+              CI trigger URL
+              <input
+                placeholder="https://ci.example.com/trigger"
+                className={field}
+              />
+            </label>
+          </div>
+          <label className="mt-3 block text-sm text-slate-600">
+            Command template
+            <input
+              value="npx playwright test --grep-invert {test_names}"
+              readOnly
+              className={field}
+            />
+          </label>
+        </div>
+        <div className="mt-4 flex justify-end">
+          <button
+            onClick={() => save("Rerun settings")}
+            className="rounded-md bg-[#1976e9] px-3 py-2 text-sm font-medium text-white"
+          >
+            Save rerun settings
+          </button>
+        </div>
+      </section>
+    ) : section === "ai" ? (
+      <div className="space-y-5">
+        <section className={card}>
+          <h3 className="text-lg font-semibold text-[#181f2d]">
+            AI capabilities
+          </h3>
+          <div className="mt-4 flex flex-wrap gap-2">
+            {[
+              "Enterprise AI active",
+              "analysis",
+              "indexing",
+              "retrieval",
+              "evidence connectors",
+            ].map((label) => (
+              <span
+                key={label}
+                className="rounded-full border border-[#d5deea] bg-[#f5f8fc] px-3 py-1.5 text-sm text-slate-600"
+              >
+                {label}
+              </span>
+            ))}
+          </div>
+        </section>
+        <section className={card}>
+          <h3 className="text-lg font-semibold text-[#181f2d]">
+            LLM connection
+          </h3>
+          <p className="mt-1 text-sm text-slate-500">
+            Configure the model provider for failure analysis and code chat.
+          </p>
+          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            <label className="text-sm text-slate-600">
+              Provider
+              <select className={field}>
+                <option>Local LLM</option>
+              </select>
+            </label>
+            <label className="text-sm text-slate-600">
+              Model
+              <input value="demo-model" readOnly className={field} />
+            </label>
+            <label className="text-sm text-slate-600">
+              API key
+              <input
+                type="password"
+                value="not-a-secret"
+                readOnly
+                className={field}
+              />
+            </label>
+            <label className="text-sm text-slate-600">
+              Endpoint URL
+              <input
+                value="http://localhost:1234/v1"
+                readOnly
+                className={field}
+              />
+            </label>
+          </div>
+          <div className="mt-4 flex justify-end gap-2">
+            <button
+              onClick={() => setNotice("Connection test is simulated")}
+              className="rounded-md border border-[#d5deea] bg-[#f5f1eb] px-3 py-2 text-sm"
+            >
+              Test current settings
+            </button>
+            <button
+              onClick={() => save("AI settings")}
+              className="rounded-md bg-[#1976e9] px-3 py-2 text-sm font-medium text-white"
+            >
+              Save AI settings
+            </button>
+          </div>
+        </section>
+      </div>
+    ) : section === "index" ? (
+      <div className="space-y-5">
+        <section className={card}>
+          <h3 className="text-lg font-semibold text-[#181f2d]">
+            Index health and retrieval diagnostics
+          </h3>
+          <p className="mt-1 text-sm text-slate-500">
+            Catalog coverage, retrieval cache health, KB activity, and runtime
+            queue status.
+          </p>
+          <div className="mt-5 grid gap-3 md:grid-cols-3">
+            {[
+              ["INDEX CATALOG", "0 repos", "No catalog generated yet."],
+              ["RETRIEVAL CACHE", "0 chunks", "No searches or cache hits."],
+              [
+                "KNOWLEDGE BASE",
+                "0 articles",
+                "No KB generation recorded yet.",
+              ],
+            ].map(([label, value, detail]) => (
+              <div
+                key={label}
+                className="rounded-2xl border border-[#d5deea] bg-[#f2f6fb] p-4"
+              >
+                <p className="text-[10px] font-semibold tracking-[.17em] text-slate-500">
+                  {label}
+                </p>
+                <p className="mt-3 text-xl font-semibold text-[#181f2d]">
+                  {value}
+                </p>
+                <p className="mt-2 text-xs text-slate-500">{detail}</p>
+              </div>
+            ))}
+          </div>
+          <div className="mt-4 flex gap-2">
+            <button
+              onClick={() => setNotice("Indexing is not started in the demo")}
+              className="rounded-md bg-[#1976e9] px-3 py-2 text-sm font-medium text-white"
+            >
+              Start indexing
+            </button>
+            <button
+              onClick={() => setNotice("Retrieval benchmark is simulated")}
+              className="rounded-md border border-[#d5deea] bg-[#f5f1eb] px-3 py-2 text-sm"
+            >
+              Benchmark retrieval
+            </button>
+          </div>
+        </section>
+      </div>
+    ) : section === "api" ? (
+      <section className={card}>
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-lg font-semibold text-[#181f2d]">API keys</h3>
+            <p className="mt-1 text-sm text-slate-500">
+              API keys for programmatic access to your account.
+            </p>
+          </div>
+          <button
+            onClick={() => setNotice("API key creation is simulated")}
+            className="rounded-md bg-[#1976e9] px-3 py-2 text-sm font-medium text-white"
+          >
+            + Create API key
+          </button>
+        </div>
+        <div className="mt-5 overflow-x-auto">
+          <table className="w-full min-w-[580px] text-left text-sm">
+            <thead className="border-b border-slate-300 text-[10px] font-semibold tracking-[.18em] text-slate-500">
+              <tr>
+                <th className="pb-3">NAME</th>
+                <th className="pb-3">PREFIX</th>
+                <th className="pb-3">CREATED</th>
+                <th className="pb-3 text-right">ACTIONS</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td className="py-4 font-medium text-[#181f2d]">Demo key</td>
+                <td className="py-4 text-slate-500">veriqorn_demo…</td>
+                <td className="py-4 text-slate-500">Never</td>
+                <td className="py-4 text-right">
+                  <button
+                    onClick={() => setNotice("No API key was revoked")}
+                    className="rounded-md border border-rose-200 bg-rose-50 px-3 py-1.5 text-rose-700"
+                  >
+                    Revoke
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    ) : (
+      <section className={card}>
+        <h3 className="text-lg font-semibold text-[#181f2d]">
+          Platform updates
+        </h3>
+        <p className="mt-1 text-sm text-slate-500">
+          Updates are executed by an isolated server-side agent. The platform
+          itself never receives Docker access.
+        </p>
+        <div className="mt-5 grid gap-3 sm:grid-cols-2">
+          <div className="rounded-2xl border border-[#d5deea] p-4">
+            <p className="text-xs text-slate-500">Installed</p>
+            <p className="mt-2 font-semibold text-[#181f2d]">demo</p>
+          </div>
+          <div className="rounded-2xl border border-[#d5deea] p-4">
+            <p className="text-xs text-slate-500">Available</p>
+            <p className="mt-2 font-semibold text-[#181f2d]">
+              No published release detected
+            </p>
+          </div>
+        </div>
+        <button
+          disabled
+          className="mt-5 rounded-md bg-[#9ec8fb] px-3 py-2 text-sm font-medium text-white"
+        >
+          Install update
+        </button>
+      </section>
+    );
 
-  return <div className="space-y-5"><div className="rounded-[28px] border border-white/80 bg-white/90 p-6 shadow-[0_18px_50px_rgba(25,42,68,0.08)]"><h2 className="text-2xl font-semibold text-[#181f2d]">Settings</h2></div><div className="grid gap-5 xl:grid-cols-[23rem_minmax(0,1fr)]"><aside className="space-y-5"><section className={card}><h3 className="text-xl font-semibold text-[#181f2d]">{activeLabel}</h3><p className="mt-2 text-sm leading-6 text-slate-500">Configure platform access, project controls, integrations, and automation safely.</p></section><section className={card}><p className="text-xs font-semibold uppercase tracking-[.18em] text-slate-500">Sections</p><div className="mt-4 space-y-1">{sections.map(([id, label, Icon]) => <button key={id} onClick={() => { setSection(id); setNotice(""); }} className={cn("flex w-full items-center gap-3 rounded-xl border px-3 py-3 text-left text-sm", section === id ? "border-[#8fc0fa] bg-[#eaf3ff] font-medium text-[#181f2d]" : "border-transparent text-slate-600 hover:bg-[#f5f1eb]")}><Icon className="h-4 w-4" />{label}</button>)}</div></section></aside><div>{notice && <div className="mb-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">{notice}</div>}{content}</div></div></div>;
+  return (
+    <div className="space-y-5">
+      <div className="rounded-[28px] border border-white/80 bg-white/90 p-6 shadow-[0_18px_50px_rgba(25,42,68,0.08)]">
+        <h2 className="text-2xl font-semibold text-[#181f2d]">Settings</h2>
+      </div>
+      <div className="grid gap-5 xl:grid-cols-[23rem_minmax(0,1fr)]">
+        <aside className="space-y-5">
+          <section className={card}>
+            <h3 className="text-xl font-semibold text-[#181f2d]">
+              {activeLabel}
+            </h3>
+            <p className="mt-2 text-sm leading-6 text-slate-500">
+              Configure platform access, project controls, integrations, and
+              automation safely.
+            </p>
+          </section>
+          <section className={card}>
+            <p className="text-xs font-semibold uppercase tracking-[.18em] text-slate-500">
+              Sections
+            </p>
+            <div className="mt-4 space-y-1">
+              {sections.map(([id, label, Icon]) => (
+                <button
+                  key={id}
+                  onClick={() => {
+                    setSection(id);
+                    setNotice("");
+                  }}
+                  className={cn(
+                    "flex w-full items-center gap-3 rounded-xl border px-3 py-3 text-left text-sm",
+                    section === id
+                      ? "border-[#8fc0fa] bg-[#eaf3ff] font-medium text-[#181f2d]"
+                      : "border-transparent text-slate-600 hover:bg-[#f5f1eb]",
+                  )}
+                >
+                  <Icon className="h-4 w-4" />
+                  {label}
+                </button>
+              ))}
+            </div>
+          </section>
+        </aside>
+        <div>
+          {notice && (
+            <div className="mb-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
+              {notice}
+            </div>
+          )}
+          {content}
+        </div>
+      </div>
+    </div>
+  );
 }
 
 function isDashboardView(view: string): boolean {
   return view === "overview";
 }
 
-function DashboardOverview({ onNavigate }: { onNavigate: (view: "overview" | "launches" | "launch" | "results" | "test" | "coverage" | "knowledge" | "settings") => void }) {
+function DashboardOverview({
+  onNavigate,
+}: {
+  onNavigate: (
+    view:
+      | "overview"
+      | "launches"
+      | "launch"
+      | "results"
+      | "test"
+      | "coverage"
+      | "knowledge"
+      | "settings",
+  ) => void;
+}) {
   const [filterOpen, setFilterOpen] = useState(false);
   const [editing, setEditing] = useState(false);
   const [dashboard, setDashboard] = useState("Default Dashboard");
-  const dashboards = ["Default Dashboard", "Dashboard 2", "Dashboard 3", "Dashboard 4", "Dashboard 5", "Dashboard 6"];
-  const metricCards = [["VISIBLE RUNS", "48", "Scoped to the current dashboard filters."], ["VISIBLE TESTS", "132", "Total test results represented in the dashboard widgets."], ["PASS RATE", "91.7%", "Current aggregated pass rate."], ["FLAKY RATE", "2.4%", "Share of tests that behave inconsistently."]];
+  const dashboards = [
+    "Default Dashboard",
+    "Dashboard 2",
+    "Dashboard 3",
+    "Dashboard 4",
+    "Dashboard 5",
+    "Dashboard 6",
+  ];
+  const metricCards = [
+    ["VISIBLE RUNS", "48", "Scoped to the current dashboard filters."],
+    [
+      "VISIBLE TESTS",
+      "132",
+      "Total test results represented in the dashboard widgets.",
+    ],
+    ["PASS RATE", "91.7%", "Current aggregated pass rate."],
+    ["FLAKY RATE", "2.4%", "Share of tests that behave inconsistently."],
+  ];
+  useEffect(() => {
+    const openFilters = () => setFilterOpen(true);
+    const beginEditing = () => setEditing(true);
+    window.addEventListener("demo-dashboard-filters", openFilters);
+    window.addEventListener("demo-dashboard-edit", beginEditing);
+    return () => {
+      window.removeEventListener("demo-dashboard-filters", openFilters);
+      window.removeEventListener("demo-dashboard-edit", beginEditing);
+    };
+  }, []);
 
-  return <div className="space-y-6"><section className="rounded-[28px] border border-white/80 bg-white/90 p-6 shadow-[0_18px_50px_rgba(25,42,68,0.08)]"><div className="flex flex-col gap-4"><div><h2 className="text-2xl font-semibold tracking-tight text-[#181f2d]">Overview</h2><p className="mt-1 text-sm text-slate-500">Configure which widgets appear on the dashboard, how large they are, and in what order they render.</p></div><div className="flex flex-wrap items-center gap-2"><button onClick={() => setFilterOpen(true)} className="inline-flex items-center gap-2 rounded-md border border-[#d2ddec] bg-[#f5f0e7] px-3 py-2 text-sm font-medium text-[#181f2d]"><Filter className="h-4 w-4" />Filters</button>{editing ? <><button onClick={() => setEditing(false)} className="rounded-md border border-[#d2ddec] bg-white px-3 py-2 text-sm font-medium text-slate-700">Cancel</button><button onClick={() => setEditing(false)} className="rounded-md bg-[#1976e9] px-3 py-2 text-sm font-medium text-white shadow-sm">Save layout</button></> : <button onClick={() => setEditing(true)} className="inline-flex items-center gap-2 rounded-md border border-[#d2ddec] bg-[#f5f0e7] px-3 py-2 text-sm font-medium text-[#181f2d]"><Layout className="h-4 w-4" />Edit layout</button>}<button onClick={() => onNavigate("settings")} className="inline-flex items-center gap-2 rounded-md border border-[#d2ddec] bg-[#f5f0e7] px-3 py-2 text-sm font-medium text-[#181f2d]"><Settings className="h-4 w-4" />Dashboard settings</button><button onClick={() => onNavigate("settings")} className="rounded-md border border-[#d2ddec] bg-[#f5f0e7] px-3 py-2 text-sm font-medium text-[#181f2d]">Project settings</button><button className="inline-flex items-center gap-2 rounded-md border border-[#d2ddec] bg-[#f5f0e7] px-3 py-2 text-sm font-medium text-[#181f2d]"><RefreshCcw className="h-4 w-4" />Refresh</button></div>{editing && <p className="text-xs text-slate-500">Drag cards to move them. Changes remain local until you save the layout.</p>}<div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">{metricCards.map(([label, value, detail]) => <div key={label} className="rounded-[22px] border border-[#e2e8f0] bg-[#f8f4ed] p-4"><p className="text-[10px] font-semibold tracking-[.2em] text-slate-500">{label}</p><p className="mt-3 text-2xl font-semibold tracking-tight text-[#181f2d]">{value}</p><p className="mt-2 text-xs leading-5 text-slate-500">{detail}</p></div>)}</div></div></section><section className="overflow-hidden rounded-[28px] border border-white/80 bg-white/90 p-4 shadow-[0_18px_50px_rgba(25,42,68,0.08)]"><div className="flex gap-2 overflow-x-auto pb-1">{dashboards.map((item) => <button key={item} onClick={() => setDashboard(item)} className={cn("whitespace-nowrap rounded-full px-4 py-2 text-sm font-medium", dashboard === item ? "bg-[#1976e9] text-white shadow-sm" : "border border-[#e1e7ef] bg-white text-slate-600 hover:bg-[#f5f0e7]")}>{item}</button>)}</div></section><div className="grid gap-5 xl:grid-cols-2"><section className="rounded-[28px] border border-white/80 bg-white/90 p-5 shadow-[0_18px_50px_rgba(25,42,68,0.08)]"><p className="text-base font-semibold text-[#181f2d]">Test Summary</p><p className="mt-1 text-xs text-slate-500">Test Summary · stat</p><div className="mt-5 grid gap-3 sm:grid-cols-2">{[["PASSED", "121", "text-emerald-600"], ["UNSTABLE", "8", "text-rose-600"], ["SKIPPED", "3", "text-amber-600"], ["PASS RATE", "91.7%", "text-sky-700"]].map(([label, value, tone]) => <button key={label} onClick={() => onNavigate("launches")} className="rounded-[20px] border border-[#e2e8f0] bg-[#f8f4ed] p-4 text-left hover:border-[#bfd7f5]"><p className="text-[10px] font-semibold tracking-[.18em] text-slate-500">{label}</p><p className={cn("mt-2 text-2xl font-semibold", tone)}>{value}</p></button>)}</div></section><section className="rounded-[28px] border border-white/80 bg-white/90 p-5 shadow-[0_18px_50px_rgba(25,42,68,0.08)]"><p className="text-base font-semibold text-[#181f2d]">Test Results Trend</p><p className="mt-1 text-xs text-slate-500">Pass/Fail Trend · line</p><TrendChart /></section></div>{filterOpen && <div className="fixed inset-0 z-50 grid place-items-center bg-slate-950/45 p-4 backdrop-blur-sm"><section role="dialog" aria-modal="true" aria-label="Dashboard filters" className="w-full max-w-2xl rounded-[22px] bg-white p-6 shadow-2xl"><div className="flex items-start justify-between gap-4"><div><h2 className="text-xl font-semibold text-[#181f2d]">Dashboard filters</h2><p className="mt-1 text-sm text-slate-500">Narrow dashboard metrics by branch, environment, status, tags, or date range.</p></div><button onClick={() => setFilterOpen(false)} aria-label="Close filters" className="text-xl text-slate-400 hover:text-slate-700">×</button></div><div className="mt-5 grid gap-4 sm:grid-cols-2"><label className="text-sm text-slate-600">Branch<input placeholder="main" className="mt-1.5 h-11 w-full rounded-xl border border-[#d5deea] bg-[#f5f1eb] px-3 outline-none focus:border-[#1976e9]" /></label><label className="text-sm text-slate-600">Environment<input placeholder="staging" className="mt-1.5 h-11 w-full rounded-xl border border-[#d5deea] bg-[#f5f1eb] px-3 outline-none focus:border-[#1976e9]" /></label><label className="text-sm text-slate-600">Date from<input type="date" className="mt-1.5 h-11 w-full rounded-xl border border-[#d5deea] bg-[#f5f1eb] px-3 outline-none focus:border-[#1976e9]" /></label><label className="text-sm text-slate-600">Date to<input type="date" className="mt-1.5 h-11 w-full rounded-xl border border-[#d5deea] bg-[#f5f1eb] px-3 outline-none focus:border-[#1976e9]" /></label></div><div className="mt-5 flex justify-end gap-2"><button onClick={() => setFilterOpen(false)} className="rounded-lg border border-[#d5deea] bg-[#f5f1eb] px-4 py-2 text-sm text-slate-700">Clear filters</button><button onClick={() => setFilterOpen(false)} className="rounded-lg bg-[#1976e9] px-4 py-2 text-sm font-medium text-white">Apply filters</button></div></section></div>}</div>;
+  return (
+    <div className="space-y-6">
+      <section className="rounded-[28px] border border-white/80 bg-white/90 p-6 shadow-[0_18px_50px_rgba(25,42,68,0.08)]">
+        <div className="flex flex-col gap-4">
+          <div>
+            <h2 className="text-2xl font-semibold tracking-tight text-[#181f2d]">
+              Overview
+            </h2>
+            <div className="mt-4 flex gap-2 overflow-x-auto pb-1">
+              {dashboards.map((item) => (
+                <button key={item} onClick={() => setDashboard(item)} className={cn("whitespace-nowrap rounded-full px-4 py-2 text-sm font-medium", dashboard === item ? "bg-[#16788a] text-white shadow-sm" : "border border-[#d9d0c4] bg-white text-slate-600 hover:bg-[#f4ede4]")}>{item}</button>
+              ))}
+            </div>
+            <p className="mt-1 text-sm text-slate-500">
+              Configure which widgets appear on the dashboard, how large they
+              are, and in what order they render.
+            </p>
+          </div>
+          {editing && (
+            <p className="text-xs text-slate-500">
+              Drag cards to move them. Changes remain local until you save the
+              layout.
+            </p>
+          )}
+          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+            {metricCards.map(([label, value, detail]) => (
+              <div
+                key={label}
+                className="rounded-[22px] border border-[#e2e8f0] bg-[#f8f4ed] p-4"
+              >
+                <p className="text-[10px] font-semibold tracking-[.2em] text-slate-500">
+                  {label}
+                </p>
+                <p className="mt-3 text-2xl font-semibold tracking-tight text-[#181f2d]">
+                  {value}
+                </p>
+                <p className="mt-2 text-xs leading-5 text-slate-500">
+                  {detail}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+      <div className="grid gap-5 xl:grid-cols-2">
+        <section className="rounded-[28px] border border-white/80 bg-white/90 p-5 shadow-[0_18px_50px_rgba(25,42,68,0.08)]">
+          <p className="text-base font-semibold text-[#181f2d]">Test Summary</p>
+          <p className="mt-1 text-xs text-slate-500">Test Summary · stat</p>
+          <div className="mt-5 grid gap-3 sm:grid-cols-2">
+            {[
+              ["PASSED", "121", "text-emerald-600"],
+              ["UNSTABLE", "8", "text-rose-600"],
+              ["SKIPPED", "3", "text-amber-600"],
+              ["PASS RATE", "91.7%", "text-sky-700"],
+            ].map(([label, value, tone]) => (
+              <button
+                key={label}
+                onClick={() => onNavigate("launches")}
+                className="rounded-[20px] border border-[#e2e8f0] bg-[#f8f4ed] p-4 text-left hover:border-[#bfd7f5]"
+              >
+                <p className="text-[10px] font-semibold tracking-[.18em] text-slate-500">
+                  {label}
+                </p>
+                <p className={cn("mt-2 text-2xl font-semibold", tone)}>
+                  {value}
+                </p>
+              </button>
+            ))}
+          </div>
+        </section>
+        <section className="rounded-[28px] border border-white/80 bg-white/90 p-5 shadow-[0_18px_50px_rgba(25,42,68,0.08)]">
+          <p className="text-base font-semibold text-[#181f2d]">
+            Test Results Trend
+          </p>
+          <p className="mt-1 text-xs text-slate-500">Pass/Fail Trend · line</p>
+          <TrendChart />
+        </section>
+      </div>
+      {filterOpen && (
+        <div className="fixed inset-0 z-50 grid place-items-center bg-slate-950/45 p-4 backdrop-blur-sm">
+          <section
+            role="dialog"
+            aria-modal="true"
+            aria-label="Dashboard filters"
+            className="w-full max-w-2xl rounded-[22px] bg-white p-6 shadow-2xl"
+          >
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <h2 className="text-xl font-semibold text-[#181f2d]">
+                  Dashboard filters
+                </h2>
+                <p className="mt-1 text-sm text-slate-500">
+                  Narrow dashboard metrics by branch, environment, status, tags,
+                  or date range.
+                </p>
+              </div>
+              <button
+                onClick={() => setFilterOpen(false)}
+                aria-label="Close filters"
+                className="text-xl text-slate-400 hover:text-slate-700"
+              >
+                ×
+              </button>
+            </div>
+            <div className="mt-5 grid gap-4 sm:grid-cols-2">
+              <label className="text-sm text-slate-600">
+                Branch
+                <input
+                  placeholder="main"
+                  className="mt-1.5 h-11 w-full rounded-xl border border-[#d5deea] bg-[#f5f1eb] px-3 outline-none focus:border-[#1976e9]"
+                />
+              </label>
+              <label className="text-sm text-slate-600">
+                Environment
+                <input
+                  placeholder="staging"
+                  className="mt-1.5 h-11 w-full rounded-xl border border-[#d5deea] bg-[#f5f1eb] px-3 outline-none focus:border-[#1976e9]"
+                />
+              </label>
+              <label className="text-sm text-slate-600">
+                Date from
+                <input
+                  type="date"
+                  className="mt-1.5 h-11 w-full rounded-xl border border-[#d5deea] bg-[#f5f1eb] px-3 outline-none focus:border-[#1976e9]"
+                />
+              </label>
+              <label className="text-sm text-slate-600">
+                Date to
+                <input
+                  type="date"
+                  className="mt-1.5 h-11 w-full rounded-xl border border-[#d5deea] bg-[#f5f1eb] px-3 outline-none focus:border-[#1976e9]"
+                />
+              </label>
+            </div>
+            <div className="mt-5 flex justify-end gap-2">
+              <button
+                onClick={() => setFilterOpen(false)}
+                className="rounded-lg border border-[#d5deea] bg-[#f5f1eb] px-4 py-2 text-sm text-slate-700"
+              >
+                Clear filters
+              </button>
+              <button
+                onClick={() => setFilterOpen(false)}
+                className="rounded-lg bg-[#1976e9] px-4 py-2 text-sm font-medium text-white"
+              >
+                Apply filters
+              </button>
+            </div>
+          </section>
+        </div>
+      )}
+    </div>
+  );
 }
 
-function DemoSubPage({ view, run, test, onNavigate, onTestSelect }: {
-  view: "overview" | "launch" | "results" | "test" | "coverage" | "knowledge" | "settings";
+function DemoSubPage({
+  view,
+  run,
+  test,
+  onNavigate,
+  onTestSelect,
+}: {
+  view:
+    | "overview"
+    | "launch"
+    | "results"
+    | "test"
+    | "coverage"
+    | "knowledge"
+    | "settings";
   run: Run;
   test: (typeof tests)[number];
-  onNavigate: (view: "overview" | "launches" | "launch" | "results" | "test" | "coverage" | "knowledge" | "settings") => void;
+  onNavigate: (
+    view:
+      | "overview"
+      | "launches"
+      | "launch"
+      | "results"
+      | "test"
+      | "coverage"
+      | "knowledge"
+      | "settings",
+  ) => void;
   onTestSelect: (test: (typeof tests)[number]) => void;
 }) {
-  const panel = "rounded-xl border border-[#d9d0c4] bg-white/95 p-5 shadow-[0_18px_50px_-28px_rgba(15,23,42,0.28)]";
+  const panel =
+    "rounded-xl border border-[#d9d0c4] bg-white/95 p-5 shadow-[0_18px_50px_-28px_rgba(15,23,42,0.28)]";
   if (view === "knowledge") return <PlatformKnowledgeBase />;
   if (view === "settings") return <PlatformSettingsDemo />;
-  const [resultTab, setResultTab] = useState<"tests" | "defects" | "timeline">("tests");
+  const [resultTab, setResultTab] = useState<"tests" | "defects" | "timeline">(
+    "tests",
+  );
   const [activeResultIndex, setActiveResultIndex] = useState(0);
   const activeResult = tests[activeResultIndex] ?? tests[0];
-  if (isDashboardView(view)) return <DashboardOverview onNavigate={onNavigate} />;
-  if (view === "overview") return <div className="space-y-6"><div className="grid gap-4 md:grid-cols-3"><Metric label="Pass rate" value="93%" detail="+1.8% vs. previous period" icon={CheckCircle2} tone="emerald" /><Metric label="Flaky rate" value="2.8%" detail="-0.6% this week" icon={AlertTriangle} tone="rose" /><Metric label="Launches" value="48" detail="12 completed this week" icon={Rocket} tone="cyan" /></div><div className="grid gap-6 xl:grid-cols-[1.35fr_0.65fr]"><section className={panel}><div className="flex items-center justify-between"><div><p className="eyebrow">Pass / fail trend</p><h2 className="mt-1 text-lg font-semibold text-[#172337]">Test execution trend</h2></div><button onClick={() => onNavigate("launches")} className="text-xs font-semibold text-[#16788a]">View launches →</button></div><TrendChart /></section><section className={panel}><p className="eyebrow">Latest run status</p><h2 className="mt-1 text-lg font-semibold text-[#172337]">Release verification</h2><DonutChart /><div className="mt-4 grid grid-cols-2 gap-2 text-xs"><span className="text-emerald-700">● 119 Passed</span><span className="text-rose-600">● 3 Failed</span><span className="text-amber-700">● 1 Broken</span><span className="text-slate-500">● 5 Skipped</span></div></section></div><div className="grid gap-6 xl:grid-cols-[1.25fr_0.75fr]"><section className={panel}><div className="flex items-center justify-between"><h2 className="font-semibold text-[#172337]">Recent launches</h2><button onClick={() => onNavigate("launches")} className="text-xs font-semibold text-[#16788a]">Open all</button></div><div className="mt-4 divide-y divide-[#e8e0d7]">{runs.slice(0,3).map((item) => <button key={item.id} onClick={() => onNavigate("launch")} className="flex w-full items-center gap-3 py-3 text-left hover:bg-[#faf8f5]"><StatusIcon status={item.status} className="h-4 w-4 text-emerald-600" /><span className="flex-1"><b className="block text-sm text-[#172337]">{item.title}</b><span className="text-xs text-slate-500">{item.branch} · {item.time}</span></span><span className="text-xs text-slate-500">{item.passed}/{item.total}</span></button>)}</div></section><section className={panel}><p className="eyebrow">AI insight</p><div className="mt-4 flex gap-3"><Bot className="h-5 w-5 text-[#16788a]" /><p className="text-sm leading-6 text-slate-600">Payment failures correlate with the provider-client retry configuration introduced in build #4818.</p></div><button onClick={() => onNavigate("launches")} className="mt-5 text-sm font-semibold text-[#16788a]">Inspect evidence →</button></section></div></div>;
-  if (view === "launch") return <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]"><section className={panel}><div className="flex items-start justify-between"><div><p className="eyebrow">Launch #{run.id.slice(4)}</p><h2 className="mt-2 text-xl font-semibold text-[#172337]">{run.title}</h2><p className="mt-1 text-sm text-slate-500"><GitBranch className="mr-1 inline h-3.5 w-3.5" />{run.branch} · completed {run.time}</p></div><span className={cn("inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold uppercase", statusStyle[run.status])}><StatusIcon status={run.status} className="h-3.5 w-3.5" />{statusText[run.status]}</span></div><div className="mt-7 grid grid-cols-4 divide-x divide-[#e8e0d7] rounded-xl border border-[#e8e0d7] text-center">{[["Passed",run.passed,"text-emerald-600"],["Failed",run.failed,"text-rose-600"],["Broken",run.broken,"text-amber-600"],["Skipped",run.skipped,"text-slate-500"]].map(([label,value,tone]) => <div key={String(label)} className="py-4"><b className={cn("text-xl", String(tone))}>{value}</b><p className="mt-1 text-[10px] font-semibold uppercase text-slate-400">{label}</p></div>)}</div><button onClick={() => onNavigate("results")} className="mt-6 rounded-xl bg-[#16788a] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#106676]">Open test results</button></section><section className={panel}><p className="eyebrow">Launch details</p><dl className="mt-5 space-y-4 text-sm"><div className="flex justify-between border-b border-[#e8e0d7] pb-3"><dt className="text-slate-500">Duration</dt><dd className="font-medium">{run.duration}</dd></div><div className="flex justify-between border-b border-[#e8e0d7] pb-3"><dt className="text-slate-500">Environment</dt><dd className="font-medium">staging</dd></div><div className="flex justify-between"><dt className="text-slate-500">Source</dt><dd className="font-medium">GitHub Actions</dd></div></dl></section></div>;
-  if (view === "results") return <div className="space-y-3"><div className="flex flex-wrap items-center gap-2 rounded-[20px] border border-[#d9d0c4] bg-white/90 px-4 py-2.5 shadow-[0_8px_24px_rgba(22,29,42,0.05)]"><div className="flex gap-1 rounded-full border border-[#d9d0c4] bg-[#f4ede4]/80 p-1">{(["tests", "defects", "timeline"] as const).map((tab) => <button key={tab} onClick={() => setResultTab(tab)} className={cn("rounded-full px-3 py-1 text-xs font-medium capitalize transition", resultTab === tab ? "bg-[#f08059] text-white" : "text-slate-500 hover:text-[#172337]")}>{tab}</button>)}</div><span className="h-4 w-px bg-[#d9d0c4]" />{(["failed", "broken", "passed", "skipped"] as TestStatus[]).map((status) => <button key={status} className={cn("flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold", statusStyle[status])}><StatusIcon status={status} className="h-3 w-3" />{statusText[status]}: {status === "failed" ? 3 : status === "broken" ? 1 : status === "passed" ? 119 : 5}</button>)}<span className="h-4 w-px bg-[#d9d0c4]" /><button className="rounded-full border border-[#d9d0c4] px-2.5 py-1 text-xs text-slate-500">Errors only</button><button className="rounded-full border border-[#d9d0c4] px-2.5 py-1 text-xs text-slate-500">Longest first</button><div className="relative ml-auto"><Search className="absolute left-2.5 top-1/2 h-3 w-3 -translate-y-1/2 text-slate-400" /><input className="h-7 rounded-full border border-[#d9d0c4] bg-[#f4ede4] pl-7 pr-3 text-xs outline-none" placeholder="Search tests..." /></div></div><div className="grid gap-3 xl:grid-cols-[2fr_3fr]"><section className="overflow-hidden rounded-[24px] border border-[#d9d0c4] bg-white/90 shadow-[0_14px_36px_rgba(22,29,42,0.06)]"><div className="border-b border-[#d9d0c4] px-4 py-3"><div className="flex items-center gap-3"><p className="text-xs text-slate-500"><b className="text-[#172337]">{resultTab === "defects" ? 2 : tests.length}</b> {resultTab === "defects" ? "defects from unstable results" : `of ${tests.length} results`}</p><div className="ml-auto flex gap-2"><button className="rounded-lg border border-[#d9d0c4] px-2 py-1.5 text-[11px] font-semibold text-slate-600">Rerun selected (0)</button><button className="rounded-lg border border-[#d9d0c4] px-2 py-1.5 text-[11px] font-semibold text-slate-600">Rerun failed/broken (4)</button></div></div></div>{resultTab === "timeline" ? <ResultTimeline tests={tests} onSelect={setActiveResultIndex} /> : <div className="max-h-[62vh] overflow-y-auto divide-y divide-[#e8e0d7]">{tests.map((item, index) => <button key={item.name} onClick={() => setActiveResultIndex(index)} className={cn("flex w-full items-center gap-2 px-4 py-3 text-left transition hover:bg-[#f4ede4]/50", activeResultIndex === index && "border-l-2 border-[#f08059] bg-[#f08059]/5")}><input type="checkbox" onClick={(event) => event.stopPropagation()} className="h-3.5 w-3.5" /><StatusIcon status={item.status} className={cn("h-4 w-4", item.status === "failed" ? "text-rose-500" : item.status === "broken" ? "text-amber-500" : "text-slate-400")} /><span className="min-w-0 flex-1"><b className="block truncate text-xs text-[#172337]">{item.name}</b><span className="block truncate text-[11px] text-slate-500">{item.suite}</span></span><span className="text-[11px] text-slate-400">{item.duration}</span></button>)}</div>}</section><ResultDetail result={activeResult} onOpen={() => onTestSelect(activeResult)} /></div></div>;
-  if (view === "test") return <div className="grid gap-6 xl:grid-cols-[1.25fr_0.75fr]"><section className={panel}><div className="flex items-start gap-3"><StatusIcon status={test.status} className="mt-1 h-5 w-5 text-rose-500" /><div><p className="eyebrow">{test.suite}</p><h2 className="mt-1 text-xl font-semibold text-[#172337]">{test.name}</h2><p className="mt-1 text-sm text-slate-500">Failed in {test.duration}</p></div></div><div className="mt-7 rounded-xl bg-[#172337] p-4 font-mono text-xs leading-6 text-slate-200"><span className="text-rose-300">AssertionError:</span> expected payment status to equal "confirmed"<br /><span className="text-slate-500">at checkout/payment.spec.ts:184:21</span><br />received: "pending"</div><h3 className="mt-6 font-semibold text-[#172337]">Steps</h3><ol className="mt-3 space-y-2 text-sm text-slate-600"><li>1. Create a checkout session</li><li>2. Complete 3-D Secure authentication</li><li className="font-medium text-rose-600">3. Confirm payment — failed</li></ol></section><section className={cn(panel, "border-[#cfc5ee]")}><div className="flex items-center gap-2"><Bot className="h-5 w-5 text-[#16788a]" /><h2 className="font-semibold text-[#172337]">AI analysis</h2></div><p className="mt-4 text-sm leading-6 text-slate-600">The confirmation request timed out after the 3-D Secure callback. This aligns with a retry configuration change introduced in build #4818.</p><div className="mt-4 rounded-xl bg-[#f4ede4] p-3 text-sm text-[#172337]"><b>87% confidence</b><p className="mt-1">Check the provider-client retry policy.</p></div><button className="mt-4 text-sm font-semibold text-[#16788a] hover:underline">View suggested fix →</button></section></div>;
-  if (view === "coverage") return <div className="space-y-4"><section className={panel}><div className="flex flex-wrap items-start justify-between gap-4"><div><h2 className="flex items-center gap-2 text-2xl font-semibold tracking-tight text-[#172337]"><Shield className="h-5 w-5" />Test coverage</h2><p className="mt-2 text-sm text-slate-500">Coverage intelligence over the platform's API, UI, and domain units — scored against the last 10 test runs.</p></div><div className="flex gap-2"><button className="rounded-xl border border-[#d9d0c4] px-3 py-2 text-xs font-semibold text-slate-600">Rebuild inventory</button><button className="inline-flex items-center gap-2 rounded-xl bg-[#16788a] px-3 py-2 text-xs font-semibold text-white"><Sparkles className="h-3.5 w-3.5" />Generate recommendations</button></div></div></section><div className="grid gap-4 lg:grid-cols-[0.4fr_0.6fr]"><section className={panel}><p className="text-sm font-semibold text-[#172337]">Summary</p><p className="mt-1 text-xs text-slate-500">Project-wide coverage posture.</p><p className="mt-5 text-5xl font-semibold tracking-tight text-[#172337]">82.4</p><p className="mt-1 text-xs uppercase tracking-wide text-slate-500">Coverage score (0–100)</p><div className="mt-5 grid grid-cols-3 gap-2 text-center text-xs"><div><b className="block text-base">412</b>Units</div><div><b className="block text-base">339</b>Covered</div><div><b className="block text-base">91%</b>Confidence</div></div></section><section className={cn(panel, "p-0 overflow-hidden")}><div className="p-5"><p className="text-sm font-semibold text-[#172337]">Modules</p><p className="text-xs text-slate-500">Coverage score per module.</p></div><CoverageTable /></section></div><section className={cn(panel, "p-0 overflow-hidden")}><div className="p-5"><p className="text-sm font-semibold text-[#172337]">Top gaps</p><p className="text-xs text-slate-500">Units with low effective coverage, ordered by priority.</p></div><GapTable /></section></div>;
-  const copy = view === "knowledge" ? ["Knowledge Base", "Ask your project", "Search indexed test documentation, repositories, and team knowledge."] : ["Settings", "Project settings", "Configure integrations, test result imports, and access for this project."];
-  return <section className={panel}><p className="eyebrow">{copy[0]}</p><h2 className="mt-2 text-2xl font-semibold text-[#172337]">{copy[1]}</h2><p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600">{copy[2]}</p><button className="mt-6 rounded-xl border border-[#d9d0c4] bg-white px-4 py-2.5 text-sm font-semibold text-[#172337] hover:bg-[#f4ede4]">Explore {copy[0]}</button></section>;
+  if (isDashboardView(view))
+    return <DashboardOverview onNavigate={onNavigate} />;
+  if (view === "overview")
+    return (
+      <div className="space-y-6">
+        <div className="grid gap-4 md:grid-cols-3">
+          <Metric
+            label="Pass rate"
+            value="93%"
+            detail="+1.8% vs. previous period"
+            icon={CheckCircle2}
+            tone="emerald"
+          />
+          <Metric
+            label="Flaky rate"
+            value="2.8%"
+            detail="-0.6% this week"
+            icon={AlertTriangle}
+            tone="rose"
+          />
+          <Metric
+            label="Launches"
+            value="48"
+            detail="12 completed this week"
+            icon={Rocket}
+            tone="cyan"
+          />
+        </div>
+        <div className="grid gap-6 xl:grid-cols-[1.35fr_0.65fr]">
+          <section className={panel}>
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="eyebrow">Pass / fail trend</p>
+                <h2 className="mt-1 text-lg font-semibold text-[#172337]">
+                  Test execution trend
+                </h2>
+              </div>
+              <button
+                onClick={() => onNavigate("launches")}
+                className="text-xs font-semibold text-[#16788a]"
+              >
+                View launches →
+              </button>
+            </div>
+            <TrendChart />
+          </section>
+          <section className={panel}>
+            <p className="eyebrow">Latest run status</p>
+            <h2 className="mt-1 text-lg font-semibold text-[#172337]">
+              Release verification
+            </h2>
+            <DonutChart />
+            <div className="mt-4 grid grid-cols-2 gap-2 text-xs">
+              <span className="text-emerald-700">● 119 Passed</span>
+              <span className="text-rose-600">● 3 Failed</span>
+              <span className="text-amber-700">● 1 Broken</span>
+              <span className="text-slate-500">● 5 Skipped</span>
+            </div>
+          </section>
+        </div>
+        <div className="grid gap-6 xl:grid-cols-[1.25fr_0.75fr]">
+          <section className={panel}>
+            <div className="flex items-center justify-between">
+              <h2 className="font-semibold text-[#172337]">Recent launches</h2>
+              <button
+                onClick={() => onNavigate("launches")}
+                className="text-xs font-semibold text-[#16788a]"
+              >
+                Open all
+              </button>
+            </div>
+            <div className="mt-4 divide-y divide-[#e8e0d7]">
+              {runs.slice(0, 3).map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => onNavigate("launch")}
+                  className="flex w-full items-center gap-3 py-3 text-left hover:bg-[#faf8f5]"
+                >
+                  <StatusIcon
+                    status={item.status}
+                    className="h-4 w-4 text-emerald-600"
+                  />
+                  <span className="flex-1">
+                    <b className="block text-sm text-[#172337]">{item.title}</b>
+                    <span className="text-xs text-slate-500">
+                      {item.branch} · {item.time}
+                    </span>
+                  </span>
+                  <span className="text-xs text-slate-500">
+                    {item.passed}/{item.total}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </section>
+          <section className={panel}>
+            <p className="eyebrow">AI insight</p>
+            <div className="mt-4 flex gap-3">
+              <Bot className="h-5 w-5 text-[#16788a]" />
+              <p className="text-sm leading-6 text-slate-600">
+                Payment failures correlate with the provider-client retry
+                configuration introduced in build #4818.
+              </p>
+            </div>
+            <button
+              onClick={() => onNavigate("launches")}
+              className="mt-5 text-sm font-semibold text-[#16788a]"
+            >
+              Inspect evidence →
+            </button>
+          </section>
+        </div>
+      </div>
+    );
+  if (view === "launch")
+    return (
+      <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
+        <section className={panel}>
+          <div className="flex items-start justify-between">
+            <div>
+              <p className="eyebrow">Launch #{run.id.slice(4)}</p>
+              <h2 className="mt-2 text-xl font-semibold text-[#172337]">
+                {run.title}
+              </h2>
+              <p className="mt-1 text-sm text-slate-500">
+                <GitBranch className="mr-1 inline h-3.5 w-3.5" />
+                {run.branch} · completed {run.time}
+              </p>
+            </div>
+            <span
+              className={cn(
+                "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold uppercase",
+                statusStyle[run.status],
+              )}
+            >
+              <StatusIcon status={run.status} className="h-3.5 w-3.5" />
+              {statusText[run.status]}
+            </span>
+          </div>
+          <div className="mt-7 grid grid-cols-4 divide-x divide-[#e8e0d7] rounded-xl border border-[#e8e0d7] text-center">
+            {[
+              ["Passed", run.passed, "text-emerald-600"],
+              ["Failed", run.failed, "text-rose-600"],
+              ["Broken", run.broken, "text-amber-600"],
+              ["Skipped", run.skipped, "text-slate-500"],
+            ].map(([label, value, tone]) => (
+              <div key={String(label)} className="py-4">
+                <b className={cn("text-xl", String(tone))}>{value}</b>
+                <p className="mt-1 text-[10px] font-semibold uppercase text-slate-400">
+                  {label}
+                </p>
+              </div>
+            ))}
+          </div>
+          <button
+            onClick={() => onNavigate("results")}
+            className="mt-6 rounded-xl bg-[#16788a] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#106676]"
+          >
+            Open test results
+          </button>
+        </section>
+        <section className={panel}>
+          <p className="eyebrow">Launch details</p>
+          <dl className="mt-5 space-y-4 text-sm">
+            <div className="flex justify-between border-b border-[#e8e0d7] pb-3">
+              <dt className="text-slate-500">Duration</dt>
+              <dd className="font-medium">{run.duration}</dd>
+            </div>
+            <div className="flex justify-between border-b border-[#e8e0d7] pb-3">
+              <dt className="text-slate-500">Environment</dt>
+              <dd className="font-medium">staging</dd>
+            </div>
+            <div className="flex justify-between">
+              <dt className="text-slate-500">Source</dt>
+              <dd className="font-medium">GitHub Actions</dd>
+            </div>
+          </dl>
+        </section>
+      </div>
+    );
+  if (view === "results")
+    return (
+      <div className="space-y-3">
+        <div className="flex flex-wrap items-center gap-2 rounded-[20px] border border-[#d9d0c4] bg-white/90 px-4 py-2.5 shadow-[0_8px_24px_rgba(22,29,42,0.05)]">
+          <div className="flex gap-1 rounded-full border border-[#d9d0c4] bg-[#f4ede4]/80 p-1">
+            {(["tests", "defects", "timeline"] as const).map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setResultTab(tab)}
+                className={cn(
+                  "rounded-full px-3 py-1 text-xs font-medium capitalize transition",
+                  resultTab === tab
+                    ? "bg-[#f08059] text-white"
+                    : "text-slate-500 hover:text-[#172337]",
+                )}
+              >
+                {tab}
+              </button>
+            ))}
+          </div>
+          <span className="h-4 w-px bg-[#d9d0c4]" />
+          {(["failed", "broken", "passed", "skipped"] as TestStatus[]).map(
+            (status) => (
+              <button
+                key={status}
+                className={cn(
+                  "flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold",
+                  statusStyle[status],
+                )}
+              >
+                <StatusIcon status={status} className="h-3 w-3" />
+                {statusText[status]}:{" "}
+                {status === "failed"
+                  ? 3
+                  : status === "broken"
+                    ? 1
+                    : status === "passed"
+                      ? 119
+                      : 5}
+              </button>
+            ),
+          )}
+          <span className="h-4 w-px bg-[#d9d0c4]" />
+          <button className="rounded-full border border-[#d9d0c4] px-2.5 py-1 text-xs text-slate-500">
+            Errors only
+          </button>
+          <button className="rounded-full border border-[#d9d0c4] px-2.5 py-1 text-xs text-slate-500">
+            Longest first
+          </button>
+          <div className="relative ml-auto">
+            <Search className="absolute left-2.5 top-1/2 h-3 w-3 -translate-y-1/2 text-slate-400" />
+            <input
+              className="h-7 rounded-full border border-[#d9d0c4] bg-[#f4ede4] pl-7 pr-3 text-xs outline-none"
+              placeholder="Search tests..."
+            />
+          </div>
+        </div>
+        <div className="grid gap-3 xl:grid-cols-[2fr_3fr]">
+          <section className="overflow-hidden rounded-[24px] border border-[#d9d0c4] bg-white/90 shadow-[0_14px_36px_rgba(22,29,42,0.06)]">
+            <div className="border-b border-[#d9d0c4] px-4 py-3">
+              <div className="flex items-center gap-3">
+                <p className="text-xs text-slate-500">
+                  <b className="text-[#172337]">
+                    {resultTab === "defects" ? 2 : tests.length}
+                  </b>{" "}
+                  {resultTab === "defects"
+                    ? "defects from unstable results"
+                    : `of ${tests.length} results`}
+                </p>
+                <div className="ml-auto flex gap-2">
+                  <button className="rounded-lg border border-[#d9d0c4] px-2 py-1.5 text-[11px] font-semibold text-slate-600">
+                    Rerun selected (0)
+                  </button>
+                  <button className="rounded-lg border border-[#d9d0c4] px-2 py-1.5 text-[11px] font-semibold text-slate-600">
+                    Rerun failed/broken (4)
+                  </button>
+                </div>
+              </div>
+            </div>
+            {resultTab === "timeline" ? (
+              <ResultTimeline tests={tests} onSelect={setActiveResultIndex} />
+            ) : (
+              <div className="max-h-[62vh] overflow-y-auto divide-y divide-[#e8e0d7]">
+                {tests.map((item, index) => (
+                  <button
+                    key={item.name}
+                    onClick={() => setActiveResultIndex(index)}
+                    className={cn(
+                      "flex w-full items-center gap-2 px-4 py-3 text-left transition hover:bg-[#f4ede4]/50",
+                      activeResultIndex === index &&
+                        "border-l-2 border-[#f08059] bg-[#f08059]/5",
+                    )}
+                  >
+                    <input
+                      type="checkbox"
+                      onClick={(event) => event.stopPropagation()}
+                      className="h-3.5 w-3.5"
+                    />
+                    <StatusIcon
+                      status={item.status}
+                      className={cn(
+                        "h-4 w-4",
+                        item.status === "failed"
+                          ? "text-rose-500"
+                          : item.status === "broken"
+                            ? "text-amber-500"
+                            : "text-slate-400",
+                      )}
+                    />
+                    <span className="min-w-0 flex-1">
+                      <b className="block truncate text-xs text-[#172337]">
+                        {item.name}
+                      </b>
+                      <span className="block truncate text-[11px] text-slate-500">
+                        {item.suite}
+                      </span>
+                    </span>
+                    <span className="text-[11px] text-slate-400">
+                      {item.duration}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </section>
+          <ResultDetail
+            result={activeResult}
+            onOpen={() => onTestSelect(activeResult)}
+          />
+        </div>
+      </div>
+    );
+  if (view === "test")
+    return (
+      <div className="grid gap-6 xl:grid-cols-[1.25fr_0.75fr]">
+        <section className={panel}>
+          <div className="flex items-start gap-3">
+            <StatusIcon
+              status={test.status}
+              className="mt-1 h-5 w-5 text-rose-500"
+            />
+            <div>
+              <p className="eyebrow">{test.suite}</p>
+              <h2 className="mt-1 text-xl font-semibold text-[#172337]">
+                {test.name}
+              </h2>
+              <p className="mt-1 text-sm text-slate-500">
+                Failed in {test.duration}
+              </p>
+            </div>
+          </div>
+          <div className="mt-7 rounded-xl bg-[#172337] p-4 font-mono text-xs leading-6 text-slate-200">
+            <span className="text-rose-300">AssertionError:</span> expected
+            payment status to equal "confirmed"
+            <br />
+            <span className="text-slate-500">
+              at checkout/payment.spec.ts:184:21
+            </span>
+            <br />
+            received: "pending"
+          </div>
+          <h3 className="mt-6 font-semibold text-[#172337]">Steps</h3>
+          <ol className="mt-3 space-y-2 text-sm text-slate-600">
+            <li>1. Create a checkout session</li>
+            <li>2. Complete 3-D Secure authentication</li>
+            <li className="font-medium text-rose-600">
+              3. Confirm payment — failed
+            </li>
+          </ol>
+        </section>
+        <section className={cn(panel, "border-[#cfc5ee]")}>
+          <div className="flex items-center gap-2">
+            <Bot className="h-5 w-5 text-[#16788a]" />
+            <h2 className="font-semibold text-[#172337]">AI analysis</h2>
+          </div>
+          <p className="mt-4 text-sm leading-6 text-slate-600">
+            The confirmation request timed out after the 3-D Secure callback.
+            This aligns with a retry configuration change introduced in build
+            #4818.
+          </p>
+          <div className="mt-4 rounded-xl bg-[#f4ede4] p-3 text-sm text-[#172337]">
+            <b>87% confidence</b>
+            <p className="mt-1">Check the provider-client retry policy.</p>
+          </div>
+          <button className="mt-4 text-sm font-semibold text-[#16788a] hover:underline">
+            View suggested fix →
+          </button>
+        </section>
+      </div>
+    );
+  if (view === "coverage")
+    return (
+      <div className="space-y-4">
+        <section className={panel}>
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <h2 className="flex items-center gap-2 text-2xl font-semibold tracking-tight text-[#172337]">
+                <Shield className="h-5 w-5" />
+                Test coverage
+              </h2>
+              <p className="mt-2 text-sm text-slate-500">
+                Coverage intelligence over the platform's API, UI, and domain
+                units — scored against the last 10 test runs.
+              </p>
+            </div>
+            <div className="flex gap-2">
+              <button className="rounded-xl border border-[#d9d0c4] px-3 py-2 text-xs font-semibold text-slate-600">
+                Rebuild inventory
+              </button>
+              <button className="inline-flex items-center gap-2 rounded-xl bg-[#16788a] px-3 py-2 text-xs font-semibold text-white">
+                <Sparkles className="h-3.5 w-3.5" />
+                Generate recommendations
+              </button>
+            </div>
+          </div>
+        </section>
+        <div className="grid gap-4 lg:grid-cols-[0.4fr_0.6fr]">
+          <section className={panel}>
+            <p className="text-sm font-semibold text-[#172337]">Summary</p>
+            <p className="mt-1 text-xs text-slate-500">
+              Project-wide coverage posture.
+            </p>
+            <p className="mt-5 text-5xl font-semibold tracking-tight text-[#172337]">
+              82.4
+            </p>
+            <p className="mt-1 text-xs uppercase tracking-wide text-slate-500">
+              Coverage score (0–100)
+            </p>
+            <div className="mt-5 grid grid-cols-3 gap-2 text-center text-xs">
+              <div>
+                <b className="block text-base">412</b>Units
+              </div>
+              <div>
+                <b className="block text-base">339</b>Covered
+              </div>
+              <div>
+                <b className="block text-base">91%</b>Confidence
+              </div>
+            </div>
+          </section>
+          <section className={cn(panel, "p-0 overflow-hidden")}>
+            <div className="p-5">
+              <p className="text-sm font-semibold text-[#172337]">Modules</p>
+              <p className="text-xs text-slate-500">
+                Coverage score per module.
+              </p>
+            </div>
+            <CoverageTable />
+          </section>
+        </div>
+        <section className={cn(panel, "p-0 overflow-hidden")}>
+          <div className="p-5">
+            <p className="text-sm font-semibold text-[#172337]">Top gaps</p>
+            <p className="text-xs text-slate-500">
+              Units with low effective coverage, ordered by priority.
+            </p>
+          </div>
+          <GapTable />
+        </section>
+      </div>
+    );
+  const copy =
+    view === "knowledge"
+      ? [
+          "Knowledge Base",
+          "Ask your project",
+          "Search indexed test documentation, repositories, and team knowledge.",
+        ]
+      : [
+          "Settings",
+          "Project settings",
+          "Configure integrations, test result imports, and access for this project.",
+        ];
+  return (
+    <section className={panel}>
+      <p className="eyebrow">{copy[0]}</p>
+      <h2 className="mt-2 text-2xl font-semibold text-[#172337]">{copy[1]}</h2>
+      <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600">
+        {copy[2]}
+      </p>
+      <button className="mt-6 rounded-xl border border-[#d9d0c4] bg-white px-4 py-2.5 text-sm font-semibold text-[#172337] hover:bg-[#f4ede4]">
+        Explore {copy[0]}
+      </button>
+    </section>
+  );
 }
 
-function ResultTimeline({ tests, onSelect }: { tests: DemoTest[]; onSelect: (index: number) => void }) {
-  return <div className="space-y-3 p-4"><div className="rounded-2xl border border-[#d9d0c4] bg-[#f4ede4]/55 p-4"><div className="grid grid-cols-[72px_minmax(0,1fr)] gap-3"><div /><div className="relative h-9 border-b border-[#d9d0c4]">{["0s", "2m", "4m", "6m", "8m"].map((label, index) => <span key={label} className="absolute top-0 text-[10px] text-slate-500" style={{ left: `${index * 25}%` }}>{label}</span>)}</div></div></div>{tests.slice(0,4).map((item, index) => <div key={item.name} className="grid grid-cols-[72px_minmax(0,1fr)] items-center gap-3"><span className="text-xs text-slate-500">Thread {index + 1}</span><div className="relative h-14 overflow-hidden rounded-xl border border-[#d9d0c4] bg-[#f4ede4]/45"><button onClick={() => onSelect(index)} className={cn("absolute top-2 h-10 rounded-xl border bg-white px-2 text-left text-[10px] shadow-sm", item.status === "failed" ? "border-rose-200" : item.status === "broken" ? "border-amber-200" : "border-emerald-200")} style={{ left: `${6 + index * 11}%`, width: `${35 + index * 8}%` }}><span className="flex items-center gap-1"><StatusIcon status={item.status} className="h-3 w-3" /><span className="truncate">{item.name}</span></span><span className="text-slate-400">{item.duration}</span></button></div></div>)}</div>;
+function ResultTimeline({
+  tests,
+  onSelect,
+}: {
+  tests: DemoTest[];
+  onSelect: (index: number) => void;
+}) {
+  return (
+    <div className="space-y-3 p-4">
+      <div className="rounded-2xl border border-[#d9d0c4] bg-[#f4ede4]/55 p-4">
+        <div className="grid grid-cols-[72px_minmax(0,1fr)] gap-3">
+          <div />
+          <div className="relative h-9 border-b border-[#d9d0c4]">
+            {["0s", "2m", "4m", "6m", "8m"].map((label, index) => (
+              <span
+                key={label}
+                className="absolute top-0 text-[10px] text-slate-500"
+                style={{ left: `${index * 25}%` }}
+              >
+                {label}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+      {tests.slice(0, 4).map((item, index) => (
+        <div
+          key={item.name}
+          className="grid grid-cols-[72px_minmax(0,1fr)] items-center gap-3"
+        >
+          <span className="text-xs text-slate-500">Thread {index + 1}</span>
+          <div className="relative h-14 overflow-hidden rounded-xl border border-[#d9d0c4] bg-[#f4ede4]/45">
+            <button
+              onClick={() => onSelect(index)}
+              className={cn(
+                "absolute top-2 h-10 rounded-xl border bg-white px-2 text-left text-[10px] shadow-sm",
+                item.status === "failed"
+                  ? "border-rose-200"
+                  : item.status === "broken"
+                    ? "border-amber-200"
+                    : "border-emerald-200",
+              )}
+              style={{
+                left: `${6 + index * 11}%`,
+                width: `${35 + index * 8}%`,
+              }}
+            >
+              <span className="flex items-center gap-1">
+                <StatusIcon status={item.status} className="h-3 w-3" />
+                <span className="truncate">{item.name}</span>
+              </span>
+              <span className="text-slate-400">{item.duration}</span>
+            </button>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
 }
 
-function ResultDetail({ result, onOpen }: { result: (typeof tests)[number]; onOpen: () => void }) {
-  return <section className="min-h-[32rem] rounded-[24px] border border-[#d9d0c4] bg-white/90 p-5 shadow-[0_14px_36px_rgba(22,29,42,0.06)]"><div className="flex items-start gap-3"><StatusIcon status={result.status} className={cn("mt-1 h-5 w-5", result.status === "failed" ? "text-rose-500" : "text-amber-500")} /><div className="min-w-0 flex-1"><p className="eyebrow">{result.suite}</p><h2 className="mt-1 text-lg font-semibold text-[#172337]">{result.name}</h2><p className="mt-1 text-xs text-slate-500">Finished in {result.duration}</p></div><button onClick={onOpen} className="rounded-lg border border-[#d9d0c4] px-2.5 py-1.5 text-xs font-semibold text-[#16788a]">Open</button></div><div className="mt-6 space-y-5"><div><p className="mb-2 text-[10px] font-semibold uppercase tracking-[.2em] text-slate-500">Status details</p><div className="rounded-lg border border-rose-200 bg-rose-50/80 px-3 py-2 text-xs leading-5 text-rose-800">Expected payment status to equal <b>confirmed</b>, received <b>pending</b>.</div></div><div><p className="mb-2 text-[10px] font-semibold uppercase tracking-[.2em] text-slate-500">Execution steps</p><div className="space-y-1">{["Create a checkout session", "Complete 3-D Secure authentication", "Confirm payment"].map((step, index) => <button key={step} className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left hover:bg-[#f4ede4]"><span className="rounded-full border border-[#d9d0c4] bg-[#f4ede4] px-2 py-0.5 text-[10px] text-slate-500">#{index + 1}</span><StatusIcon status={index === 2 ? "failed" : "passed"} className={cn("h-3.5 w-3.5", index === 2 ? "text-rose-500" : "text-emerald-500")} /><span className="flex-1 text-sm text-[#172337]">{step}</span><span className="text-[11px] text-slate-400">{index === 2 ? "8.1s" : "2.4s"}</span></button>)}</div></div><div><p className="mb-2 text-[10px] font-semibold uppercase tracking-[.2em] text-slate-500">History</p><p className="text-xs text-slate-500">Failed in 2 of the last 5 executions.</p></div></div></section>;
+function ResultDetail({
+  result,
+  onOpen,
+}: {
+  result: (typeof tests)[number];
+  onOpen: () => void;
+}) {
+  return (
+    <section className="min-h-[32rem] rounded-[24px] border border-[#d9d0c4] bg-white/90 p-5 shadow-[0_14px_36px_rgba(22,29,42,0.06)]">
+      <div className="flex items-start gap-3">
+        <StatusIcon
+          status={result.status}
+          className={cn(
+            "mt-1 h-5 w-5",
+            result.status === "failed" ? "text-rose-500" : "text-amber-500",
+          )}
+        />
+        <div className="min-w-0 flex-1">
+          <p className="eyebrow">{result.suite}</p>
+          <h2 className="mt-1 text-lg font-semibold text-[#172337]">
+            {result.name}
+          </h2>
+          <p className="mt-1 text-xs text-slate-500">
+            Finished in {result.duration}
+          </p>
+        </div>
+        <button
+          onClick={onOpen}
+          className="rounded-lg border border-[#d9d0c4] px-2.5 py-1.5 text-xs font-semibold text-[#16788a]"
+        >
+          Open
+        </button>
+      </div>
+      <div className="mt-6 space-y-5">
+        <div>
+          <p className="mb-2 text-[10px] font-semibold uppercase tracking-[.2em] text-slate-500">
+            Status details
+          </p>
+          <div className="rounded-lg border border-rose-200 bg-rose-50/80 px-3 py-2 text-xs leading-5 text-rose-800">
+            Expected payment status to equal <b>confirmed</b>, received{" "}
+            <b>pending</b>.
+          </div>
+        </div>
+        <div>
+          <p className="mb-2 text-[10px] font-semibold uppercase tracking-[.2em] text-slate-500">
+            Execution steps
+          </p>
+          <div className="space-y-1">
+            {[
+              "Create a checkout session",
+              "Complete 3-D Secure authentication",
+              "Confirm payment",
+            ].map((step, index) => (
+              <button
+                key={step}
+                className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left hover:bg-[#f4ede4]"
+              >
+                <span className="rounded-full border border-[#d9d0c4] bg-[#f4ede4] px-2 py-0.5 text-[10px] text-slate-500">
+                  #{index + 1}
+                </span>
+                <StatusIcon
+                  status={index === 2 ? "failed" : "passed"}
+                  className={cn(
+                    "h-3.5 w-3.5",
+                    index === 2 ? "text-rose-500" : "text-emerald-500",
+                  )}
+                />
+                <span className="flex-1 text-sm text-[#172337]">{step}</span>
+                <span className="text-[11px] text-slate-400">
+                  {index === 2 ? "8.1s" : "2.4s"}
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
+        <div>
+          <p className="mb-2 text-[10px] font-semibold uppercase tracking-[.2em] text-slate-500">
+            History
+          </p>
+          <p className="text-xs text-slate-500">
+            Failed in 2 of the last 5 executions.
+          </p>
+        </div>
+      </div>
+    </section>
+  );
 }
 
 function TrendChart() {
-  return <div className="mt-6"><svg viewBox="0 0 620 210" className="h-52 w-full" role="img" aria-label="Pass and fail trend"><defs><linearGradient id="passArea" x1="0" x2="0" y1="0" y2="1"><stop stopColor="#10b981" stopOpacity=".25"/><stop offset="1" stopColor="#10b981" stopOpacity="0"/></linearGradient></defs>{[35,80,125,170].map((y) => <line key={y} x1="36" x2="600" y1={y} y2={y} stroke="#e8e0d7" strokeDasharray="3 5" />)}<path d="M36 155 L115 128 L195 139 L275 88 L355 106 L435 64 L515 79 L600 45 L600 190 L36 190 Z" fill="url(#passArea)"/><path d="M36 155 L115 128 L195 139 L275 88 L355 106 L435 64 L515 79 L600 45" fill="none" stroke="#10b981" strokeWidth="3"/><path d="M36 178 L115 171 L195 175 L275 157 L355 168 L435 146 L515 159 L600 137" fill="none" stroke="#ef4444" strokeWidth="3" strokeDasharray="6 5"/>{[36,115,195,275,355,435,515,600].map((x,i) => <text key={x} x={x} y="207" textAnchor="middle" fill="#78818c" fontSize="11">{`Jul ${18+i*2}`}</text>)}</svg><div className="flex gap-5 text-xs"><span className="text-emerald-700">━ Passed tests</span><span className="text-rose-600">┄ Failed tests</span></div></div>;
+  return (
+    <div className="mt-6">
+      <svg
+        viewBox="0 0 620 210"
+        className="h-52 w-full"
+        role="img"
+        aria-label="Pass and fail trend"
+      >
+        <defs>
+          <linearGradient id="passArea" x1="0" x2="0" y1="0" y2="1">
+            <stop stopColor="#10b981" stopOpacity=".25" />
+            <stop offset="1" stopColor="#10b981" stopOpacity="0" />
+          </linearGradient>
+        </defs>
+        {[35, 80, 125, 170].map((y) => (
+          <line
+            key={y}
+            x1="36"
+            x2="600"
+            y1={y}
+            y2={y}
+            stroke="#e8e0d7"
+            strokeDasharray="3 5"
+          />
+        ))}
+        <path
+          d="M36 155 L115 128 L195 139 L275 88 L355 106 L435 64 L515 79 L600 45 L600 190 L36 190 Z"
+          fill="url(#passArea)"
+        />
+        <path
+          d="M36 155 L115 128 L195 139 L275 88 L355 106 L435 64 L515 79 L600 45"
+          fill="none"
+          stroke="#10b981"
+          strokeWidth="3"
+        />
+        <path
+          d="M36 178 L115 171 L195 175 L275 157 L355 168 L435 146 L515 159 L600 137"
+          fill="none"
+          stroke="#ef4444"
+          strokeWidth="3"
+          strokeDasharray="6 5"
+        />
+        {[36, 115, 195, 275, 355, 435, 515, 600].map((x, i) => (
+          <text
+            key={x}
+            x={x}
+            y="207"
+            textAnchor="middle"
+            fill="#78818c"
+            fontSize="11"
+          >{`Jul ${18 + i * 2}`}</text>
+        ))}
+      </svg>
+      <div className="flex gap-5 text-xs">
+        <span className="text-emerald-700">━ Passed tests</span>
+        <span className="text-rose-600">┄ Failed tests</span>
+      </div>
+    </div>
+  );
 }
 
 function InteractiveTestBar({ run }: { run: Run }) {
   const [activeState, setActiveState] = useState<TestStatus | null>(null);
   const active = activeState as TestStatus;
-  const setActive = (value: TestStatus | null | ((current: TestStatus) => TestStatus | null)) => setActiveState((current) => typeof value === "function" ? value(current as TestStatus) : value);
+  const setActive = (
+    value: TestStatus | null | ((current: TestStatus) => TestStatus | null),
+  ) =>
+    setActiveState((current) =>
+      typeof value === "function" ? value(current as TestStatus) : value,
+    );
   return <ClickableTestBar run={run} />;
   const total = Math.max(run.total, 1);
-  const segments: Array<{ status: TestStatus; value: number; color: string }> = [{ status: "passed", value: run.passed, color: "#10b981" }, { status: "failed", value: run.failed, color: "#ef4444" }, { status: "broken", value: run.broken, color: "#f59e0b" }, { status: "skipped", value: run.skipped, color: "#94a3b8" }];
-  return <div className="min-w-[16rem]"><div className="flex justify-between text-xs text-slate-500"><span>{total} tests</span><span>{run.passed} passed</span></div><div className="mt-2 flex h-3 overflow-hidden rounded-full border border-[#d9dfe8] bg-[#f7f9fb] p-[2px]" title={active ? `Filter: ${statusText[active]}` : "Click a segment to filter results"}>{segments.map((segment) => segment.value > 0 && <button aria-label={`Filter ${statusText[segment.status]}`} key={segment.status} onClick={(event) => { event.stopPropagation(); setActive((current) => current === segment.status ? null : segment.status); }} onMouseEnter={() => setActive(segment.status)} onMouseLeave={() => setActive(null)} className={cn("h-full transition-all duration-200", segment.status === "passed" && "rounded-l-full", active && active !== segment.status && "opacity-35", active === segment.status && "scale-y-150") } style={{ backgroundColor: segment.color, width: `${(segment.value / total) * 100}%` }} />)}</div><div className="mt-2 flex gap-3 text-xs text-slate-500"><span className={cn(active === "passed" && "font-bold text-emerald-700")}>{run.passed} passed</span><span className={cn(active === "failed" && "font-bold text-rose-700")}>{run.failed + run.broken} unstable</span><span className={cn(active === "skipped" && "font-bold text-slate-700")}>{run.skipped} skipped</span></div>{active && <p className="mt-1 text-[10px] font-semibold text-[#16788a]">Filter: {statusText[active]}</p>}</div>;
+  const segments: Array<{ status: TestStatus; value: number; color: string }> =
+    [
+      { status: "passed", value: run.passed, color: "#10b981" },
+      { status: "failed", value: run.failed, color: "#ef4444" },
+      { status: "broken", value: run.broken, color: "#f59e0b" },
+      { status: "skipped", value: run.skipped, color: "#94a3b8" },
+    ];
+  return (
+    <div className="min-w-[16rem]">
+      <div className="flex justify-between text-xs text-slate-500">
+        <span>{total} tests</span>
+        <span>{run.passed} passed</span>
+      </div>
+      <div
+        className="mt-2 flex h-3 overflow-hidden rounded-full border border-[#d9dfe8] bg-[#f7f9fb] p-[2px]"
+        title={
+          active
+            ? `Filter: ${statusText[active]}`
+            : "Click a segment to filter results"
+        }
+      >
+        {segments.map(
+          (segment) =>
+            segment.value > 0 && (
+              <button
+                aria-label={`Filter ${statusText[segment.status]}`}
+                key={segment.status}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  setActive((current) =>
+                    current === segment.status ? null : segment.status,
+                  );
+                }}
+                onMouseEnter={() => setActive(segment.status)}
+                onMouseLeave={() => setActive(null)}
+                className={cn(
+                  "h-full transition-all duration-200",
+                  segment.status === "passed" && "rounded-l-full",
+                  active && active !== segment.status && "opacity-35",
+                  active === segment.status && "scale-y-150",
+                )}
+                style={{
+                  backgroundColor: segment.color,
+                  width: `${(segment.value / total) * 100}%`,
+                }}
+              />
+            ),
+        )}
+      </div>
+      <div className="mt-2 flex gap-3 text-xs text-slate-500">
+        <span
+          className={cn(active === "passed" && "font-bold text-emerald-700")}
+        >
+          {run.passed} passed
+        </span>
+        <span className={cn(active === "failed" && "font-bold text-rose-700")}>
+          {run.failed + run.broken} unstable
+        </span>
+        <span
+          className={cn(active === "skipped" && "font-bold text-slate-700")}
+        >
+          {run.skipped} skipped
+        </span>
+      </div>
+      {active && (
+        <p className="mt-1 text-[10px] font-semibold text-[#16788a]">
+          Filter: {statusText[active]}
+        </p>
+      )}
+    </div>
+  );
 }
 
 function ClickableTestBar({ run }: { run: Run }) {
   const [activeState, setActiveState] = useState<TestStatus | null>(null);
   const active = activeState as TestStatus;
-  const setActive = (value: TestStatus | null | ((current: TestStatus) => TestStatus | null)) => setActiveState((current) => typeof value === "function" ? value(current as TestStatus) : value);
-  const segments: Array<{ status: TestStatus; value: number; color: string }> = [{ status: "passed", value: run.passed, color: "#10b981" }, { status: "failed", value: run.failed, color: "#ef4444" }, { status: "broken", value: run.broken, color: "#f59e0b" }, { status: "skipped", value: run.skipped, color: "#94a3b8" }];
-  const activate = (status: TestStatus) => { const next = active === status ? null : status; setActive(next); if (next) window.dispatchEvent(new CustomEvent("demo-status-filter", { detail: next })); };
-  return <div className="min-w-[16rem]"><div className="flex justify-between text-xs text-slate-500"><span>{run.total} tests</span><span>{run.passed} passed</span></div><div className="mt-2 flex h-3 overflow-hidden rounded-full border border-[#d9dfe8] bg-[#f7f9fb] p-[2px]">{segments.map((segment) => segment.value > 0 && <button key={segment.status} aria-label={`Filter ${statusText[segment.status]}`} onClick={(event) => { event.stopPropagation(); activate(segment.status); }} onMouseEnter={() => setActive(segment.status)} onMouseLeave={() => setActive(null)} className={cn("h-full transition-all duration-200", segment.status === "passed" && "rounded-l-full", active && active !== segment.status && "opacity-35", active === segment.status && "scale-y-150")} style={{ backgroundColor: segment.color, width: `${(segment.value / Math.max(run.total, 1)) * 100}%` }} />)}</div><div className="mt-2 flex gap-3 text-xs text-slate-500"><span>{run.passed} passed</span><span>{run.failed + run.broken} unstable</span><span>{run.skipped} skipped</span></div>{active && <p className="mt-1 text-[10px] font-semibold text-[#16788a]">Filter: {statusText[active]}</p>}</div>;
+  const setActive = (
+    value: TestStatus | null | ((current: TestStatus) => TestStatus | null),
+  ) =>
+    setActiveState((current) =>
+      typeof value === "function" ? value(current as TestStatus) : value,
+    );
+  const segments: Array<{ status: TestStatus; value: number; color: string }> =
+    [
+      { status: "passed", value: run.passed, color: "#10b981" },
+      { status: "failed", value: run.failed, color: "#ef4444" },
+      { status: "broken", value: run.broken, color: "#f59e0b" },
+      { status: "skipped", value: run.skipped, color: "#94a3b8" },
+    ];
+  const activate = (status: TestStatus) => {
+    const next = active === status ? null : status;
+    setActive(next);
+    if (next)
+      window.dispatchEvent(
+        new CustomEvent("demo-status-filter", { detail: next }),
+      );
+  };
+  return (
+    <div className="min-w-[16rem]">
+      <div className="flex justify-between text-xs text-slate-500">
+        <span>{run.total} tests</span>
+        <span>{run.passed} passed</span>
+      </div>
+      <div className="mt-2 flex h-3 overflow-hidden rounded-full border border-[#d9dfe8] bg-[#f7f9fb] p-[2px]">
+        {segments.map(
+          (segment) =>
+            segment.value > 0 && (
+              <button
+                key={segment.status}
+                aria-label={`Filter ${statusText[segment.status]}`}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  activate(segment.status);
+                }}
+                onMouseEnter={() => setActive(segment.status)}
+                onMouseLeave={() => setActive(null)}
+                className={cn(
+                  "h-full transition-all duration-200",
+                  segment.status === "passed" && "rounded-l-full",
+                  active && active !== segment.status && "opacity-35",
+                  active === segment.status && "scale-y-150",
+                )}
+                style={{
+                  backgroundColor: segment.color,
+                  width: `${(segment.value / Math.max(run.total, 1)) * 100}%`,
+                }}
+              />
+            ),
+        )}
+      </div>
+      <div className="mt-2 flex gap-3 text-xs text-slate-500">
+        <span>{run.passed} passed</span>
+        <span>{run.failed + run.broken} unstable</span>
+        <span>{run.skipped} skipped</span>
+      </div>
+      {active && (
+        <p className="mt-1 text-[10px] font-semibold text-[#16788a]">
+          Filter: {statusText[active]}
+        </p>
+      )}
+    </div>
+  );
 }
 
 function ClickableDonut() {
   const [activeState, setActiveState] = useState<TestStatus | null>(null);
   const active = activeState as TestStatus;
-  const setActive = (value: TestStatus | null | ((current: TestStatus) => TestStatus | null)) => setActiveState((current) => typeof value === "function" ? value(current as TestStatus) : value);
-  const segments: Array<{ status: TestStatus; color: string; start: number; end: number }> = [{ status: "passed", color: "#10b981", start: 0, end: 92.9 }, { status: "failed", color: "#ef4444", start: 92.9, end: 95.2 }, { status: "broken", color: "#f59e0b", start: 95.2, end: 96 }, { status: "skipped", color: "#94a3b8", start: 96, end: 100 }];
-  const activate = (status: TestStatus) => { const next = active === status ? null : status; setActive(next); if (next) window.dispatchEvent(new CustomEvent("demo-status-filter", { detail: next })); };
-  return <div className="relative h-36 w-36" aria-label="Pass rate chart"><div className="absolute inset-0 rounded-full transition-transform duration-200" style={{ background: `conic-gradient(${segments.map((segment) => `${segment.color} ${segment.start}% ${segment.end}%`).join(", ")}`, transform: active ? "scale(1.05)" : undefined }} />{segments.map((segment) => <button key={segment.status} aria-label={`Filter ${statusText[segment.status]}`} onClick={() => activate(segment.status)} onMouseEnter={() => setActive(segment.status)} onMouseLeave={() => setActive(null)} className={cn("absolute inset-0 rounded-full transition-opacity", active && active !== segment.status && "opacity-45")} style={{ clipPath: `conic-gradient(transparent 0 ${segment.start}%, #000 ${segment.start}% ${segment.end}%, transparent ${segment.end}% 100%)` }} />)}<div className="absolute inset-4 grid place-items-center rounded-full bg-white text-center"><b className="text-2xl text-[#172337]">93%</b><span className="text-[9px] font-semibold uppercase text-slate-500">pass rate</span></div>{active && <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 whitespace-nowrap text-[10px] font-semibold text-[#16788a]">Filter: {statusText[active]}</span>}</div>;
+  const setActive = (
+    value: TestStatus | null | ((current: TestStatus) => TestStatus | null),
+  ) =>
+    setActiveState((current) =>
+      typeof value === "function" ? value(current as TestStatus) : value,
+    );
+  const segments: Array<{
+    status: TestStatus;
+    color: string;
+    start: number;
+    end: number;
+  }> = [
+    { status: "passed", color: "#10b981", start: 0, end: 92.9 },
+    { status: "failed", color: "#ef4444", start: 92.9, end: 95.2 },
+    { status: "broken", color: "#f59e0b", start: 95.2, end: 96 },
+    { status: "skipped", color: "#94a3b8", start: 96, end: 100 },
+  ];
+  const activate = (status: TestStatus) => {
+    const next = active === status ? null : status;
+    setActive(next);
+    if (next)
+      window.dispatchEvent(
+        new CustomEvent("demo-status-filter", { detail: next }),
+      );
+  };
+  return (
+    <div className="relative h-36 w-36" aria-label="Pass rate chart">
+      <div
+        className="absolute inset-0 rounded-full transition-transform duration-200"
+        style={{
+          background: `conic-gradient(${segments.map((segment) => `${segment.color} ${segment.start}% ${segment.end}%`).join(", ")}`,
+          transform: active ? "scale(1.05)" : undefined,
+        }}
+      />
+      {segments.map((segment) => (
+        <button
+          key={segment.status}
+          aria-label={`Filter ${statusText[segment.status]}`}
+          onClick={() => activate(segment.status)}
+          onMouseEnter={() => setActive(segment.status)}
+          onMouseLeave={() => setActive(null)}
+          className={cn(
+            "absolute inset-0 rounded-full transition-opacity",
+            active && active !== segment.status && "opacity-45",
+          )}
+          style={{
+            clipPath: `conic-gradient(transparent 0 ${segment.start}%, #000 ${segment.start}% ${segment.end}%, transparent ${segment.end}% 100%)`,
+          }}
+        />
+      ))}
+      <div className="absolute inset-4 grid place-items-center rounded-full bg-white text-center">
+        <b className="text-2xl text-[#172337]">93%</b>
+        <span className="text-[9px] font-semibold uppercase text-slate-500">
+          pass rate
+        </span>
+      </div>
+      {active && (
+        <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 whitespace-nowrap text-[10px] font-semibold text-[#16788a]">
+          Filter: {statusText[active]}
+        </span>
+      )}
+    </div>
+  );
 }
 
 function InteractiveDonut() {
   const [activeState, setActiveState] = useState<TestStatus | null>(null);
   const active = activeState as TestStatus;
-  const setActive = (value: TestStatus | null | ((current: TestStatus) => TestStatus | null)) => setActiveState((current) => typeof value === "function" ? value(current as TestStatus) : value);
+  const setActive = (
+    value: TestStatus | null | ((current: TestStatus) => TestStatus | null),
+  ) =>
+    setActiveState((current) =>
+      typeof value === "function" ? value(current as TestStatus) : value,
+    );
   return <ClickableDonut />;
-  const segments: Array<{ status: TestStatus; value: number; color: string; start: number; end: number }> = [{ status: "passed", value: 119, color: "#10b981", start: 0, end: 92.9 }, { status: "failed", value: 3, color: "#ef4444", start: 92.9, end: 95.2 }, { status: "broken", value: 1, color: "#f59e0b", start: 95.2, end: 96 }, { status: "skipped", value: 5, color: "#94a3b8", start: 96, end: 100 }];
-  return <div className="relative h-36 w-36" aria-label="Pass rate chart"><div className="absolute inset-0 rounded-full transition-transform duration-200" style={{ background: `conic-gradient(${segments.map((segment) => `${segment.color} ${segment.start}% ${segment.end}%`).join(", ")})`, transform: active ? "scale(1.05)" : undefined }} />{segments.map((segment) => <button key={segment.status} aria-label={`Filter ${statusText[segment.status]}`} onClick={() => setActive((current) => current === segment.status ? null : segment.status)} onMouseEnter={() => setActive(segment.status)} onMouseLeave={() => setActive(null)} className={cn("absolute inset-0 rounded-full transition-opacity", active && active !== segment.status && "opacity-45")} style={{ clipPath: `conic-gradient(transparent 0 ${segment.start}%, #000 ${segment.start}% ${segment.end}%, transparent ${segment.end}% 100%)` }} />)}<div className="absolute inset-4 grid place-items-center rounded-full bg-white text-center"><b className="text-2xl text-[#172337]">93%</b><span className="text-[9px] font-semibold uppercase text-slate-500">pass rate</span></div>{active && <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 whitespace-nowrap text-[10px] font-semibold text-[#16788a]">Filter: {statusText[active]}</span>}</div>;
+  const segments: Array<{
+    status: TestStatus;
+    value: number;
+    color: string;
+    start: number;
+    end: number;
+  }> = [
+    { status: "passed", value: 119, color: "#10b981", start: 0, end: 92.9 },
+    { status: "failed", value: 3, color: "#ef4444", start: 92.9, end: 95.2 },
+    { status: "broken", value: 1, color: "#f59e0b", start: 95.2, end: 96 },
+    { status: "skipped", value: 5, color: "#94a3b8", start: 96, end: 100 },
+  ];
+  return (
+    <div className="relative h-36 w-36" aria-label="Pass rate chart">
+      <div
+        className="absolute inset-0 rounded-full transition-transform duration-200"
+        style={{
+          background: `conic-gradient(${segments.map((segment) => `${segment.color} ${segment.start}% ${segment.end}%`).join(", ")})`,
+          transform: active ? "scale(1.05)" : undefined,
+        }}
+      />
+      {segments.map((segment) => (
+        <button
+          key={segment.status}
+          aria-label={`Filter ${statusText[segment.status]}`}
+          onClick={() =>
+            setActive((current) =>
+              current === segment.status ? null : segment.status,
+            )
+          }
+          onMouseEnter={() => setActive(segment.status)}
+          onMouseLeave={() => setActive(null)}
+          className={cn(
+            "absolute inset-0 rounded-full transition-opacity",
+            active && active !== segment.status && "opacity-45",
+          )}
+          style={{
+            clipPath: `conic-gradient(transparent 0 ${segment.start}%, #000 ${segment.start}% ${segment.end}%, transparent ${segment.end}% 100%)`,
+          }}
+        />
+      ))}
+      <div className="absolute inset-4 grid place-items-center rounded-full bg-white text-center">
+        <b className="text-2xl text-[#172337]">93%</b>
+        <span className="text-[9px] font-semibold uppercase text-slate-500">
+          pass rate
+        </span>
+      </div>
+      {active && (
+        <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 whitespace-nowrap text-[10px] font-semibold text-[#16788a]">
+          Filter: {statusText[active]}
+        </span>
+      )}
+    </div>
+  );
 }
 
 function DonutChart() {
   return <InteractiveDonut />;
-  return <div className="mt-5 flex justify-center"><div className="relative h-36 w-36 rounded-full" style={{ background: "conic-gradient(#10b981 0 92.9%, #ef4444 92.9% 95.2%, #f59e0b 95.2% 96%, #94a3b8 96% 100%)" }}><div className="absolute inset-4 grid place-items-center rounded-full bg-white text-center"><b className="text-2xl text-[#172337]">93%</b><span className="text-[9px] font-semibold uppercase text-slate-500">pass rate</span></div></div></div>;
+  return (
+    <div className="mt-5 flex justify-center">
+      <div
+        className="relative h-36 w-36 rounded-full"
+        style={{
+          background:
+            "conic-gradient(#10b981 0 92.9%, #ef4444 92.9% 95.2%, #f59e0b 95.2% 96%, #94a3b8 96% 100%)",
+        }}
+      >
+        <div className="absolute inset-4 grid place-items-center rounded-full bg-white text-center">
+          <b className="text-2xl text-[#172337]">93%</b>
+          <span className="text-[9px] font-semibold uppercase text-slate-500">
+            pass rate
+          </span>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 function CoverageTable() {
-  const rows = [["checkout", "91.2", "83 / 91", "94%"], ["auth", "88.6", "54 / 61", "92%"], ["catalog", "76.1", "118 / 155", "89%"], ["notifications", "67.5", "84 / 105", "90%"]];
-  return <table className="w-full text-sm"><thead className="bg-[#f4ede4] text-left text-xs font-semibold uppercase tracking-[.16em] text-slate-500"><tr><th className="px-4 py-3">Module</th><th className="px-4 py-3 text-right">Score</th><th className="px-4 py-3 text-right">Units</th><th className="px-4 py-3 text-right">Confidence</th></tr></thead><tbody className="divide-y divide-[#e8e0d7]">{rows.map((row) => <tr key={row[0]} className="hover:bg-[#faf8f5]"><td className="px-4 py-3 font-medium text-[#172337]">{row[0]}</td><td className="px-4 py-3 text-right">{row[1]}</td><td className="px-4 py-3 text-right">{row[2]}</td><td className="px-4 py-3 text-right">{row[3]}</td></tr>)}</tbody></table>;
+  const rows = [
+    ["checkout", "91.2", "83 / 91", "94%"],
+    ["auth", "88.6", "54 / 61", "92%"],
+    ["catalog", "76.1", "118 / 155", "89%"],
+    ["notifications", "67.5", "84 / 105", "90%"],
+  ];
+  return (
+    <table className="w-full text-sm">
+      <thead className="bg-[#f4ede4] text-left text-xs font-semibold uppercase tracking-[.16em] text-slate-500">
+        <tr>
+          <th className="px-4 py-3">Module</th>
+          <th className="px-4 py-3 text-right">Score</th>
+          <th className="px-4 py-3 text-right">Units</th>
+          <th className="px-4 py-3 text-right">Confidence</th>
+        </tr>
+      </thead>
+      <tbody className="divide-y divide-[#e8e0d7]">
+        {rows.map((row) => (
+          <tr key={row[0]} className="hover:bg-[#faf8f5]">
+            <td className="px-4 py-3 font-medium text-[#172337]">{row[0]}</td>
+            <td className="px-4 py-3 text-right">{row[1]}</td>
+            <td className="px-4 py-3 text-right">{row[2]}</td>
+            <td className="px-4 py-3 text-right">{row[3]}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
 }
 
 function GapTable() {
-  const rows = [["PaymentRetryPolicy", "checkout", "High", "34.0%", "Recent production path has no regression coverage"], ["OAuthCallback", "auth", "Medium", "48.2%", "Failure recovery path is untested"], ["TemplateRenderer", "notifications", "Medium", "52.0%", "Low test frequency in last 10 runs"]];
-  return <table className="w-full text-sm"><thead className="bg-[#f4ede4] text-left text-xs font-semibold uppercase tracking-[.16em] text-slate-500"><tr><th className="px-4 py-3">Unit</th><th className="px-4 py-3">Module</th><th className="px-4 py-3">Priority</th><th className="px-4 py-3 text-right">Coverage</th><th className="px-4 py-3">Reason</th></tr></thead><tbody className="divide-y divide-[#e8e0d7]">{rows.map((row) => <tr key={row[0]}><td className="px-4 py-3 font-medium text-[#172337]">{row[0]}</td><td className="px-4 py-3">{row[1]}</td><td className="px-4 py-3"><span className={cn("rounded-full px-2 py-1 text-xs font-semibold", row[2] === "High" ? "bg-rose-50 text-rose-700" : "bg-amber-50 text-amber-700")}>{row[2]}</span></td><td className="px-4 py-3 text-right">{row[3]}</td><td className="px-4 py-3 text-xs text-slate-500">{row[4]}</td></tr>)}</tbody></table>;
+  const rows = [
+    [
+      "PaymentRetryPolicy",
+      "checkout",
+      "High",
+      "34.0%",
+      "Recent production path has no regression coverage",
+    ],
+    [
+      "OAuthCallback",
+      "auth",
+      "Medium",
+      "48.2%",
+      "Failure recovery path is untested",
+    ],
+    [
+      "TemplateRenderer",
+      "notifications",
+      "Medium",
+      "52.0%",
+      "Low test frequency in last 10 runs",
+    ],
+  ];
+  return (
+    <table className="w-full text-sm">
+      <thead className="bg-[#f4ede4] text-left text-xs font-semibold uppercase tracking-[.16em] text-slate-500">
+        <tr>
+          <th className="px-4 py-3">Unit</th>
+          <th className="px-4 py-3">Module</th>
+          <th className="px-4 py-3">Priority</th>
+          <th className="px-4 py-3 text-right">Coverage</th>
+          <th className="px-4 py-3">Reason</th>
+        </tr>
+      </thead>
+      <tbody className="divide-y divide-[#e8e0d7]">
+        {rows.map((row) => (
+          <tr key={row[0]}>
+            <td className="px-4 py-3 font-medium text-[#172337]">{row[0]}</td>
+            <td className="px-4 py-3">{row[1]}</td>
+            <td className="px-4 py-3">
+              <span
+                className={cn(
+                  "rounded-full px-2 py-1 text-xs font-semibold",
+                  row[2] === "High"
+                    ? "bg-rose-50 text-rose-700"
+                    : "bg-amber-50 text-amber-700",
+                )}
+              >
+                {row[2]}
+              </span>
+            </td>
+            <td className="px-4 py-3 text-right">{row[3]}</td>
+            <td className="px-4 py-3 text-xs text-slate-500">{row[4]}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
 }
 
-function Metric({ label, value, detail, icon: Icon, tone }: { label: string; value: string; detail: string; icon: typeof ShieldCheck; tone: "emerald" | "rose" | "cyan" | "violet" }) {
-  const colors = { emerald: "bg-emerald-50 text-emerald-600", rose: "bg-rose-50 text-rose-600", cyan: "bg-cyan-50 text-cyan-600", violet: "bg-violet-50 text-violet-600" };
-  return <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm"><div className="flex items-start justify-between"><div><p className="text-xs font-semibold text-slate-500">{label}</p><p className="mt-1 text-2xl font-bold text-slate-950">{value}</p></div><span className={cn("grid h-9 w-9 place-items-center rounded-lg", colors[tone])}><Icon className="h-4 w-4" /></span></div><p className="mt-2 text-xs text-slate-500">{detail}</p></div>;
+function Metric({
+  label,
+  value,
+  detail,
+  icon: Icon,
+  tone,
+}: {
+  label: string;
+  value: string;
+  detail: string;
+  icon: typeof ShieldCheck;
+  tone: "emerald" | "rose" | "cyan" | "violet";
+}) {
+  const colors = {
+    emerald: "bg-emerald-50 text-emerald-600",
+    rose: "bg-rose-50 text-rose-600",
+    cyan: "bg-cyan-50 text-cyan-600",
+    violet: "bg-violet-50 text-violet-600",
+  };
+  return (
+    <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+      <div className="flex items-start justify-between">
+        <div>
+          <p className="text-xs font-semibold text-slate-500">{label}</p>
+          <p className="mt-1 text-2xl font-bold text-slate-950">{value}</p>
+        </div>
+        <span
+          className={cn(
+            "grid h-9 w-9 place-items-center rounded-lg",
+            colors[tone],
+          )}
+        >
+          <Icon className="h-4 w-4" />
+        </span>
+      </div>
+      <p className="mt-2 text-xs text-slate-500">{detail}</p>
+    </div>
+  );
 }
