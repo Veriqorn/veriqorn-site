@@ -190,6 +190,7 @@ const StatusIcon = ({
 
 function DemoHeaderActions({ view, onNavigate }: { view: string; onNavigate: () => void }) {
   if (view === "overview") return <div className="flex flex-wrap items-center justify-end gap-2"><button onClick={() => window.dispatchEvent(new Event("demo-dashboard-filters"))} className="inline-flex items-center gap-2 rounded-xl border border-[#d9d0c4] bg-white px-3 py-2 text-xs font-semibold text-slate-600 hover:bg-[#f4ede4]"><Filter className="h-3.5 w-3.5" />Filters</button><button onClick={() => window.dispatchEvent(new Event("demo-dashboard-edit"))} className="inline-flex items-center gap-2 rounded-xl border border-[#d9d0c4] bg-white px-3 py-2 text-xs font-semibold text-slate-600 hover:bg-[#f4ede4]"><Layout className="h-3.5 w-3.5" />Edit layout</button><button onClick={onNavigate} className="inline-flex items-center gap-2 rounded-xl border border-[#d9d0c4] bg-white px-3 py-2 text-xs font-semibold text-slate-600 hover:bg-[#f4ede4]"><Settings className="h-3.5 w-3.5" />Dashboard settings</button><button onClick={onNavigate} className="rounded-xl border border-[#d9d0c4] bg-white px-3 py-2 text-xs font-semibold text-slate-600 hover:bg-[#f4ede4]">Project settings</button><button className="inline-flex items-center gap-2 rounded-xl border border-[#d9d0c4] bg-white px-3 py-2 text-xs font-semibold text-slate-600 hover:bg-[#f4ede4]"><RefreshCcw className="h-3.5 w-3.5" />Refresh</button></div>;
+  if (view === "launches") return <div className="flex flex-wrap items-center justify-end gap-2"><button onClick={() => window.dispatchEvent(new Event("demo-launches-filters"))} className="inline-flex items-center gap-2 rounded-xl border border-[#d9d0c4] bg-white px-3 py-2 text-xs font-semibold text-slate-600 hover:bg-[#f4ede4]"><Filter className="h-3.5 w-3.5" />Filters</button><button className="inline-flex items-center gap-2 rounded-xl bg-[#16788a] px-3 py-2 text-xs font-semibold text-white hover:bg-[#106676]"><Plus className="h-3.5 w-3.5" />Create launch</button><button className="inline-flex items-center gap-2 rounded-xl border border-[#d9d0c4] bg-white px-3 py-2 text-xs font-semibold text-slate-600 hover:bg-[#f4ede4]"><Import className="h-3.5 w-3.5" />Import results</button><button className="inline-flex items-center gap-2 rounded-xl border border-[#d9d0c4] bg-white px-3 py-2 text-xs font-semibold text-slate-600 hover:bg-[#f4ede4]"><RefreshCcw className="h-3.5 w-3.5" />Refresh</button></div>;
   if (view === "coverage") return <div className="flex flex-wrap items-center justify-end gap-2"><button className="rounded-xl border border-[#d9d0c4] bg-white px-3 py-2 text-xs font-semibold text-slate-600 hover:bg-[#f4ede4]">Rebuild inventory</button><button className="inline-flex items-center gap-2 rounded-xl bg-[#16788a] px-3 py-2 text-xs font-semibold text-white hover:bg-[#106676]"><Sparkles className="h-3.5 w-3.5" />Generate recommendations</button></div>;
   return null;
 }
@@ -893,31 +894,16 @@ function LaunchDetailDemo({
 
 function LaunchesPageDemo({ onOpen }: { onOpen: (run: Run) => void }) {
   const [filterOpen, setFilterOpen] = useState(false);
+  useEffect(() => {
+    const openFilters = () => setFilterOpen((current) => !current);
+    window.addEventListener("demo-launches-filters", openFilters);
+    return () => window.removeEventListener("demo-launches-filters", openFilters);
+  }, []);
   return (
     <div className="space-y-6">
       <section className="rounded-[28px] border border-[#d9d0c4] bg-white/90 p-6 shadow-[0_20px_55px_rgba(22,29,42,0.07)]">
         <div className="flex flex-wrap items-center justify-between gap-4">
-          <div className="flex flex-wrap items-center gap-2">
-            <button
-              onClick={() => setFilterOpen((current) => !current)}
-              className="inline-flex items-center gap-2 rounded-lg border border-[#d9d0c4] bg-white px-3 py-2 text-sm font-medium text-[#172337]"
-            >
-              <Filter className="h-4 w-4" />
-              Filters
-            </button>
-            <button className="inline-flex items-center gap-2 rounded-lg bg-[#1674e7] px-3 py-2 text-sm font-medium text-white shadow-sm">
-              <Plus className="h-4 w-4" />
-              Create launch
-            </button>
-            <button className="inline-flex items-center gap-2 rounded-lg bg-[#eef2f7] px-3 py-2 text-sm font-medium text-slate-600">
-              <Import className="h-4 w-4" />
-              Import results
-            </button>
-            <button className="inline-flex items-center gap-2 rounded-lg border border-[#d9d0c4] bg-white px-3 py-2 text-sm font-medium text-[#172337]">
-              <RefreshCcw className="h-4 w-4" />
-              Refresh
-            </button>
-          </div>
+          <p className="text-sm font-medium text-[#172337]">Launch history</p>
           <span className="text-sm text-slate-500">Page 1 of 20</span>
         </div>
         {filterOpen && (
