@@ -38,18 +38,18 @@
     min-height: 100vh;
   }
 
-  h1,
-  h2,
-  h3,
-  h4 {
-    font-family: "Aptos", "Segoe UI Variable Text", "Trebuchet MS", sans-serif;
+h1,
+h2,
+h3,
+h4 {
+  font-family: "Space Grotesk", sans-serif;
   }
 }
 
 @layer components {
-  .demo-platform {
-    min-height: 100vh;
-    font-family: "Space Grotesk", sans-serif;
+.demo-platform {
+  min-height: 100vh;
+  font-family: "Aptos", "Segoe UI Variable Text", "Trebuchet MS", sans-serif;
     color: #181f2d;
     background-image:
       radial-gradient(circle at 15% 0%, rgba(197, 221, 246, 0.64), transparent 34%),
