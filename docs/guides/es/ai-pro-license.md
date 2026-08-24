@@ -24,6 +24,45 @@ Es una transición en el mismo lugar: el overlay sustituye solo `backend` y
 `frontend`. PostgreSQL, MinIO, volúmenes, proyectos, usuarios e historial de
 ejecuciones se conservan. No ejecute `docker compose down -v` ni reinstale.
 
+## Acceso a imágenes Enterprise privadas
+
+Las imágenes Enterprise se almacenan en paquetes privados de GitHub Container
+Registry (GHCR). Este acceso sirve solo para entregar imágenes: no activa la
+licencia Enterprise vinculada a la instalación ni concede acceso a los
+repositorios de código fuente de Veriqorn.
+
+1. Indique a Veriqorn el nombre de una cuenta de GitHub dedicada al despliegue,
+   por ejemplo `acme-veriqorn-deploy`. Se recomienda una cuenta técnica
+   independiente.
+2. Veriqorn concede a esa cuenta acceso **Read** solo a los paquetes
+   `veriqorn-enterprise-backend` y `veriqorn-enterprise-frontend`.
+3. Cree para esa cuenta un personal access token **classic** con únicamente el
+   alcance `read:packages`. Si la organización requiere SSO, autorice el token.
+4. En el servidor, inicie sesión una vez en GHCR con Docker y añada los mismos
+   valores al archivo local `.env` del despliegue:
+
+   ```bash
+   echo "$GHCR_TOKEN" | docker login ghcr.io -u acme-veriqorn-deploy --password-stdin
+   ```
+
+   ```dotenv
+   UPDATE_REGISTRY_USERNAME=acme-veriqorn-deploy
+   UPDATE_REGISTRY_TOKEN=<GitHub PAT con read:packages>
+   ```
+
+   No confirme este token ni lo añada a `.env.enterprise`. El agente de
+   actualización lo usa únicamente mientras descarga nuevas imágenes Enterprise.
+5. Después de añadir o renovar el token, vuelva a crear el agente de actualización:
+
+   ```bash
+   docker compose --env-file .env --env-file .env.enterprise \
+     -f docker-compose.yml -f compose.enterprise.yml up -d --force-recreate update-agent
+   ```
+
+Al finalizar la suscripción, Veriqorn retira el acceso de la cuenta técnica a
+los paquetes. La caducidad o revocación de la licencia controla por separado si
+el producto Enterprise ya instalado puede ejecutarse.
+
 ## Preparar el overlay Enterprise
 
 Este paso requiere un operador de servidor de confianza con acceso al directorio

@@ -26,6 +26,45 @@ This is an in-place transition: the overlay replaces only `backend` and
 `frontend`. PostgreSQL, MinIO, named volumes, projects, users, and test history
 remain intact. Do not run `docker compose down -v` and do not reinstall.
 
+## Access to private Enterprise images
+
+Enterprise images are stored in private GitHub Container Registry (GHCR)
+packages. This delivery access is separate from the installation-bound
+Enterprise license: it lets Docker download authorized images, but it does not
+activate the product or grant source-repository access.
+
+1. Give Veriqorn the GitHub username of a dedicated deployment account (for
+   example, `acme-veriqorn-deploy`). A dedicated service account is recommended.
+2. Veriqorn grants that account **Read** access only to the
+   `veriqorn-enterprise-backend` and `veriqorn-enterprise-frontend` packages.
+3. Create a **classic** GitHub personal access token for that account with only
+   the `read:packages` scope. If the organization requires SSO, authorize the
+   token for it.
+4. On the server, sign Docker in once and add the same values to the local
+   deployment `.env` file:
+
+   ```bash
+   echo "$GHCR_TOKEN" | docker login ghcr.io -u acme-veriqorn-deploy --password-stdin
+   ```
+
+   ```dotenv
+   UPDATE_REGISTRY_USERNAME=acme-veriqorn-deploy
+   UPDATE_REGISTRY_TOKEN=<GitHub PAT with read:packages>
+   ```
+
+   Do not commit this token or put it in `.env.enterprise`. The update agent
+   uses these values only while it downloads new Enterprise images.
+5. After adding or rotating the token, recreate the update agent:
+
+   ```bash
+   docker compose --env-file .env --env-file .env.enterprise \
+     -f docker-compose.yml -f compose.enterprise.yml up -d --force-recreate update-agent
+   ```
+
+At the end of a subscription, Veriqorn removes the deployment account's package
+access. License expiration or revocation separately controls whether the
+installed Enterprise product runs.
+
 ## Prepare the Enterprise overlay
 
 This step requires a trusted server operator with access to the deployment

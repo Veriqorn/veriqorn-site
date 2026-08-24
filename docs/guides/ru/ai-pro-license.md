@@ -27,6 +27,46 @@ PostgreSQL, MinIO, именованные volume, проекты, пользов
 сохраняются. Не выполняйте `docker compose down -v` и не переустанавливайте
 систему.
 
+## Доступ к приватным Enterprise-образам
+
+Enterprise-образы хранятся в приватных пакетах GitHub Container Registry
+(GHCR). Этот доступ нужен только для доставки образов: он не активирует
+Enterprise-лицензию, привязанную к установке, и не даёт доступа к исходным
+репозиториям Veriqorn.
+
+1. Сообщите Veriqorn имя отдельного GitHub-аккаунта для развёртывания,
+   например `acme-veriqorn-deploy`. Рекомендуется использовать выделенный
+   технический аккаунт.
+2. Veriqorn выдаёт этому аккаунту доступ **Read** только к пакетам
+   `veriqorn-enterprise-backend` и `veriqorn-enterprise-frontend`.
+3. Создайте для этого аккаунта **classic** personal access token только с
+   областью `read:packages`. Если в организации требуется SSO, авторизуйте
+   токен для неё.
+4. На сервере один раз войдите Docker в GHCR и добавьте те же значения в
+   локальный файл развёртывания `.env`:
+
+   ```bash
+   echo "$GHCR_TOKEN" | docker login ghcr.io -u acme-veriqorn-deploy --password-stdin
+   ```
+
+   ```dotenv
+   UPDATE_REGISTRY_USERNAME=acme-veriqorn-deploy
+   UPDATE_REGISTRY_TOKEN=<GitHub PAT с read:packages>
+   ```
+
+   Не коммитьте этот токен и не добавляйте его в `.env.enterprise`. Агент
+   обновления использует его только на время загрузки новых Enterprise-образов.
+5. После добавления или замены токена пересоздайте агента обновления:
+
+   ```bash
+   docker compose --env-file .env --env-file .env.enterprise \
+     -f docker-compose.yml -f compose.enterprise.yml up -d --force-recreate update-agent
+   ```
+
+После завершения подписки Veriqorn отзывает у технического аккаунта доступ к
+пакетам. Срок действия и отзыв лицензии отдельно определяют, может ли работать
+уже установленный Enterprise-продукт.
+
 ## Подготовьте Enterprise overlay
 
 Этот шаг выполняет доверенный оператор сервера с доступом к папке развёртывания
