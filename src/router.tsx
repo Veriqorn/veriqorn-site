@@ -6,7 +6,7 @@ import {
   createRouter,
   useRouterState,
 } from "@tanstack/react-router";
-import { ExternalLink, Github } from "lucide-react";
+import { ExternalLink, GitFork } from "lucide-react";
 import { useEffect, useState } from "react";
 import { HomePage } from "@/pages/home-page";
 import { DocsPage } from "@/pages/docs-page";
@@ -49,7 +49,7 @@ function PlatformReleaseLinks() {
         className="inline-flex items-center gap-1 rounded-md px-1 py-1 transition-colors hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
         aria-label={`Open Veriqorn Community ${versionLabel} release notes on GitHub`}
       >
-        <Github className="h-3.5 w-3.5" aria-hidden="true" />
+        <GitFork className="h-3.5 w-3.5" aria-hidden="true" />
         <span>{versionLabel}</span>
         <ExternalLink className="h-3 w-3" aria-hidden="true" />
       </a>

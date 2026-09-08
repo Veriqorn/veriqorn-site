@@ -1,8 +1,363 @@
-@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap')
+layer(base);
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+@plugin '@tailwindcss/typography';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+
+  --background-image-hero-glow:
+    radial-gradient(
+      circle at 20% 20%,
+      rgba(45, 151, 255, 0.25),
+      transparent 45%
+    ),
+    radial-gradient(circle at 80% 15%, rgba(6, 182, 212, 0.2), transparent 40%),
+    linear-gradient(
+      120deg,
+      rgba(255, 255, 255, 0.95),
+      rgba(248, 250, 252, 0.95)
+    );
+}
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+}
+
+@utility demo-platform {
+  min-height: 100vh;
+  font-family: 'Aptos', 'Segoe UI Variable Text', 'Trebuchet MS', sans-serif;
+  color: #181f2d;
+  background-image:
+    radial-gradient(
+      circle at 15% 0%,
+      rgba(197, 221, 246, 0.64),
+      transparent 34%
+    ),
+    radial-gradient(
+      circle at 79% 0%,
+      rgba(255, 232, 193, 0.5),
+      transparent 35%
+    ),
+    linear-gradient(180deg, #eef4fb 0%, #e8f0f8 100%);
+
+  & .eyebrow {
+    color: #697386;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.19em;
+    text-transform: uppercase;
+  }
+
+  & button {
+    font: inherit;
+  }
+
+  & input {
+    font: inherit;
+  }
+
+  & select {
+    font: inherit;
+  }
+
+  & :where(h1, h2, h3, h4, h5, h6) {
+    font-family: inherit;
+  }
+
+  /* Match the product shell: one shared panel surface (28px) instead of the
+     mixed marketing radii that the older demo accumulated.  Controls keep
+     their smaller radii. */
+  & [class*='rounded-[32px]'] {
+    border-radius: 1.75rem !important;
+    border-color: rgb(210 221 236 / 0.8) !important;
+    box-shadow: 0 18px 50px -28px rgb(15 23 42 / 0.28) !important;
+  }
+  & [class*='rounded-[28px]'] {
+    border-radius: 1.75rem !important;
+    border-color: rgb(210 221 236 / 0.8) !important;
+    box-shadow: 0 18px 50px -28px rgb(15 23 42 / 0.28) !important;
+  }
+
+  & [class*='rounded-[24px]'] {
+    border-radius: 1.5rem !important;
+    border-color: rgb(210 221 236 / 0.8) !important;
+    box-shadow: 0 14px 36px rgb(22 29 42 / 0.06) !important;
+  }
+
+  & button {
+    transition:
+      background-color 160ms ease,
+      border-color 160ms ease,
+      color 160ms ease,
+      box-shadow 160ms ease,
+      transform 160ms ease;
+  }
+
+  & button:active:not(:disabled) {
+    transform: translateY(1px);
+  }
+
+  & .rounded-xl {
+    border-radius: 1.25rem;
+  }
+
+  & [data-demo-view] > .mt-6.mb-5 {
+    display: none;
+  }
+
+  & [data-demo-view] > .mt-6.mb-5 + * {
+    margin-top: 1.5rem;
+  }
+
+  & [data-demo-view='overview'] > header h1 {
+    color: transparent;
+    position: relative;
+  }
+
+  & [data-demo-view='overview'] > header h1::after {
+    content: 'Dashboard';
+    color: #172337;
+    inset: 0;
+    position: absolute;
+  }
+
+  /* Coverage now uses the shared page header for its actions, just like the
+     installed Enterprise frontend. */
+  & [data-demo-view='coverage'] > .space-y-4 > section:first-child {
+    display: none;
+  }
+
+  & span[style*='width'] {
+    transform-origin: left center;
+    animation: demo-bar-fill 750ms cubic-bezier(0.22, 0.8, 0.32, 1) both;
+  }
+
+  & [aria-label='Pass rate chart'] {
+    width: 9rem;
+    height: 9rem;
+    min-width: 9rem;
+    flex: 0 0 9rem;
+    aspect-ratio: 1;
+  }
+
+  & article {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+}
+
+@utility eyebrow {
+  .demo-platform & {
+    color: #697386;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.19em;
+    text-transform: uppercase;
+  }
+}
+
+@utility rounded-xl {
+  .demo-platform & {
+    border-radius: 1.25rem;
+  }
+}
+
+@utility mt-6 {
+  .demo-platform [data-demo-view] > &.mb-5 {
+    display: none;
+  }
+
+  .demo-platform [data-demo-view] > &.mb-5 + * {
+    margin-top: 1.5rem;
+  }
+}
+
+@utility mb-5 {
+  .demo-platform [data-demo-view] > &.mt-6 {
+    display: none;
+  }
+
+  .demo-platform [data-demo-view] > &.mt-6 + * {
+    margin-top: 1.5rem;
+  }
+}
+
+@utility space-y-4 {
+  /* Coverage now uses the shared page header for its actions, just like the
+     installed Enterprise frontend. */
+  .demo-platform [data-demo-view='coverage'] > & > section:first-child {
+    display: none;
+  }
+}
+
+@utility container-shell {
+  @apply mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8;
+}
+
+@utility docs-container-shell {
+  @apply mx-auto w-full max-w-384 px-4 sm:px-6 lg:px-8 xl:px-10;
+}
+
+@utility markdown {
+  @apply prose prose-sm prose-slate max-w-none wrap-break-word prose-headings:font-semibold prose-headings:text-foreground prose-headings:scroll-mt-24 prose-p:text-muted-foreground prose-p:leading-relaxed prose-strong:text-foreground prose-a:text-primary prose-a:no-underline prose-a:hover:underline prose-img:rounded-xl prose-img:border prose-img:border-border/70 prose-ul:my-3 prose-ol:my-3 prose-li:my-1 prose-li:text-muted-foreground prose-blockquote:border-l-primary/30 prose-blockquote:text-foreground/80 prose-hr:border-border/80 prose-pre:rounded-xl prose-pre:border prose-pre:border-slate-800 prose-pre:bg-slate-950 prose-pre:text-slate-100 prose-th:text-foreground prose-td:align-top sm:prose-base;
+
+  & :not(pre) > code {
+    @apply rounded-md border border-slate-200 bg-slate-100 px-1.5 py-0.5 font-medium text-slate-900;
+  }
+
+  & pre {
+    @apply overflow-x-auto;
+  }
+
+  & img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  & svg {
+    max-width: 100%;
+    height: auto;
+  }
+
+  & video {
+    max-width: 100%;
+    height: auto;
+  }
+
+  & iframe {
+    max-width: 100%;
+    height: auto;
+  }
+
+  & .table-wrapper {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  & table {
+    width: auto;
+    border-collapse: separate;
+    border-spacing: 0;
+    border: 1px solid hsl(var(--border));
+    border-radius: 0.9rem;
+    background: rgba(255, 255, 255, 0.82);
+  }
+
+  & > :where(p, ul, ol, blockquote, h2, h3, h4, hr) {
+    max-width: 78ch;
+  }
+
+  & > :where(h2, h3, h4) {
+    text-wrap: balance;
+  }
+
+  & a {
+    word-break: break-word;
+  }
+
+  & ul {
+    padding-left: 1.1rem;
+  }
+
+  & ol {
+    padding-left: 1.1rem;
+  }
+
+  & li > p {
+    margin: 0;
+  }
+
+  & pre {
+    padding: 1rem;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  }
+
+  & th {
+    padding: 0.8rem 1rem;
+    border-bottom: 1px solid hsl(var(--border));
+    text-align: left;
+  }
+
+  & td {
+    padding: 0.8rem 1rem;
+    border-bottom: 1px solid hsl(var(--border));
+    text-align: left;
+  }
+
+  & thead th {
+    background: rgba(242, 248, 252, 0.92);
+  }
+
+  & tbody tr:nth-child(even) {
+    background: rgba(247, 250, 252, 0.82);
+  }
+
+  & tbody tr:last-child td {
+    border-bottom: 0;
+  }
+
+  & pre code {
+    @apply bg-transparent p-0 text-slate-100;
+  }
+
+  & code::before {
+    content: '';
+  }
+
+  & code::after {
+    content: '';
+  }
+}
+
+@utility table-wrapper {
+  .markdown & {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+  }
+}
 
 @layer base {
   :root {
@@ -47,206 +402,8 @@ h4 {
 }
 
 @layer components {
-.demo-platform {
-  min-height: 100vh;
-  font-family: "Aptos", "Segoe UI Variable Text", "Trebuchet MS", sans-serif;
-    color: #181f2d;
-    background-image:
-      radial-gradient(circle at 15% 0%, rgba(197, 221, 246, 0.64), transparent 34%),
-      radial-gradient(circle at 79% 0%, rgba(255, 232, 193, 0.5), transparent 35%),
-      linear-gradient(180deg, #eef4fb 0%, #e8f0f8 100%);
-  }
-
-  .demo-platform .eyebrow {
-    color: #697386;
-    font-size: 0.65rem;
-    font-weight: 700;
-    letter-spacing: 0.19em;
-    text-transform: uppercase;
-  }
-
-  .demo-platform button,
-  .demo-platform input,
-  .demo-platform select {
-    font: inherit;
-  }
-
-  .demo-platform :where(h1, h2, h3, h4, h5, h6) {
-    font-family: inherit;
-  }
-
-  /* Match the product shell: one shared panel surface (28px) instead of the
-     mixed marketing radii that the older demo accumulated.  Controls keep
-     their smaller radii. */
-  .demo-platform [class*="rounded-[32px]"],
-  .demo-platform [class*="rounded-[28px]"] {
-    border-radius: 1.75rem !important;
-    border-color: rgb(210 221 236 / .8) !important;
-    box-shadow: 0 18px 50px -28px rgb(15 23 42 / .28) !important;
-  }
-
-  .demo-platform [class*="rounded-[24px]"] {
-    border-radius: 1.5rem !important;
-    border-color: rgb(210 221 236 / .8) !important;
-    box-shadow: 0 14px 36px rgb(22 29 42 / .06) !important;
-  }
-
-  .demo-platform button {
-    transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease,
-      box-shadow 160ms ease, transform 160ms ease;
-  }
-
-  .demo-platform button:active:not(:disabled) {
-    transform: translateY(1px);
-  }
-
-  .demo-platform .rounded-xl {
-    border-radius: 1.25rem;
-  }
-
-  .demo-platform [data-demo-view] > .mt-6.mb-5 {
-    display: none;
-  }
-
-  .demo-platform [data-demo-view] > .mt-6.mb-5 + * {
-    margin-top: 1.5rem;
-  }
-
-  .demo-platform [data-demo-view="overview"] > header h1 {
-    color: transparent;
-    position: relative;
-  }
-
-  .demo-platform [data-demo-view="overview"] > header h1::after {
-    content: "Dashboard";
-    color: #172337;
-    inset: 0;
-    position: absolute;
-  }
-
-  /* Coverage now uses the shared page header for its actions, just like the
-     installed Enterprise frontend. */
-  .demo-platform [data-demo-view="coverage"] > .space-y-4 > section:first-child {
-    display: none;
-  }
-
-  .demo-platform span[style*="width"] {
-    transform-origin: left center;
-    animation: demo-bar-fill 750ms cubic-bezier(.22, .8, .32, 1) both;
-  }
-
-  .demo-platform [aria-label="Pass rate chart"] {
-    width: 9rem;
-    height: 9rem;
-    min-width: 9rem;
-    flex: 0 0 9rem;
-    aspect-ratio: 1;
-  }
-
-  .demo-platform article {
-    grid-column: 1 / -1;
-    width: 100%;
-  }
-
   @keyframes demo-bar-fill {
     from { transform: scaleX(0); opacity: .4; }
     to { transform: scaleX(1); opacity: 1; }
-  }
-
-  .container-shell {
-    @apply mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8;
-  }
-
-  .docs-container-shell {
-    @apply mx-auto w-full max-w-[96rem] px-4 sm:px-6 lg:px-8 xl:px-10;
-  }
-
-  .markdown {
-    @apply prose prose-sm prose-slate max-w-none break-words prose-headings:font-semibold prose-headings:text-foreground prose-headings:scroll-mt-24 prose-p:text-muted-foreground prose-p:leading-relaxed prose-strong:text-foreground prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-img:rounded-xl prose-img:border prose-img:border-border/70 prose-ul:my-3 prose-ol:my-3 prose-li:my-1 prose-li:text-muted-foreground prose-blockquote:border-l-primary/30 prose-blockquote:text-foreground/80 prose-hr:border-border/80 prose-pre:rounded-xl prose-pre:border prose-pre:border-slate-800 prose-pre:bg-slate-950 prose-pre:text-slate-100 prose-th:text-foreground prose-td:align-top sm:prose-base;
-  }
-
-  .markdown :not(pre) > code {
-    @apply rounded-md border border-slate-200 bg-slate-100 px-1.5 py-0.5 font-medium text-slate-900;
-  }
-
-  .markdown pre {
-    @apply overflow-x-auto;
-  }
-
-  .markdown img,
-  .markdown svg,
-  .markdown video,
-  .markdown iframe {
-    max-width: 100%;
-    height: auto;
-  }
-
-  .markdown .table-wrapper {
-    display: block;
-    width: 100%;
-    overflow-x: auto;
-  }
-
-  .markdown table {
-    width: auto;
-    border-collapse: separate;
-    border-spacing: 0;
-    border: 1px solid hsl(var(--border));
-    border-radius: 0.9rem;
-    background: rgba(255, 255, 255, 0.82);
-  }
-
-  .markdown > :where(p, ul, ol, blockquote, h2, h3, h4, hr) {
-    max-width: 78ch;
-  }
-
-  .markdown > :where(h2, h3, h4) {
-    text-wrap: balance;
-  }
-
-  .markdown a {
-    word-break: break-word;
-  }
-
-  .markdown ul,
-  .markdown ol {
-    padding-left: 1.1rem;
-  }
-
-  .markdown li > p {
-    margin: 0;
-  }
-
-  .markdown pre {
-    padding: 1rem;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
-  }
-
-  .markdown th,
-  .markdown td {
-    padding: 0.8rem 1rem;
-    border-bottom: 1px solid hsl(var(--border));
-    text-align: left;
-  }
-
-  .markdown thead th {
-    background: rgba(242, 248, 252, 0.92);
-  }
-
-  .markdown tbody tr:nth-child(even) {
-    background: rgba(247, 250, 252, 0.82);
-  }
-
-  .markdown tbody tr:last-child td {
-    border-bottom: 0;
-  }
-
-  .markdown pre code {
-    @apply bg-transparent p-0 text-slate-100;
-  }
-
-  .markdown code::before,
-  .markdown code::after {
-    content: "";
   }
 }
