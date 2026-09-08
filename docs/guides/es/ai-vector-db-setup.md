@@ -39,7 +39,7 @@ Consulte tambien:
 
 Esta guia publica asume que la plataforma ya esta desplegada mediante el flujo self-hosted soportado.
 
-Si utilizo `veriqorn-install/docker-compose.yml`, PostgreSQL ya esta incluido y el backend ya se conecta al servicio interno `postgres`. No se requiere configuracion adicional de PostgreSQL para esta guia.
+Si utilizo `veriqorn/deploy/docker-compose.yml`, PostgreSQL ya esta incluido y el backend ya se conecta al servicio interno `postgres`. No se requiere configuracion adicional de PostgreSQL para esta guia.
 
 Esta pagina no cubre flujos de desarrollo local basados en codigo fuente ni workflows internos de depuracion.
 

@@ -28,7 +28,7 @@ Los datos se eliminan unicamente si usted borra explicitamente los volumenes (po
 - Acceso a `.env`
 - Suficiente espacio libre en disco para los archivos de respaldo
 
-Para el contrato canonico de variables de entorno, mantenga `.env` alineado con `veriqorn-install/.env.example`.
+Para el contrato canonico de variables de entorno, mantenga `.env` alineado con `veriqorn/deploy/.env.example`.
 
 ---
 

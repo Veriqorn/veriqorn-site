@@ -41,7 +41,7 @@
 
 Этот публичный гайд предполагает, что платформа уже развёрнута через поддерживаемый self-hosted install flow.
 
-Если вы используете `veriqorn-install/docker-compose.yml`, PostgreSQL уже входит в поставку, а backend уже подключён к внутреннему сервису `postgres`. Дополнительная настройка PostgreSQL для этого гайда не требуется.
+Если вы используете `veriqorn/deploy/docker-compose.yml`, PostgreSQL уже входит в поставку, а backend уже подключён к внутреннему сервису `postgres`. Дополнительная настройка PostgreSQL для этого гайда не требуется.
 
 Этот документ не описывает source-based local development и внутренние debug-workflow.
 

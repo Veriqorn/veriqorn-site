@@ -72,8 +72,8 @@ imágenes que ejecuta Docker.
 Descargue los archivos junto a `docker-compose.yml` y `.env`:
 
 ```bash
-curl -fsSLO https://raw.githubusercontent.com/veriqorn/veriqorn-install/master/compose.enterprise.yml
-curl -fsSLO https://raw.githubusercontent.com/veriqorn/veriqorn-install/master/.env.enterprise.example
+curl -fsSLO https://raw.githubusercontent.com/Veriqorn/veriqorn/main/deploy/compose.enterprise.yml
+curl -fsSLO https://raw.githubusercontent.com/Veriqorn/veriqorn/main/deploy/.env.enterprise.example
 cp .env.enterprise.example .env.enterprise
 ```
 

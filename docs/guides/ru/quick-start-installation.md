@@ -19,14 +19,14 @@ Veriqorn поставляется в виде готовых Docker-образо
 Скачайте установочный compose-файл и пример файла окружения из репозитория:
 
 ```bash
-curl -fsSLO https://raw.githubusercontent.com/veriqorn/veriqorn-install/master/docker-compose.yml
-curl -fsSLO https://raw.githubusercontent.com/veriqorn/veriqorn-install/master/.env.example
-curl -fsSLO https://raw.githubusercontent.com/veriqorn/veriqorn-install/master/Caddyfile
-curl -fsSLO https://raw.githubusercontent.com/veriqorn/veriqorn-install/master/preflight.ps1
-curl -fsSLO https://raw.githubusercontent.com/veriqorn/veriqorn-install/master/preflight.sh
+curl -fsSLO https://raw.githubusercontent.com/Veriqorn/veriqorn/main/deploy/docker-compose.yml
+curl -fsSLO https://raw.githubusercontent.com/Veriqorn/veriqorn/main/deploy/.env.example
+curl -fsSLO https://raw.githubusercontent.com/Veriqorn/veriqorn/main/deploy/Caddyfile
+curl -fsSLO https://raw.githubusercontent.com/Veriqorn/veriqorn/main/deploy/preflight.ps1
+curl -fsSLO https://raw.githubusercontent.com/Veriqorn/veriqorn/main/deploy/preflight.sh
 ```
 
-Либо скопируйте их вручную из корня репозитория `veriqorn-install`: `docker-compose.yml` и `.env.example`.
+Либо скопируйте их вручную из каталога `veriqorn/deploy`: `docker-compose.yml` и `.env.example`.
 
 ---
 

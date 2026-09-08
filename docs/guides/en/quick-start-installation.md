@@ -1,4 +1,4 @@
-﻿# Quick Start — Installation Guide
+# Quick Start — Installation Guide
 
 Veriqorn ships as pre-built Docker images on GitHub Container Registry (GHCR). You can have the Community platform running in under five minutes with a single `docker compose` command.
 
@@ -19,14 +19,14 @@ No other dependencies are required — the compose file includes PostgreSQL, Min
 Download the installation compose file and environment example from the repository:
 
 ```bash
-curl -fsSLO https://raw.githubusercontent.com/veriqorn/veriqorn-install/master/docker-compose.yml
-curl -fsSLO https://raw.githubusercontent.com/veriqorn/veriqorn-install/master/.env.example
-curl -fsSLO https://raw.githubusercontent.com/veriqorn/veriqorn-install/master/Caddyfile
-curl -fsSLO https://raw.githubusercontent.com/veriqorn/veriqorn-install/master/preflight.ps1
-curl -fsSLO https://raw.githubusercontent.com/veriqorn/veriqorn-install/master/preflight.sh
+curl -fsSLO https://raw.githubusercontent.com/Veriqorn/veriqorn/main/deploy/docker-compose.yml
+curl -fsSLO https://raw.githubusercontent.com/Veriqorn/veriqorn/main/deploy/.env.example
+curl -fsSLO https://raw.githubusercontent.com/Veriqorn/veriqorn/main/deploy/Caddyfile
+curl -fsSLO https://raw.githubusercontent.com/Veriqorn/veriqorn/main/deploy/preflight.ps1
+curl -fsSLO https://raw.githubusercontent.com/Veriqorn/veriqorn/main/deploy/preflight.sh
 ```
 
-Or copy them manually from the `veriqorn-install` repository root: `docker-compose.yml` and `.env.example`.
+Or copy them manually from the `veriqorn/deploy` directory root: `docker-compose.yml` and `.env.example`.
 
 ---
 

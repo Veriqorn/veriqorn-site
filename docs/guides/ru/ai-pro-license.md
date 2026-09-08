@@ -76,8 +76,8 @@ Enterprise-лицензию, привязанную к установке, и н
 Скачайте overlay-файлы рядом с существующими `docker-compose.yml` и `.env`:
 
 ```bash
-curl -fsSLO https://raw.githubusercontent.com/veriqorn/veriqorn-install/master/compose.enterprise.yml
-curl -fsSLO https://raw.githubusercontent.com/veriqorn/veriqorn-install/master/.env.enterprise.example
+curl -fsSLO https://raw.githubusercontent.com/Veriqorn/veriqorn/main/deploy/compose.enterprise.yml
+curl -fsSLO https://raw.githubusercontent.com/Veriqorn/veriqorn/main/deploy/.env.enterprise.example
 cp .env.enterprise.example .env.enterprise
 ```
 

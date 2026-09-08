@@ -1,4 +1,4 @@
-# Veriqorn Site
+﻿# Veriqorn Site
 
 Standalone public marketing site and documentation portal for Veriqorn.
 
@@ -35,7 +35,7 @@ VITE_SITE_URL=https://your-domain.example
 If not set, the site falls back to `https://veriqorn.vercel.app`.
 
 Set `VITE_PLATFORM_VERSION` during a site deployment to override the built-in
-platform version (`v0.2.7`). For automated public release metadata, see
+platform version (`v0.2.28`). For automated public release metadata, see
 [`docs/public-release-manifest.md`](docs/public-release-manifest.md).
 
 ## Deployment
@@ -49,8 +49,8 @@ Suggested settings:
 After deployment, keep `public/sitemap.xml` and `public/robots.txt` aligned with the public domain.
 
 ## Related Repositories
-- Product source code: `https://github.com/veriqorn/veriqorn-platform`
-- Public installation assets: `https://github.com/veriqorn/veriqorn-install`
+- Product source code: `https://github.com/Veriqorn/veriqorn`
+- Deployment and installation assets: `https://github.com/Veriqorn/veriqorn/tree/main/deploy`
 
 ## License
 Apache-2.0

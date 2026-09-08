@@ -27,7 +27,7 @@ Data is removed only if you explicitly delete volumes (for example `docker compo
 - Access to `.env`
 - Enough free disk space for backup archives
 
-For the canonical environment contract, keep `.env` aligned with `veriqorn-install/.env.example`.
+For the canonical environment contract, keep `.env` aligned with `veriqorn/deploy/.env.example`.
 
 ### Recommended: enable updates from the platform UI
 
