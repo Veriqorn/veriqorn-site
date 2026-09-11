@@ -46,6 +46,7 @@ const modulesByLanguage: Record<Language, Record<string, string>> = {
 const GUIDE_ORDER: string[] = [
   "quick-start-installation",
   "test-results-ci-integration",
+  "test-case-ids",
   "ai-module-overview",
   "ai-llm-connection",
   "ai-repository-indexing",
