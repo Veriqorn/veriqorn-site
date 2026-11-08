@@ -81,8 +81,8 @@ cp .env.example .env
 доступны из целевой среды:
 
 ```bash
-docker pull ghcr.io/veriqorn/veriqorn-backend:v0.2.34
-docker pull ghcr.io/veriqorn/veriqorn-frontend:v0.2.34
+docker pull ghcr.io/veriqorn/veriqorn-backend:v0.2.35
+docker pull ghcr.io/veriqorn/veriqorn-frontend:v0.2.35
 ```
 
 Если любая команда возвращает `unauthorized`, GHCR package не открыт публично
@@ -247,3 +247,5 @@ docker compose -f docker-compose.yml down -v
 - **Повторный запуск тестов**: настройте [pipeline Test Rerun](test-rerun-setup.md), чтобы запускать выбранные тесты из прогона.
 - Для Enterprise AI-функций разверните Enterprise overlay и активируйте офлайн-лицензию. Публичный ключ проверки уже встроен в Enterprise-образ: см. [лицензию Enterprise AI](ai-pro-license.md).
 - Для подключения LLM см. [LLM Connection](ai-llm-connection.md).
+
+- **Хранилище вложений**: Настройте [Amazon S3 или MinIO](object-storage.md) в системных настройках (v0.2.35+).

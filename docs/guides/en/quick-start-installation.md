@@ -49,7 +49,7 @@ cp .env.example .env
 | `JWT_SECRET` | *(required)* | Secret key for signing JWT tokens |
 | `BACKEND_BOOTSTRAP_ADMIN_EMAIL` | *(required on first start)* | First administrator email for an empty database |
 | `BACKEND_BOOTSTRAP_ADMIN_PASSWORD` | *(required on first start)* | Unique 12+ character password for that administrator |
-| `PLATFORM_VERSION` | `latest` | Docker image tag (`latest`, `v0.2.34`, etc.) |
+| `PLATFORM_VERSION` | `latest` | Docker image tag (`latest`, `v0.2.35`, etc.) |
 | `POSTGRES_USER` | `postgres` | PostgreSQL user |
 | `POSTGRES_PASSWORD` | *(required)* | PostgreSQL password |
 | `POSTGRES_DB` | `test_ops` | Database name |
@@ -79,8 +79,8 @@ Before handing the install to a customer, verify that the published images are
 readable from the target environment:
 
 ```bash
-docker pull ghcr.io/veriqorn/veriqorn-backend:v0.2.34
-docker pull ghcr.io/veriqorn/veriqorn-frontend:v0.2.34
+docker pull ghcr.io/veriqorn/veriqorn-backend:v0.2.35
+docker pull ghcr.io/veriqorn/veriqorn-frontend:v0.2.35
 ```
 
 If either pull returns `unauthorized`, the GHCR package is not public or the
@@ -238,3 +238,5 @@ docker compose -f docker-compose.yml down -v
 - **Enterprise AI features**: Deploy the Enterprise overlay and activate its offline license to enable failure analysis, repository indexing, and coverage intelligence. The Enterprise image already includes Veriqorn's public verification key. See [Enterprise AI License](ai-pro-license.md).
 - **LLM connection**: Connect a local or cloud LLM provider for AI analysis. See [LLM Connection](ai-llm-connection.md).
 
+
+- **Object storage**: Configure [Amazon S3 or MinIO](object-storage.md) for attachments (v0.2.35+).
