@@ -35,7 +35,7 @@ VITE_SITE_URL=https://your-domain.example
 If not set, the site falls back to `https://veriqorn.vercel.app`.
 
 Set `VITE_PLATFORM_VERSION` during a site deployment to override the built-in
-platform version (`v0.2.33`). For automated public release metadata, see
+platform version (`v0.2.34`). For automated public release metadata, see
 [`docs/public-release-manifest.md`](docs/public-release-manifest.md).
 
 ## Deployment
@@ -54,3 +54,10 @@ After deployment, keep `public/sitemap.xml` and `public/robots.txt` aligned with
 
 ## License
 Apache-2.0
+
+## Dependency verification
+
+Use Bun 1.4.4 and Node.js 26 LTS (26.13.0 is pinned in .node-version).
+Install with bun install --frozen-lockfile and run bun run audit.
+See [the dependency audit](docs/dependency-audit-2026-11-08.md) for validation
+results and compatibility notes.
