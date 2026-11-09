@@ -81,8 +81,8 @@ cp .env.example .env
 доступны из целевой среды:
 
 ```bash
-docker pull ghcr.io/veriqorn/veriqorn-backend:v0.2.35
-docker pull ghcr.io/veriqorn/veriqorn-frontend:v0.2.35
+docker pull ghcr.io/veriqorn/veriqorn-backend:v0.2.36
+docker pull ghcr.io/veriqorn/veriqorn-frontend:v0.2.36
 ```
 
 Если любая команда возвращает `unauthorized`, GHCR package не открыт публично
